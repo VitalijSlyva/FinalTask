@@ -16,6 +16,7 @@ using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
+    [Authorize(Roles ="admin")]
     public class AdminController : Controller
     {
         private IAdminService _adminService;
@@ -44,7 +45,7 @@ namespace Rental.WEB.Controllers
 
         public ActionResult BanUser(string id)
         {
-            if (id != null)
+            if (!String.IsNullOrEmpty(id))
             {
                 _adminService.BanUserAsync(id);
             }
@@ -53,7 +54,7 @@ namespace Rental.WEB.Controllers
 
         public ActionResult UnBanUser(string id)
         {
-            if (id != null)
+            if (!String.IsNullOrEmpty(id))
             {
                 _adminService.UnbanUserAsync(id);
             }
@@ -104,9 +105,13 @@ namespace Rental.WEB.Controllers
         [HttpPost]
         public ActionResult CreateCar(CreateVM model)
         {
-            CarDTO carDTO = _createCarDTO(model);
-            _adminService.CreateCar(carDTO);
-            return RedirectToAction("GetCars");
+            if (ModelState.IsValid)
+            {
+                CarDTO carDTO = _createCarDTO(model);
+                _adminService.CreateCar(carDTO);
+                return RedirectToAction("GetCars");
+            }
+            return View(model);
         }
     
         public ActionResult UpdateCar(int? id)
@@ -121,9 +126,13 @@ namespace Rental.WEB.Controllers
         [HttpPost]
         public ActionResult UpdateCar(CreateVM model)
         {
-            CarDTO carDTO = _createCarDTO(model);
+            if (ModelState.IsValid)
+            {
+                CarDTO carDTO = _createCarDTO(model);
             _adminService.UpdateCar(carDTO);
             return RedirectToAction("GetCars");
+            }
+            return View("Create", model );
         }
 
         public ActionResult Delete(int? id)
@@ -154,6 +163,13 @@ namespace Rental.WEB.Controllers
                 return RedirectToAction("GetUsers");
             }
             return View(register);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _rentService.Dispose();
+            _adminService.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

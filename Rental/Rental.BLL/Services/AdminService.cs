@@ -33,9 +33,6 @@ namespace Rental.BLL.Services
         {
             try
             {
-              //  ApplicationUser user = await IdentityUnitOfWork.UserManager.FindByIdAsync(userId);
-                //user.Banned = true;
-                //await IdentityUnitOfWork.UserManager.UpdateAsync(user);
                 await IdentityUnitOfWork.UserManager.AddToRoleAsync(userId, "banned");
                 IdentityUnitOfWork.Save();
             }

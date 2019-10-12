@@ -24,28 +24,26 @@ namespace Rental.WEB.Controllers
 
         public ActionResult Index()
         {
-            var car = _rentMapperDM.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(_rentService.GetCars());
-            return View();
+            var cars = _rentMapperDM.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(_rentService.GetCars());
+            return View(cars);
         }
 
-        public ActionResult Car()
+        public ActionResult Car(int?id)
         {
-            var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(_rentService.GetCar(1));
-            return View();
+            if (id != null)
+            {
+                var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(_rentService.GetCar(id.Value));
+                if (car == null)
+                    return new HttpNotFoundResult();
+                return View(car);
+            }
+            return new HttpNotFoundResult();
         }
 
-        public ActionResult About()
+        protected override void Dispose(bool disposing)
         {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
+            _rentService.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

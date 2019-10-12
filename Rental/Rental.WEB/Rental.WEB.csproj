@@ -174,9 +174,11 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
+    <Compile Include="Attributes\AuthorizeWithoutBannAttribute.cs" />
     <Compile Include="Attributes\NoAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\ClientController.cs" />
     <Compile Include="Controllers\ManagerController.cs" />
     <Compile Include="Controllers\RentController.cs" />
     <Compile Include="Global.asax.cs">
@@ -207,6 +209,7 @@
     <Compile Include="Models\View_Models\Admin\CreateVM.cs" />
     <Compile Include="Models\View_Models\Admin\GetCarsVM.cs" />
     <Compile Include="Models\View_Models\Admin\GetUsersVM.cs" />
+    <Compile Include="Models\View_Models\Client\ShowUserOrdersVM.cs" />
     <Compile Include="Models\View_Models\Manager\ShowConfirmsVM.cs" />
     <Compile Include="Models\View_Models\Manager\ShowReturnsVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -336,6 +339,7 @@
     <Folder Include="Models\Domain_Models\Log\" />
     <Folder Include="Views\Account\" />
     <Folder Include="Views\Admin\" />
+    <Folder Include="Views\Client\" />
     <Folder Include="Views\Manager\" />
   </ItemGroup>
   <ItemGroup>

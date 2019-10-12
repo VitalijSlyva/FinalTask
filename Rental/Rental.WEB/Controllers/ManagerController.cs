@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Rental.BLL.DTO.Rent;
 using Rental.BLL.Interfaces;
+using Rental.WEB.Attributes;
 using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Rent;
 using Rental.WEB.Models.View_Models.Manager;
@@ -12,6 +13,8 @@ using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
+    [Authorize(Roles = "manager")]
+    [AuthorizeWithoutBann]
     public class ManagerController : Controller
     {
         private IManagerService _managerService;
@@ -32,17 +35,14 @@ namespace Rental.WEB.Controllers
         [HttpPost]
         public ActionResult Confirm(ConfirmDM confirmDM)
         {
-            try
+            if (ModelState.IsValid)
             {
                 ConfirmDTO confirm = _rentMapperDM.ToConfirmDTO.Map<ConfirmDM, ConfirmDTO>(confirmDM);
                 confirm.User.Id = User.Identity.GetUserId();
                 _managerService.ConfirmOrder(confirm);
                 return RedirectToAction("ShowConfirms", "Manager", null);
             }
-            catch
-            {
-                return View(confirmDM);
-            }
+            return View(confirmDM);
         }
 
         public ActionResult ShowConfirms()
@@ -63,7 +63,7 @@ namespace Rental.WEB.Controllers
 
         public ActionResult ShowConfirm(int? id)
         {
-            if (id.Value > 0)
+            if (id!=null)
             {
                 var confirmDTO = _managerService.GetConfirm(id.Value);
                 if(confirmDTO==null)
@@ -76,7 +76,7 @@ namespace Rental.WEB.Controllers
 
         public ActionResult ShowReturn(int? id)
         {
-            if (id.Value > 0)
+            if (id!=null)
             {
                 var returnDTO = _managerService.GetReturn(id.Value);
                 if (returnDTO == null)
@@ -95,17 +95,20 @@ namespace Rental.WEB.Controllers
         [HttpPost]
         public ActionResult Result(ReturnDM returnDM)
         {
-            try
+            if (ModelState.IsValid)
             {
                 ReturnDTO returnDTO = _rentMapperDM.ToReturnDTO.Map<ReturnDM, ReturnDTO>(returnDM);
                 returnDM.User.Id = User.Identity.GetUserId();
                 _managerService.ReturnCar(returnDTO);
                 return RedirectToAction("ShowReturns", "Manager", null);
             }
-            catch
-            {
-                return View(returnDM);
-            }
+            return View(returnDM);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _managerService.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

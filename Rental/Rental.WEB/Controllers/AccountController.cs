@@ -1,4 +1,5 @@
-﻿using Microsoft.Owin.Security;
+﻿using Microsoft.AspNet.Identity;
+using Microsoft.Owin.Security;
 using Rental.BLL.DTO.Identity;
 using Rental.BLL.Interfaces;
 using Rental.WEB.Attributes;
@@ -92,21 +93,24 @@ namespace Rental.WEB.Controllers
                     Name = register.Name,
                 };
                 await _accountService.CreateAsync(user);
-             //   if (details.Succedeed)
-                    return await Login(new LoginVM() { Email = register.Email, Password = register.Password });
-             //   else
-                  //  ModelState.AddModelError(details.Property, details.Message);
+                return await Login(new LoginVM() { Email = register.Email, Password = register.Password });
             }
             return View(register);
         }
 
         [Authorize]
-        public async Task<ActionResult> ShowProfile()
+        public async Task<ActionResult> ShowUser()
         {
-            string name = User.Identity.Name;
-            var user = await _accountService.GetUserAsync(name);
+            string id = User.Identity.GetUserId();
+            var user = await _accountService.GetUserAsync(id);
             UserDM userProfile = _identityMapperDM.ToUserDM.Map<User, UserDM>(user);
             return View(userProfile);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _accountService.Dispose();
+            base.Dispose(disposing);
         }
     }
 }

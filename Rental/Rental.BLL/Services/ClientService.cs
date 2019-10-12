@@ -54,11 +54,10 @@ namespace Rental.BLL.Services
             }
         }
 
-        public async Task<IEnumerable<OrderDTO>> GetOrdersForClientAsync(string name)
+        public async Task<IEnumerable<OrderDTO>> GetOrdersForClientAsync(string userId)
         {
             try
             {
-                string userId = (await IdentityUnitOfWork.UserManager.FindByNameAsync(name)).Id;
                 IEnumerable<Order> orders = RentUnitOfWork.Orders.Find(x => x.ClientId == userId);
                 List<OrderDTO> ordersDTO = RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
                 return ordersDTO;
