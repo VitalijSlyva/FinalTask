@@ -2,6 +2,7 @@
 using Rental.BLL.Interfaces;
 using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Rent;
+using Rental.WEB.Models.View_Models.Rent;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,7 +26,9 @@ namespace Rental.WEB.Controllers
         public ActionResult Index()
         {
             var cars = _rentMapperDM.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(_rentService.GetCars());
-            return View(cars);
+            IndexVM indexVM = new IndexVM();
+            indexVM.Cars = cars;
+            return View(indexVM);
         }
 
         public ActionResult Car(int?id)

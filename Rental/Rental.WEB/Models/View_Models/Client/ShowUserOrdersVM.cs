@@ -9,5 +9,7 @@ namespace Rental.WEB.Models.View_Models.Client
     public class ShowUserOrdersVM
     {
         public List<OrderDM> OrdersDM { get; set; }
+
+        public Dictionary<int,string> Statuses { get; set; }
     }
 }

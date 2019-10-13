@@ -27,14 +27,26 @@ namespace Rental.WEB.Controllers
             _rentMapperDM = rentMapper;
         }
         // GET: Manager
-        public ActionResult Confirm()
+        public ActionResult Confirm(int? id)
         {
-            return View();
+            if (id != null)
+            {
+                var orderDTO = _managerService.GetOrder(id.Value,true);
+                if (orderDTO == null)
+                    return new HttpNotFoundResult();
+                ConfirmDM confirm = new ConfirmDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
+                return View(confirm);
+            }
+            return new HttpNotFoundResult();
         }
 
         [HttpPost]
         public ActionResult Confirm(ConfirmDM confirmDM)
         {
+            if (!confirmDM.IsConfirmed&&String.IsNullOrEmpty(confirmDM.Description))
+            {
+                ModelState.AddModelError("", "Не указана причина отклонения");
+            }
             if (ModelState.IsValid)
             {
                 ConfirmDTO confirm = _rentMapperDM.ToConfirmDTO.Map<ConfirmDM, ConfirmDTO>(confirmDM);
@@ -42,66 +54,53 @@ namespace Rental.WEB.Controllers
                 _managerService.ConfirmOrder(confirm);
                 return RedirectToAction("ShowConfirms", "Manager", null);
             }
+            var orderDTO = _managerService.GetOrder(confirmDM.Order.Id,true);
+            confirmDM.Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO);
             return View(confirmDM);
         }
 
         public ActionResult ShowConfirms()
         {
-            var confirmsDTO = _managerService.GetConfirms();
-            List<ConfirmDM> confirms = _rentMapperDM.ToConfirmDM.Map<IEnumerable<ConfirmDTO>, List<ConfirmDM>>(confirmsDTO);
-            ShowConfirmsVM confirmsVM = new ShowConfirmsVM() { Confirms = confirms };
+            var orders = _managerService.GetForConfirms();
+            var ordersDM = _rentMapperDM.ToOrderDM.Map<IEnumerable<OrderDTO>, List<OrderDM>>(orders);
+            ShowConfirmsVM confirmsVM = new ShowConfirmsVM() { Orders=ordersDM };
             return View(confirmsVM);
         }
 
         public ActionResult ShowReturns()
         {
-            var returnsDTO = _managerService.GetReturns();
-            List<ReturnDM> returns = _rentMapperDM.ToReturnDM.Map<IEnumerable<ReturnDTO>, List<ReturnDM>>(returnsDTO);
-            ShowReturnsVM returnsVM = new ShowReturnsVM() { ReturnsDM = returns };
+            var orders = _managerService.GetForReturns();
+            var ordersDM = _rentMapperDM.ToOrderDM.Map<IEnumerable<OrderDTO>, List<OrderDM>>(orders);
+            ShowReturnsVM returnsVM = new ShowReturnsVM() { Orders = ordersDM };
             return View(returnsVM);
         }
 
-        public ActionResult ShowConfirm(int? id)
+        public ActionResult Return(int? id)
         {
-            if (id!=null)
+            if (id != null)
             {
-                var confirmDTO = _managerService.GetConfirm(id.Value);
-                if(confirmDTO==null)
+                var orderDTO = _managerService.GetOrder(id.Value, false);
+                if (orderDTO == null)
                     return new HttpNotFoundResult();
-                ConfirmDM confirm = _rentMapperDM.ToConfirmDM.Map<ConfirmDTO, ConfirmDM>(confirmDTO);
-                return View(confirm);
-            }
-            return new HttpNotFoundResult();
-        }
-
-        public ActionResult ShowReturn(int? id)
-        {
-            if (id!=null)
-            {
-                var returnDTO = _managerService.GetReturn(id.Value);
-                if (returnDTO == null)
-                    return new HttpNotFoundResult();
-                ReturnDM returnDM = _rentMapperDM.ToReturnDM.Map<ReturnDTO, ReturnDM>(returnDTO);
+                ReturnDM returnDM = new ReturnDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
                 return View(returnDM);
             }
             return new HttpNotFoundResult();
         }
 
-        public ActionResult Return()
-        {
-            return View();
-        }
-
         [HttpPost]
-        public ActionResult Result(ReturnDM returnDM)
+        public ActionResult Return(ReturnDM returnDM,bool withCrash=false)
         {
-            if (ModelState.IsValid)
+
+            if (ModelState.IsValid||!withCrash)
             {
                 ReturnDTO returnDTO = _rentMapperDM.ToReturnDTO.Map<ReturnDM, ReturnDTO>(returnDM);
-                returnDM.User.Id = User.Identity.GetUserId();
+                returnDTO.User.Id = User.Identity.GetUserId();
                 _managerService.ReturnCar(returnDTO);
                 return RedirectToAction("ShowReturns", "Manager", null);
             }
+            var orderDTO = _managerService.GetOrder(returnDM.Order.Id, false);
+            returnDM = new ReturnDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
             return View(returnDM);
         }
 

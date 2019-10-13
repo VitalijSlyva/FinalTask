@@ -36,9 +36,11 @@ namespace Rental.WEB.Controllers
             _rentService = rentService;
         }
 
-        public ActionResult CreateProfile()
+        public async Task<ActionResult> CreateProfile()
         {
+            if((await _clientService.ShowProfileAsync(User.Identity.GetUserId()))==null)
             return View();
+            return new HttpNotFoundResult();
         }
 
         [HttpPost]
@@ -54,9 +56,12 @@ namespace Rental.WEB.Controllers
             return View(profileDM);
         }
 
-        public ActionResult UpdateProfile()
+        public async Task<ActionResult> UpdateProfile()
         {
-            return View();
+            if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) == null)
+                return new HttpNotFoundResult();
+            var profile = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(await _clientService.ShowProfileAsync(User.Identity.GetUserId()));
+            return View(profile);
         }
 
         [HttpPost]
@@ -83,15 +88,28 @@ namespace Rental.WEB.Controllers
 
         public async Task<ActionResult> ShowUserOrders()
         {
-            var ordersDTO = await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId());
+            var ordersDTO = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).OrderByDescending(x=>x.DateStart);
             var ordersDM = _rentMapperDM.ToOrderDM.Map<IEnumerable<OrderDTO>, List<OrderDM>>(ordersDTO);
-            var showVM = new ShowUserOrdersVM() { OrdersDM = ordersDM };
+            Dictionary<int, string> statuses = new Dictionary<int, string>();
+            foreach(var i in ordersDM)
+            {
+                statuses.Add(i.Id, _clientService.GetStatus(i.Id));
+            }
+            var showVM = new ShowUserOrdersVM() { OrdersDM = ordersDM,Statuses=statuses };
             return View(showVM);
         }
 
-        public ActionResult MakeOrder()
+        public async Task<ActionResult> MakeOrder(int? carId)
         {
-            return View();
+            if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) != null&&carId!=null)
+            {
+                var carDTO=_rentService.GetCar(carId.Value);
+                if(carDTO==null)
+                    return new HttpNotFoundResult();
+                var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
+                return View(new OrderDM() { Car=car});
+            }
+            return new HttpNotFoundResult();
         }
 
         [HttpPost]
@@ -102,14 +120,25 @@ namespace Rental.WEB.Controllers
                 var orderDTO = _rentMapperDM.ToOrderDTO.Map<OrderDM, OrderDTO>(orderDM);
                 orderDTO.Profile = await _clientService.ShowProfileAsync(User.Identity.GetUserId());
                 await _clientService.MakeOrderAsync(orderDTO);
-                return RedirectToAction("Index", "Rent");
+                var paymentId = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).Last().Payment.Id;
+                return RedirectToAction("MakePayment", "Client",new { id=paymentId});
             }
+            var carDTO = _rentService.GetCar(orderDM.Car.Id);
+            var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
+            orderDM.Car = car;
             return View(orderDM);
         }
 
-        public ActionResult MakePayment()
+        public ActionResult MakePayment(int?id)
         {
-            return View();
+            if (id != null)
+            {
+                var paymentDTO = _clientService.GetPayment(id.Value);
+                if(paymentDTO==null)
+                    return new HttpNotFoundResult();
+                return View(_rentMapperDM.ToPaymentDM.Map<PaymentDTO, PaymentDM>(paymentDTO));
+            }
+            return new HttpNotFoundResult();
         }
 
         [HttpPost] 
@@ -121,6 +150,15 @@ namespace Rental.WEB.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View(paymentDM);
+        }
+
+        public ActionResult ShowPayments()
+        {
+            var paymentsDTO = _clientService.GetPaymentsForClient(User.Identity.GetUserId()).OrderBy(x=>x.IsPaid);
+            if (paymentsDTO == null)
+                return View(new ShowPaymentsVM());
+            var payments = _rentMapperDM.ToPaymentDM.Map<IEnumerable<PaymentDTO>, List<PaymentDM>>(paymentsDTO);
+            return View(new ShowPaymentsVM() { Payments = payments });
         }
 
         protected override void Dispose(bool disposing)

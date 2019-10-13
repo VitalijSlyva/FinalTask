@@ -209,9 +209,11 @@
     <Compile Include="Models\View_Models\Admin\CreateVM.cs" />
     <Compile Include="Models\View_Models\Admin\GetCarsVM.cs" />
     <Compile Include="Models\View_Models\Admin\GetUsersVM.cs" />
+    <Compile Include="Models\View_Models\Client\ShowPaymentsVM.cs" />
     <Compile Include="Models\View_Models\Client\ShowUserOrdersVM.cs" />
     <Compile Include="Models\View_Models\Manager\ShowConfirmsVM.cs" />
     <Compile Include="Models\View_Models\Manager\ShowReturnsVM.cs" />
+    <Compile Include="Models\View_Models\Rent\IndexVM.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -221,6 +223,7 @@
     <Content Include="Content\bootstrap-reboot.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\styles-rent\index.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -265,6 +268,7 @@
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
+    <Content Include="Images\logo.png" />
     <Content Include="Scripts\bootstrap.bundle.js" />
     <Content Include="Scripts\bootstrap.bundle.min.js" />
     <Content Include="Scripts\bootstrap.js" />
@@ -333,14 +337,26 @@
     <Content Include="Scripts\popper.js.map" />
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
+    <Content Include="Views\Rent\Car.cshtml" />
+    <Content Include="Views\Manager\ShowConfirms.cshtml" />
+    <Content Include="Views\Manager\Confirm.cshtml" />
+    <Content Include="Views\Manager\ShowReturns.cshtml" />
+    <Content Include="Views\Manager\Return.cshtml" />
+    <Content Include="Views\Account\Login.cshtml" />
+    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Account\ShowUser.cshtml" />
+    <Content Include="Views\Client\CreateProfile.cshtml" />
+    <Content Include="Views\Client\UpdateProfile.cshtml" />
+    <Content Include="Views\Client\ShowProfile.cshtml" />
+    <Content Include="Views\Client\ShowUserOrders.cshtml" />
+    <Content Include="Views\Client\MakeOrder.cshtml" />
+    <Content Include="Views\Client\MakePayment.cshtml" />
+    <Content Include="Views\Client\ShowPayments.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Models\Domain_Models\Log\" />
-    <Folder Include="Views\Account\" />
     <Folder Include="Views\Admin\" />
-    <Folder Include="Views\Client\" />
-    <Folder Include="Views\Manager\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

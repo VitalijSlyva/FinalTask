@@ -1,0 +1,20 @@
+﻿@model Rental.WEB.Models.View_Models.Manager.ShowConfirmsVM
+
+@{
+    ViewBag.Title = "ShowConfirms";
+}
+
+<ul class="list-group">
+    @foreach (var i in Model.Orders)
+    {
+        <li class="list-group-item">
+            <div>
+                <h6>@i.Id</h6>
+                <h3>@i.Car.Brand @i.Car.Model</h3>
+                <p>@i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</p>
+                <p>@(i.Payment.IsPaid?"Оплачен":"Неоплачен")</p>
+                <a class="btn btn-outline-dark" href="@Url.Action("Confirm","Manager",new { id=i.Id})">Подтвердить</a>
+            </div>
+        </li>
+    }
+</ul>

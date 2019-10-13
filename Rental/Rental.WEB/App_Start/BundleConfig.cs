@@ -25,6 +25,13 @@ namespace Rental.WEB
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Content/bootstrap.css",
                       "~/Content/site.css"));
+
+            RegistreRentBundles(bundles);
+        }
+
+        private static void RegistreRentBundles(BundleCollection bundles)
+        {
+            bundles.Add(new StyleBundle("~/Content/styles-rent/index").Include("~/Content/styles-rent/index.css"));
         }
     }
 }

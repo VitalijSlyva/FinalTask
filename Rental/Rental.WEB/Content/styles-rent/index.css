@@ -1,0 +1,6 @@
+﻿.car-item {
+    margin-top: 20px;
+    box-sizing: border-box;
+    border-right: 1px outset;
+    border-radius: 5px;
+}

@@ -20,39 +20,42 @@ namespace Rental.BLL.Services
 
         }
 
-        public IEnumerable<ConfirmDTO> GetConfirms()
+        public IEnumerable<OrderDTO> GetForConfirms()
         {
-            var confirms = RentUnitOfWork.Confirms.Show();
-            return RentMapperDTO.ToConfirmDTO.Map<IEnumerable<Confirm>, List<ConfirmDTO>>(confirms);
+            var orders = RentUnitOfWork.Orders.Show().Where(x=>x.Confirm==null);
+            return RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
         }
 
-        public IEnumerable<ReturnDTO> GetReturns()
+        public IEnumerable<OrderDTO> GetForReturns()
         {
-            var returns = RentUnitOfWork.Returns.Show();
-            return RentMapperDTO.ToReturnDTO.Map<IEnumerable<Return>, List<ReturnDTO>>(returns);
+            var orders = RentUnitOfWork.Orders.Show().Where(x => x.Confirm != null&&x.Return==null&&x.Confirm.IsConfirmed);
+            return RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
         }
 
-        public ReturnDTO GetReturn(int id)
+        public OrderDTO GetOrder(int id,bool forConfirm)
         {
-            var returnObject = RentUnitOfWork.Returns.Get(id);
-            return RentMapperDTO.ToReturnDTO.Map<Return,ReturnDTO>(returnObject);
-        }
-
-        public ConfirmDTO GetConfirm(int id)
-        {
-            var confirm = RentUnitOfWork.Confirms.Get(id);
-            return RentMapperDTO.ToConfirmDTO.Map<Confirm, ConfirmDTO>(confirm);
+            var order = RentUnitOfWork.Orders.Get(id);
+            if (order == null)
+                return null;
+            if (forConfirm && order.Confirm != null)
+                return null;
+            if (!forConfirm && (order.Return != null || order.Confirm == null || !order.Confirm.IsConfirmed))
+                return null;
+            return RentMapperDTO.ToOrderDTO.Map<Order, OrderDTO>(order);
         }
 
         public async Task ConfirmOrder(ConfirmDTO confirmDTO)
         {
             try
             {
-                var confirm = RentMapperDTO.ToConfirm.Map<ConfirmDTO, Confirm>(confirmDTO);
-                confirm.ManagerId = confirmDTO.User.Id;
-                confirm.Order = RentUnitOfWork.Orders.Get(confirmDTO.Order.Id);
-                RentUnitOfWork.Confirms.Create(confirm);
-                RentUnitOfWork.Save();
+                if (RentUnitOfWork.Orders.Get(confirmDTO.Order.Id).Confirm == null)
+                {
+                    var confirm = RentMapperDTO.ToConfirm.Map<ConfirmDTO, Confirm>(confirmDTO);
+                    confirm.ManagerId = confirmDTO.User.Id;
+                    confirm.Order = RentUnitOfWork.Orders.Get(confirmDTO.Order.Id);
+                    RentUnitOfWork.Confirms.Create(confirm);
+                    RentUnitOfWork.Save();
+                }
             }
             catch
             {

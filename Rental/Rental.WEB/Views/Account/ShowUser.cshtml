@@ -1,0 +1,29 @@
+﻿@model Rental.WEB.Models.Domain_Models.Identity.UserDM
+
+@{
+    ViewBag.Title = "ShowUser";
+}
+
+<h2>ShowUser</h2>
+
+<div>
+    <h4>UserDM</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+    </dl>
+</div>

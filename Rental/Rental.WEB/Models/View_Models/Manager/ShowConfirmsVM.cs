@@ -8,6 +8,7 @@ namespace Rental.WEB.Models.View_Models.Manager
 {
     public class ShowConfirmsVM
     {
-        public List<ConfirmDM> Confirms { get; set; }
+   //     public List<ConfirmDM> Confirms { get; set; }
+          public List<OrderDM> Orders { get; set; }
     }
 }

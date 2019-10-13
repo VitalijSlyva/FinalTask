@@ -1,0 +1,21 @@
+﻿@model Rental.WEB.Models.View_Models.Client.ShowUserOrdersVM
+
+@{
+    ViewBag.Title = "ShowUserOrders";
+}
+
+<div class="row">
+@foreach(var i in Model.OrdersDM)
+{
+    <div class="col-12">
+        <h6>@i.Id</h6>
+        <h4>@i.Car.Brand.Name @i.Car.Model</h4>
+        <p>@i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</p>
+        <p>@(i.Payment!=null&&i.Payment.IsPaid?i.Payment.Price.ToString():"Не оплачен")</p>
+        <p>
+            @Model.Statuses[i.Id]
+        </p>
+    </div>
+}
+</div>
+    

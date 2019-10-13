@@ -1,0 +1,21 @@
+﻿@model Rental.WEB.Models.View_Models.Client.ShowPaymentsVM
+
+@{
+    ViewBag.Title = "ShowPayments";
+}
+
+<div class="row">
+    @foreach(var i in Model.Payments)
+    {
+        <div class="col-12">
+            <p>@i.Id</p>
+            <p>@i.Price</p>
+            <p>@(i.IsPaid?"Оплачен":"Неоплачен")</p>
+            @if (!i.IsPaid)
+            {
+                <a class="btn btn-success" href="@Url.Action("MakePayment","Client",new { id=i.Id})">Оплатить</a>
+            }
+        </div>
+    }
+</div>
+

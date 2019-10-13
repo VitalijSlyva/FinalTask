@@ -13,13 +13,11 @@ namespace Rental.BLL.Interfaces
 
         Task ReturnCar(ReturnDTO returnDTO);
 
-        IEnumerable<ReturnDTO> GetReturns();
+        IEnumerable<OrderDTO> GetForReturns();
 
-        IEnumerable<ConfirmDTO> GetConfirms();
+        IEnumerable<OrderDTO> GetForConfirms();
 
-        ReturnDTO GetReturn(int id);
-
-        ConfirmDTO GetConfirm(int id);
+        OrderDTO GetOrder(int id,bool forConfirm);
 
     }
 }

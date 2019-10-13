@@ -8,6 +8,6 @@ namespace Rental.WEB.Models.View_Models.Manager
 {
     public class ShowReturnsVM
     {
-        public List<ReturnDM> ReturnsDM { get; set; }
+        public List<OrderDM> Orders { get; set; }
     }
 }

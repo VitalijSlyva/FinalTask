@@ -1,0 +1,40 @@
+﻿@model Rental.WEB.Models.Domain_Models.Rent.CarDM
+
+@{
+    ViewBag.Title = "Car";
+}
+
+<div class="row">
+    <div class="col-md-5">
+        <img />
+    </div>
+    <div class="col-md-7">
+        <h2>@Model.Model</h2>
+        <h3>@Model.Brand.Name</h3>
+        <h4>@Model</h4>
+        <p><a class="btn btn-dark @(Model.IsDeleted?"disabled":"") " href="@Url.Action("MakeOrder","Client",new { id=Model.Id})">Орендовать</a></p>
+    </div>
+    <div class="col-md-12">
+        <ul class="list-group">
+            <li class="list-group-item active">Характеристики</li>
+            <li class="list-group-item">Качество: @Model.Quality.Text</li>
+            <li class="list-group-item">Номер: @Model.Number</li>
+            <li class="list-group-item">Количество дверей: @Model.Doors</li>
+            <li class="list-group-item">Вместительность: @Model.Кoominess</li>
+            <li class="list-group-item">Топливо: @Model.Fuel</li>
+            <li class="list-group-item">Грузоподьемность: @Model.Carrying</li>
+            <li class="list-group-item">Обьем двигателя: @Model.EngineVolume</li>
+            <li class="list-group-item">Лошадиные силы: @Model.Hoursepower</li>
+            <li class="list-group-item">Год выпуска: @Model.DateOfCreate.Year</li>
+            <li class="list-group-item">Коробка передач: @Model.Transmission.Category-@Model.Transmission.Count</li>
+            <li class="list-group-item">Кузов: @Model.Carcass.Type</li>
+            @if (Model.Properties != null)
+            {
+                foreach (var i in Model.Properties)
+                {
+                  <li class="list-group-item">@i.Name: @i.Text</li>
+                }
+            }
+        </ul>
+    </div>
+</div>

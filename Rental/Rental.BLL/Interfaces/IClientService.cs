@@ -21,5 +21,11 @@ namespace Rental.BLL.Interfaces
         Task UpdateProfileAsync(ProfileDTO profileDTO);
 
         Task<ProfileDTO> ShowProfileAsync(string id);
+
+        string GetStatus(int id);
+
+        PaymentDTO GetPayment(int id);
+
+        IEnumerable<PaymentDTO> GetPaymentsForClient(string id);
     }
 }
