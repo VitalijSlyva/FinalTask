@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Rental.BLL.Abstracts;
 using Rental.BLL.DTO.Identity;
+using Rental.BLL.DTO.Log;
 using Rental.BLL.Interfaces;
 using Rental.DAL.Entities.Identity;
 using Rental.DAL.Interfaces;
@@ -16,19 +17,27 @@ namespace Rental.BLL.Services
     public class AccountService : Service, IAccountService
     {
         public AccountService(IRentMapperDTO mapperDTO, IRentUnitOfWork rentUnit,
-                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper)
-                :base(mapperDTO, rentUnit, identityUnit, identityMapper)
+                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper, ILogService log)
+                :base(mapperDTO, rentUnit, identityUnit, identityMapper,log)
         {
 
         }
 
         public async Task<ClaimsIdentity> AuthenticateAsync(User client)
         {
-            ClaimsIdentity claims = null;
-            ApplicationUser user = await IdentityUnitOfWork.UserManager.FindAsync(client.Email, client.Password);
-            if (user != null)
-                claims = await IdentityUnitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
-            return claims;
+            try
+            {
+                ClaimsIdentity claims = null;
+                ApplicationUser user = await IdentityUnitOfWork.UserManager.FindAsync(client.Email, client.Password);
+                if (user != null)
+                    claims = await IdentityUnitOfWork.UserManager.CreateIdentityAsync(user, DefaultAuthenticationTypes.ApplicationCookie);
+                return claims;
+            }
+            catch(Exception e)
+            {
+                CreateLog(e, "AccountService", "AuthenticateAsync");
+                return null;
+            }
         }
 
         public async Task CreateAsync(User client)
@@ -54,18 +63,25 @@ namespace Rental.BLL.Services
                 {
                 }
             }
-            catch
+            catch(Exception e)
             {
-
+                CreateLog(e, "AccountService", "CreateAsync");
             }
         }
 
         public async Task<User> GetUserAsync(string id)
         {
-            ApplicationUser user = (await IdentityUnitOfWork.UserManager.FindByIdAsync(id));
-            if (user != null)
-                return IdentityMapperDTO.ToUserDTO.Map<ApplicationUser, User>(user);
-            return null;
+            try
+            {
+                ApplicationUser user = (await IdentityUnitOfWork.UserManager.FindByIdAsync(id));
+                if (user != null)
+                    return IdentityMapperDTO.ToUserDTO.Map<ApplicationUser, User>(user);
+                return null;
+            }catch(Exception e)
+            {
+                CreateLog(e, "AccountService", "GetUserAsync");
+                return null;
+            }
         }
     }
 }

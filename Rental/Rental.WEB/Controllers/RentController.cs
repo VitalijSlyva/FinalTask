@@ -1,5 +1,6 @@
 ﻿using Rental.BLL.DTO.Rent;
 using Rental.BLL.Interfaces;
+using Rental.WEB.Attributes;
 using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Rent;
 using Rental.WEB.Models.View_Models.Rent;
@@ -23,6 +24,7 @@ namespace Rental.WEB.Controllers
             _rentMapperDM = rentMapper;
         }
 
+        [ExceptionLogger]
         public ActionResult Index()
         {
             var cars = _rentMapperDM.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(_rentService.GetCars());
@@ -31,6 +33,7 @@ namespace Rental.WEB.Controllers
             return View(indexVM);
         }
 
+        [ExceptionLogger]
         public ActionResult Car(int?id)
         {
             if (id != null)

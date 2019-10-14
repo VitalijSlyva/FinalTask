@@ -1,0 +1,28 @@
+﻿@model Rental.WEB.Models.View_Models.Admin.GetUsersVM
+
+@{
+    ViewBag.Title = "GetUsers";
+}
+
+<div class="row">
+    @foreach(var i in Model.UsersDM)
+    {
+    <div class="col-12">
+        <h3>@i.Name</h3>
+        <p>@i.Email</p>
+        <p>@Model.Roles[i.Id]</p>
+        @(Model.Banns[i.Id] ? "<p>Забанен</p>")
+        @if (Model.Banns[i.Id])
+        {
+            <a href="@Url.Action("UnbanUser","Admin",new { userId=i.Id})" class="btn btn-success" 
+               onclick="return confirm('Поддтвердите действие разбана пользователя @i.Name.')">Разбанить</a>
+        }
+        else
+        {
+            <a href="@Url.Action("BanUser","Admin",new { userId=i.Id})" class="btn btn-success" 
+               onclick="return confirm('Поддтвердите действие бана пользователя @i.Name.')">Забанить</a>
+        }
+    </div>
+    }
+</div>
+

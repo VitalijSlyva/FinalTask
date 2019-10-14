@@ -14,34 +14,58 @@ namespace Rental.BLL.Services
     public class ManagerService :Service, IManagerService
     {
         public ManagerService(IRentMapperDTO mapperDTO, IRentUnitOfWork rentUnit,
-                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper)
-                : base(mapperDTO, rentUnit, identityUnit, identityMapper)
+                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper,ILogService log)
+                : base(mapperDTO, rentUnit, identityUnit, identityMapper,log)
         {
 
         }
 
         public IEnumerable<OrderDTO> GetForConfirms()
         {
-            var orders = RentUnitOfWork.Orders.Show().Where(x=>x.Confirm==null);
-            return RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
+            try
+            {
+                var orders = RentUnitOfWork.Orders.Show().Where(x => x.Confirm == null);
+                return RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "ManagerService", "GetForConfirms");
+                return null;
+            }
         }
 
         public IEnumerable<OrderDTO> GetForReturns()
         {
-            var orders = RentUnitOfWork.Orders.Show().Where(x => x.Confirm != null&&x.Return==null&&x.Confirm.IsConfirmed);
-            return RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
+            try
+            {
+                var orders = RentUnitOfWork.Orders.Show().Where(x => x.Confirm != null && x.Return == null && x.Confirm.IsConfirmed);
+                return RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "ManagerService", "GetForReturns");
+                return null;
+            }
         }
 
         public OrderDTO GetOrder(int id,bool forConfirm)
         {
-            var order = RentUnitOfWork.Orders.Get(id);
-            if (order == null)
+            try
+            {
+                var order = RentUnitOfWork.Orders.Get(id);
+                if (order == null)
+                    return null;
+                if (forConfirm && order.Confirm != null)
+                    return null;
+                if (!forConfirm && (order.Return != null || order.Confirm == null || !order.Confirm.IsConfirmed))
+                    return null;
+                return RentMapperDTO.ToOrderDTO.Map<Order, OrderDTO>(order);
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "ManagerService", "GetOrder");
                 return null;
-            if (forConfirm && order.Confirm != null)
-                return null;
-            if (!forConfirm && (order.Return != null || order.Confirm == null || !order.Confirm.IsConfirmed))
-                return null;
-            return RentMapperDTO.ToOrderDTO.Map<Order, OrderDTO>(order);
+            }
         }
 
         public async Task ConfirmOrder(ConfirmDTO confirmDTO)
@@ -57,9 +81,9 @@ namespace Rental.BLL.Services
                     RentUnitOfWork.Save();
                 }
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "ManagerService", "ConfirmOrder");
             }
         }
 
@@ -79,9 +103,9 @@ namespace Rental.BLL.Services
                 RentUnitOfWork.Returns.Create(returnCar);
                 RentUnitOfWork.Save();
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "ManagerService", "ReturnCar");
             }
         }
     }

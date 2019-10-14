@@ -16,18 +16,23 @@ namespace Rental.BLL.Infrastructure
 
         private string _identityConnectionString;
 
-        public ServiceModuleBLL(string identityConnectionString,string rentConnectionString)
+        private string _logConnectionString;
+
+        public ServiceModuleBLL(string identityConnectionString,string rentConnectionString, string logConnectionString)
         {
             _identityConnectionString = identityConnectionString;
             _rentConnectionString = rentConnectionString;
+            _logConnectionString = logConnectionString;
         }
 
         public override void Load()
         {
             Bind<IIdentityUnitOfWork>().To<IdentityUnitOfWork>().WithConstructorArgument(_identityConnectionString);
             Bind<IRentUnitOfWork>().To<RentUnitOfWork>().WithConstructorArgument(_rentConnectionString);
+            Bind<ILogUnitOfWork>().To<LogUnitOfWork>().WithConstructorArgument(_logConnectionString);
             Bind<IRentMapperDTO>().To<RentMapperDTO>();
             Bind<IIdentityMapperDTO>().To<IdentityMapperDTO>();
+            Bind<ILogMapperDTO>().To<LogMapperDTO>();
         }
     }
 }

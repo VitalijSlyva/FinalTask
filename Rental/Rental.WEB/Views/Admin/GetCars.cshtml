@@ -1,0 +1,22 @@
+﻿@model Rental.WEB.Models.View_Models.Admin.GetCarsVM
+
+@{
+    ViewBag.Title = "GetCars";
+}
+
+<div class="row">
+   @foreach(var i in Model.CarsDM)
+   {
+    <div>
+        <h4>@i.Brand.Name @i.Model</h4>
+        <h5>@i.Number</h5>
+        <p>@i.Price</p>
+        <a class="btn btn-danger" href="@Url.Action("Delete","Admin",new { id=i.Id})">Удалить</a>
+        @if (!i.IsDeleted)
+        {
+            <a class="btn btn-secondary" href="@Url.Action("UpdateCar","Admin",new { id=i.Id})"
+               onclick="return confirm('Поддтвердите действие удаление машины с номером @i.Number.')">Изменить</a>
+        }
+    </div>
+   }
+</div>

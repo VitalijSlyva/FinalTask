@@ -23,5 +23,7 @@ namespace Rental.BLL.Interfaces
         void CreateManager(User user);
 
         IEnumerable<User> GetUsers();
+
+        Task<IEnumerable<string>> GetRolesAsync(string id);
     }
 }

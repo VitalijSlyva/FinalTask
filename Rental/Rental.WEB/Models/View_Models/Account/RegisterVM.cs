@@ -8,20 +8,23 @@ namespace Rental.WEB.Models.View_Models.Account
 {
     public class RegisterVM
     {
-        [Required]
+        [Required(ErrorMessage ="Поле должно быть заполнено")]
+        [DataType(DataType.EmailAddress,ErrorMessage ="Не является почтой")]
         [Display(Name = "Почта")]
         public string Email { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле должно быть заполнено")]
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
 
-        [Required]
-
+        [Required(ErrorMessage = "Поле должно быть заполнено")]
+        [Compare("Password",ErrorMessage ="Пароли  не совпадают")]
+        [DataType(DataType.Password)]
+        [Display(Name="Повторите пароль")]
         public string ConfirmPassword { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Поле должно быть заполнено")]
         [Display(Name = "Имя")]
         public string Name { get; set; }
     }

@@ -17,9 +17,11 @@ namespace Rental.WEB.Infrastructure
             Bind<IClientService>().To<ClientService>();
             Bind<IRentService>().To<RentService>();
             Bind<IManagerService>().To<ManagerService>();
+            Bind<ILogService>().To<LogService>();
             Bind<IAdminService>().To<AdminService>();
             Bind<IIdentityMapperDM>().To<IdentityMapperDM>();
             Bind<IRentMapperDM>().To<RentMapperDM>();
+            Bind<ILogMapperDM>().To<LogMapperDM>();
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNet.Identity;
 using Rental.BLL.DTO.Identity;
+using Rental.BLL.DTO.Log;
 using Rental.BLL.DTO.Rent;
 using Rental.BLL.Interfaces;
 using Rental.WEB.Attributes;
@@ -28,14 +29,31 @@ namespace Rental.WEB.Controllers
 
         private IRentMapperDM _rentMapperDM;
 
-        public ClientController(IClientService clientService, IIdentityMapperDM identityMapperDM, IRentMapperDM rentMapperDM, IRentService rentService)
+        private ILogService _logService;
+
+        public ClientController(IClientService clientService, IIdentityMapperDM identityMapperDM,
+            IRentMapperDM rentMapperDM, IRentService rentService, ILogService log)
         {
             _clientService = clientService;
             _identityMapperDM = identityMapperDM;
             _rentMapperDM = rentMapperDM;
             _rentService = rentService;
+            _logService = log;
         }
 
+        public void CreateLog(string action, string authorId)
+        {
+            ActionLogDTO log = new ActionLogDTO()
+            {
+                Action = action,
+                Time = DateTime.Now,
+                AuthorId = authorId
+            };
+            _logService.CreateActionLog(log);
+        }
+
+
+        [ExceptionLogger]
         public async Task<ActionResult> CreateProfile()
         {
             if((await _clientService.ShowProfileAsync(User.Identity.GetUserId()))==null)
@@ -43,6 +61,7 @@ namespace Rental.WEB.Controllers
             return new HttpNotFoundResult();
         }
 
+        [ExceptionLogger]
         [HttpPost]
         public ActionResult CreateProfile(ProfileDM profileDM)
         {
@@ -51,11 +70,13 @@ namespace Rental.WEB.Controllers
                 ProfileDTO profileDTO = _identityMapperDM.ToProfileDTO.Map<ProfileDM, ProfileDTO>(profileDM);
                 profileDTO.User = new User() { Id = User.Identity.GetUserId() };
                 _clientService.CreateProfileAsync(profileDTO);
+                CreateLog("Добавил паспортные данные", User.Identity.GetUserId());
                 return RedirectToAction("ShowProfile");
             }
             return View(profileDM);
         }
 
+        [ExceptionLogger]
         public async Task<ActionResult> UpdateProfile()
         {
             if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) == null)
@@ -64,6 +85,7 @@ namespace Rental.WEB.Controllers
             return View(profile);
         }
 
+        [ExceptionLogger]
         [HttpPost]
         public ActionResult UpdateProfile(ProfileDM profileDM)
         {
@@ -72,11 +94,13 @@ namespace Rental.WEB.Controllers
                 ProfileDTO profileDTO = _identityMapperDM.ToProfileDTO.Map<ProfileDM, ProfileDTO>(profileDM);
                 profileDTO.User = new User() { Id = User.Identity.GetUserId() };
                 _clientService.UpdateProfileAsync(profileDTO);
+                CreateLog("Обновил паспортные данные", User.Identity.GetUserId());
                 return RedirectToAction("ShowProfile");
             }
             return View(profileDM);
         }
 
+        [ExceptionLogger]
         public async Task<ActionResult> ShowProfile()
         {
             var profile = await _clientService.ShowProfileAsync(User.Identity.GetUserId());
@@ -86,6 +110,7 @@ namespace Rental.WEB.Controllers
             return View(profileDM);
         }
 
+        [ExceptionLogger]
         public async Task<ActionResult> ShowUserOrders()
         {
             var ordersDTO = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).OrderByDescending(x=>x.DateStart);
@@ -99,6 +124,7 @@ namespace Rental.WEB.Controllers
             return View(showVM);
         }
 
+        [ExceptionLogger]
         public async Task<ActionResult> MakeOrder(int? carId)
         {
             if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) != null&&carId!=null)
@@ -112,6 +138,7 @@ namespace Rental.WEB.Controllers
             return new HttpNotFoundResult();
         }
 
+        [ExceptionLogger]
         [HttpPost]
         public async Task<ActionResult> MakeOrder(OrderDM orderDM)
         {
@@ -121,6 +148,7 @@ namespace Rental.WEB.Controllers
                 orderDTO.Profile = await _clientService.ShowProfileAsync(User.Identity.GetUserId());
                 await _clientService.MakeOrderAsync(orderDTO);
                 var paymentId = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).Last().Payment.Id;
+                CreateLog("Заказал авто", User.Identity.GetUserId());
                 return RedirectToAction("MakePayment", "Client",new { id=paymentId});
             }
             var carDTO = _rentService.GetCar(orderDM.Car.Id);
@@ -129,6 +157,7 @@ namespace Rental.WEB.Controllers
             return View(orderDM);
         }
 
+        [ExceptionLogger]
         public ActionResult MakePayment(int?id)
         {
             if (id != null)
@@ -141,17 +170,20 @@ namespace Rental.WEB.Controllers
             return new HttpNotFoundResult();
         }
 
+        [ExceptionLogger]
         [HttpPost] 
         public ActionResult MakePayment(PaymentDM paymentDM)
         {
             if (ModelState.IsValid)
             {
                 _clientService.CreatePayment(paymentDM.Id, paymentDM.TransactionId);
+                CreateLog("Произвел оплату" +paymentDM.Id, User.Identity.GetUserId());
                 return RedirectToAction("Index", "Home");
             }
             return View(paymentDM);
         }
 
+        [ExceptionLogger]
         public ActionResult ShowPayments()
         {
             var paymentsDTO = _clientService.GetPaymentsForClient(User.Identity.GetUserId()).OrderBy(x=>x.IsPaid);

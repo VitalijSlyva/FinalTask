@@ -14,8 +14,8 @@ namespace Rental.BLL.Services
     public class RentService :Service, IRentService
     {
         public RentService(IRentMapperDTO mapperDTO, IRentUnitOfWork rentUnit,
-                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper)
-                : base(mapperDTO, rentUnit, identityUnit, identityMapper)
+                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper,ILogService log)
+                : base(mapperDTO, rentUnit, identityUnit, identityMapper,log)
         {
 
         }
@@ -23,12 +23,20 @@ namespace Rental.BLL.Services
 
         public CarDTO GetCar(int? id)
         {
-            if (id == null)
+            try
+            {
+                if (id == null)
+                    return null;
+                var car = RentUnitOfWork.Cars.Get(id.Value);
+                if (car == null)
+                    return null;
+                return RentMapperDTO.ToCarDTO.Map<Car, CarDTO>(car);
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "RentService", "GetCar");
                 return null;
-            var car = RentUnitOfWork.Cars.Get(id.Value);
-            if (car == null)
-                return null;
-            return RentMapperDTO.ToCarDTO.Map<Car, CarDTO>(car);
+            }
         }
 
         public IEnumerable<CarDTO> GetCars()
@@ -38,8 +46,9 @@ namespace Rental.BLL.Services
                 var cars = RentUnitOfWork.Cars.Show().ToList();
                 return RentMapperDTO.ToCarDTO.Map<IEnumerable<Car>, List<CarDTO>>(cars);
             }
-            catch(Exception e)
+            catch (Exception e)
             {
+                CreateLog(e, "RentService", "GetCars");
                 return null;
             }
         }

@@ -17,16 +17,39 @@ namespace Rental.BLL.Services
     public class AdminService : Service,  IAdminService
     {
         public AdminService(IRentMapperDTO mapperDTO, IRentUnitOfWork rentUnit,
-                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper)
-                : base(mapperDTO, rentUnit, identityUnit, identityMapper)
+                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper,ILogService log)
+                : base(mapperDTO, rentUnit, identityUnit, identityMapper,log)
         {
 
         }
 
         public IEnumerable<User> GetUsers()
         {
-            List<ApplicationUser> users = IdentityUnitOfWork.UserManager.Users.Where(x => !(IdentityUnitOfWork.UserManager.IsInRole(x.Id, "admin"))).ToList();
-            return IdentityMapperDTO.ToUserDTO.Map<IEnumerable<ApplicationUser>, List<User>>(users);
+            try
+            {
+                List<ApplicationUser> users = IdentityUnitOfWork.UserManager.Users.Where(x => !(IdentityUnitOfWork.UserManager.IsInRole(x.Id, "admin"))).ToList();
+                return IdentityMapperDTO.ToUserDTO.Map<IEnumerable<ApplicationUser>, List<User>>(users);
+            }
+            catch(Exception e)
+            {
+                CreateLog(e, "AdminService", "GetUsers");
+                return null;
+            }
+        }
+
+        public async Task<IEnumerable<string>> GetRolesAsync(string id)
+        {
+            try { 
+            if (id == null)
+                return null;
+            var roles =await IdentityUnitOfWork.UserManager.GetRolesAsync(id);
+            return roles;
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "AdminService", "GetRolesAsync");
+                return null;
+            }
         }
 
         public async Task BanUserAsync(string userId)
@@ -36,9 +59,9 @@ namespace Rental.BLL.Services
                 await IdentityUnitOfWork.UserManager.AddToRoleAsync(userId, "banned");
                 IdentityUnitOfWork.Save();
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "AdminService", "BanUserAsync");
             }
         }
 
@@ -95,9 +118,9 @@ namespace Rental.BLL.Services
                 RentUnitOfWork.Cars.Create(car);
                 RentUnitOfWork.Save();
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "AdminService", "CreateCar");
             }
         }
 
@@ -124,9 +147,9 @@ namespace Rental.BLL.Services
                 {
                 }
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "AdminService", "CreateManager");
             }
         }
 
@@ -142,8 +165,9 @@ namespace Rental.BLL.Services
                     RentUnitOfWork.Save();
                 }
             }
-            catch 
+            catch (Exception e)
             {
+                CreateLog(e, "AdminService", "DeleteCar");
             }
         }
 
@@ -151,15 +175,12 @@ namespace Rental.BLL.Services
         {
             try
             {
-                //ApplicationUser user = await IdentityUnitOfWork.UserManager.FindByIdAsync(userId);
-                //user.Banned = false;
-                //await IdentityUnitOfWork.UserManager.UpdateAsync(user);
                 await IdentityUnitOfWork.UserManager.RemoveFromRoleAsync(userId, "banned");
                 IdentityUnitOfWork.Save();
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "AdminService", "UnbanUserAsync");
             }
         }
 
@@ -224,9 +245,9 @@ namespace Rental.BLL.Services
                 RentUnitOfWork.Cars.Update(car);
                 RentUnitOfWork.Save();
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "AdminService", "UpdateCar");
             }
         }
     }

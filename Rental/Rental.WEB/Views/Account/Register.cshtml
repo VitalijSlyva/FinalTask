@@ -2,9 +2,10 @@
 
 @{
     ViewBag.Title = "Register";
+    bool isManager = (bool)ViewBag.CreatingManger;
 }
 
-@using (Html.BeginForm()) 
+@using (Html.BeginForm(isManager?"CreateManager":"Register",isManager?"Admin":"Account",FormMethod.Post)) 
 {
     @Html.AntiForgeryToken()
     

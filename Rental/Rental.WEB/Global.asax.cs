@@ -25,7 +25,7 @@ namespace Rental.WEB
 
         protected void IncludeNinject()
         {
-            NinjectModule ninjectModuleBLL = new BLL.Infrastructure.ServiceModuleBLL("IdentityContext", "RentContext");
+            NinjectModule ninjectModuleBLL = new BLL.Infrastructure.ServiceModuleBLL("IdentityContext", "RentContext","LogContext");
             NinjectModule ninjectModuleWEB = new WEB.Infrastructure.ServiceModuleWEB();
             var kernel = new StandardKernel(ninjectModuleBLL, ninjectModuleWEB);
             kernel.Unbind<ModelValidatorProvider>();

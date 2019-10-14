@@ -1,6 +1,9 @@
-﻿using Rental.BLL.DTO.Identity;
+﻿using Microsoft.AspNet.Identity;
+using Rental.BLL.DTO.Identity;
+using Rental.BLL.DTO.Log;
 using Rental.BLL.DTO.Rent;
 using Rental.BLL.Interfaces;
+using Rental.WEB.Attributes;
 using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Identity;
 using Rental.WEB.Models.Domain_Models.Rent;
@@ -27,45 +30,80 @@ namespace Rental.WEB.Controllers
 
         private IRentMapperDM _rentMapperDM;
 
-        public AdminController(IAdminService adminService, IIdentityMapperDM identityMapperDM,IRentMapperDM rentMapperDM,IRentService rentService)
+        private ILogService _logService;
+
+        public AdminController(IAdminService adminService, IIdentityMapperDM identityMapperDM,
+            IRentMapperDM rentMapperDM,IRentService rentService,ILogService log)
         {
             _adminService = adminService;
             _identityMapperDM = identityMapperDM;
             _rentMapperDM = rentMapperDM;
             _rentService = rentService;
+            _logService = log;
         }
 
-        public ActionResult GetUsers()
+
+        public void CreateLog(string action, string authorId)
+        {
+            ActionLogDTO log = new ActionLogDTO()
+            {
+                Action = action,
+                Time = DateTime.Now,
+                AuthorId = authorId
+            };
+            _logService.CreateActionLog(log);
+        }
+
+        [ExceptionLogger]
+        public async Task<ActionResult> GetUsers()
         {
             var users = _adminService.GetUsers();
             var usersDM = _identityMapperDM.ToUserDM.Map<IEnumerable<User>, List<UserDM>>(users);
             GetUsersVM getUsersVM = new GetUsersVM() {UsersDM=usersDM };
-            return View(usersDM);
+            var roles = new Dictionary<string, string>();
+            var banns = new Dictionary<string, bool>();
+            foreach(var i in users)
+            {
+                string role = (await _adminService.GetRolesAsync(i.Id)).Contains("manager")?"Менеджер":"Клиент";
+                bool bann = (await _adminService.GetRolesAsync(i.Id)).Contains("banned");
+                roles.Add(i.Id, role);
+                banns.Add(i.Id, bann);
+
+            }
+            getUsersVM.Roles = roles;
+            getUsersVM.Banns = banns;
+            return View(getUsersVM);
         }
 
+        [ExceptionLogger]
         public ActionResult BanUser(string id)
         {
             if (!String.IsNullOrEmpty(id))
             {
                 _adminService.BanUserAsync(id);
+                CreateLog("Забанил пользователя "+id, User.Identity.GetUserId());
             }
             return RedirectToAction("GetUsers");
         }
 
-        public ActionResult UnBanUser(string id)
+        [ExceptionLogger]
+        public ActionResult UnbanUser(string id)
         {
             if (!String.IsNullOrEmpty(id))
             {
                 _adminService.UnbanUserAsync(id);
+                CreateLog("Разбанил пользователя " + id, User.Identity.GetUserId());
             }
             return RedirectToAction("GetUsers");
         }
 
+        [ExceptionLogger]
         public ActionResult CreateCar()
         {
             return View();
         }
 
+        [ExceptionLogger]
         public ActionResult GetCars()
         {
             var cars = _rentService.GetCars();
@@ -74,6 +112,7 @@ namespace Rental.WEB.Controllers
             return View(carsVM);
         }
 
+        [ExceptionLogger]
         private CarDTO _createCarDTO(CreateVM model)
         {
             CarDTO carDTO = _rentMapperDM.ToCarDTO.Map<CarDM, CarDTO>(model.Car);
@@ -102,6 +141,7 @@ namespace Rental.WEB.Controllers
             return carDTO;
         }
 
+        [ExceptionLogger]
         [HttpPost]
         public ActionResult CreateCar(CreateVM model)
         {
@@ -109,11 +149,13 @@ namespace Rental.WEB.Controllers
             {
                 CarDTO carDTO = _createCarDTO(model);
                 _adminService.CreateCar(carDTO);
+                CreateLog("Добавил автомобиль " , User.Identity.GetUserId());
                 return RedirectToAction("GetCars");
             }
             return View(model);
         }
-    
+
+        [ExceptionLogger]
         public ActionResult UpdateCar(int? id)
         {
             if (id == null)
@@ -123,6 +165,7 @@ namespace Rental.WEB.Controllers
 
         }
 
+        [ExceptionLogger]
         [HttpPost]
         public ActionResult UpdateCar(CreateVM model)
         {
@@ -130,24 +173,30 @@ namespace Rental.WEB.Controllers
             {
                 CarDTO carDTO = _createCarDTO(model);
             _adminService.UpdateCar(carDTO);
-            return RedirectToAction("GetCars");
+                CreateLog("Обновил данные про автомобиль " + model.Car.Id, User.Identity.GetUserId());
+                return RedirectToAction("GetCars");
             }
             return View("Create", model );
         }
 
+        [ExceptionLogger]
         public ActionResult Delete(int? id)
         {
             if (id == null)
                 return new HttpNotFoundResult();
             _adminService.DeleteCar(id.Value);
+            CreateLog("Убрал автомобиль " + id, User.Identity.GetUserId());
             return RedirectToAction("GatCars");
         }
 
+        [ExceptionLogger]
         public ActionResult CreateManager()
         {
-            return View();
+            ViewBag.CreatingManger = true;
+            return View("Register");
         }
 
+        [ExceptionLogger]
         [HttpPost]
         public ActionResult CreateManager(RegisterVM register)
         {
@@ -160,9 +209,11 @@ namespace Rental.WEB.Controllers
                     Name = register.Name,
                 };
                 _adminService.CreateManager(user);
+                CreateLog("Добавил менеджера", User.Identity.GetUserId());
                 return RedirectToAction("GetUsers");
             }
-            return View(register);
+            ViewBag.CreatingManger = true;
+            return View("Register", register);
         }
 
         protected override void Dispose(bool disposing)

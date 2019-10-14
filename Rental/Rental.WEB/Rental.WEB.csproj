@@ -175,6 +175,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.cs" />
     <Compile Include="Attributes\AuthorizeWithoutBannAttribute.cs" />
+    <Compile Include="Attributes\ExceptionLoggerAttribute.cs" />
     <Compile Include="Attributes\NoAuthorizeAttribute.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
@@ -185,12 +186,16 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Infrastructure\IdentityMapperDM.cs" />
+    <Compile Include="Infrastructure\LogMapperDM.cs" />
     <Compile Include="Infrastructure\RentMapperDM.cs" />
     <Compile Include="Infrastructure\ServiceModuleWEB.cs" />
     <Compile Include="Interfaces\IIdentityMapperDM.cs" />
+    <Compile Include="Interfaces\ILogMapperDM.cs" />
     <Compile Include="Interfaces\IRentMapperDM.cs" />
     <Compile Include="Models\Domain_Models\Identity\ProfileDM.cs" />
     <Compile Include="Models\Domain_Models\Identity\UserDM.cs" />
+    <Compile Include="Models\Domain_Models\Log\ActionLogDM.cs" />
+    <Compile Include="Models\Domain_Models\Log\ExceptionLogDM.cs" />
     <Compile Include="Models\Domain_Models\Rent\BrandDM.cs" />
     <Compile Include="Models\Domain_Models\Rent\CarcassDM.cs" />
     <Compile Include="Models\Domain_Models\Rent\CarDM.cs" />
@@ -352,11 +357,12 @@
     <Content Include="Views\Client\MakeOrder.cshtml" />
     <Content Include="Views\Client\MakePayment.cshtml" />
     <Content Include="Views\Client\ShowPayments.cshtml" />
+    <Content Include="Views\Admin\GetUsers.cshtml" />
+    <Content Include="Views\Admin\CreateCar.cshtml" />
+    <Content Include="Views\Admin\GetCars.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Models\Domain_Models\Log\" />
-    <Folder Include="Views\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

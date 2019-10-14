@@ -16,8 +16,8 @@ namespace Rental.BLL.Services
     public class ClientService :Service, IClientService
     {
         public ClientService(IRentMapperDTO mapperDTO, IRentUnitOfWork rentUnit,
-                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper)
-                : base(mapperDTO, rentUnit, identityUnit, identityMapper)
+                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper,ILogService log)
+                : base(mapperDTO, rentUnit, identityUnit, identityMapper,log)
         {
 
         }
@@ -32,27 +32,35 @@ namespace Rental.BLL.Services
                 RentUnitOfWork.Payments.Update(payment);
                 RentUnitOfWork.Save();
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "ClientService", "CreatePayment");
             }
         }
         
         public string GetStatus(int id)
         {
-            var test1 = RentUnitOfWork.Returns.Find(x => x.OrderId == id && x.Crash != null);
-            if (_answer(test1))
-                return "Возвращен с повреждениями";
-            var test2 = RentUnitOfWork.Returns.Find(x => x.OrderId == id);
-            if (_answer(test2))
-                return "Возвращен";
-            var test3 = RentUnitOfWork.Confirms.Find(x => x.OrderId == id && x.IsConfirmed);
-            if (_answer(test3))
-                return "Одобрен";
-            var test4 = RentUnitOfWork.Confirms.Find(x => x.OrderId == id && !x.IsConfirmed);
-            if (_answer(test4))
-                return "Отклонен по причине:"+test4.First().Description;
-            return "На рассмотрении";
+            try
+            {
+                var test1 = RentUnitOfWork.Returns.Find(x => x.OrderId == id && x.Crash != null);
+                if (_answer(test1))
+                    return "Возвращен с повреждениями";
+                var test2 = RentUnitOfWork.Returns.Find(x => x.OrderId == id);
+                if (_answer(test2))
+                    return "Возвращен";
+                var test3 = RentUnitOfWork.Confirms.Find(x => x.OrderId == id && x.IsConfirmed);
+                if (_answer(test3))
+                    return "Одобрен";
+                var test4 = RentUnitOfWork.Confirms.Find(x => x.OrderId == id && !x.IsConfirmed);
+                if (_answer(test4))
+                    return "Отклонен по причине:" + test4.First().Description;
+                return "На рассмотрении";
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "ClientService", "GetStatus");
+                return null;
+            }
         }
 
         private bool _answer(IEnumerable<object> data)
@@ -70,9 +78,9 @@ namespace Rental.BLL.Services
                 IdentityUnitOfWork.ClientManager.Create(profile);
                 IdentityUnitOfWork.Save();
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "ClientService", "CreateProfileAsync");
             }
         }
 
@@ -84,8 +92,9 @@ namespace Rental.BLL.Services
                 List<OrderDTO> ordersDTO = RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
                 return ordersDTO;
             }
-            catch
+            catch (Exception e)
             {
+                CreateLog(e, "ClientService", "GetOrdersForClientAsync");
                 return null;
             }
         }
@@ -101,8 +110,9 @@ namespace Rental.BLL.Services
                 RentUnitOfWork.Orders.Create(order);
                 RentUnitOfWork.Save();
             }
-            catch
+            catch (Exception e)
             {
+                CreateLog(e, "ClientService", "MakeOrderAsync");
             }
         }
 
@@ -114,8 +124,9 @@ namespace Rental.BLL.Services
                 List<PaymentDTO> paymentsDTO = RentMapperDTO.ToPaymentDTO.Map<IEnumerable<Payment>, List<PaymentDTO>>(payments);
                 return paymentsDTO;
             }
-            catch
+            catch (Exception e)
             {
+                CreateLog(e, "ClientService", "GetPaymentsForClient");
                 return null;
             }
         }
@@ -127,11 +138,11 @@ namespace Rental.BLL.Services
                 var profile = (await IdentityUnitOfWork.UserManager.FindByIdAsync(id)).Profile;
                 return IdentityMapperDTO.ToProfileDTO.Map<Profile, ProfileDTO>(profile);
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "ClientService", "ShowProfileAsync");
+                return null;
             }
-            return null;
         }
 
         public async Task UpdateProfileAsync(ProfileDTO profileDTO)
@@ -144,18 +155,25 @@ namespace Rental.BLL.Services
                 IdentityUnitOfWork.ClientManager.Update(profile);
                 IdentityUnitOfWork.Save();
             }
-            catch
+            catch (Exception e)
             {
-
+                CreateLog(e, "ClientService", "UpdateProfileAsync");
             }
         }
 
         public PaymentDTO GetPayment(int id)
         {
+            try { 
             var paymentDTO = RentUnitOfWork.Payments.Show().FirstOrDefault(x => x.Id == id);
             if (paymentDTO == null)
                 return null;
             return RentMapperDTO.ToPaymentDTO.Map<Payment, PaymentDTO>(paymentDTO);
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "ClientService", "GetPayment");
+                return null;
+            }
         }
     }
 }

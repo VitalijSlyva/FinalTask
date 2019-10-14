@@ -1,0 +1,261 @@
+﻿@model Rental.WEB.Models.View_Models.Admin.CreateVM
+
+@{
+    int? id = Model?.Car?.Id ?? 0;
+    ViewBag.Title = "CreateCar";
+    //string[] pNames = Model?.Car?.Properties?.Select(x => x.Name)?.ToArray() ?? new string[0];
+    //string[] pValues = Model?.Car?.Properties?.Select(x => x.Text)?.ToArray() ?? new string[0];
+
+}
+
+@using (Html.BeginForm(id==0? "CreateCar" : "UpdateCar", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+
+        @if (id != 0)
+        {
+            @Html.HiddenFor(x => x.Car.Id)
+        }
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Model, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Model, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Model, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Brand.Name, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Brand.Name, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Brand.Name, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Carcass.Type, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Carcass.Type, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Carcass.Type, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Quality.Text, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Quality.Text, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Quality.Text, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Transmission.Category, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Transmission.Category, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Transmission.Category, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Transmission.Count, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Transmission.Count, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Transmission.Count, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Number, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Number, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Number, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Price, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Price, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Price, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Doors, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Doors, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Doors, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Кoominess, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Кoominess, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Кoominess, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Fuel, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Fuel, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Fuel, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Carrying, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Carrying, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Carrying, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.EngineVolume, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.EngineVolume, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.EngineVolume, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.Hoursepower, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.Hoursepower, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.Hoursepower, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.Car.DateOfCreate, htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.EditorFor(model => model.Car.DateOfCreate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.ValidationMessageFor(model => model.Car.DateOfCreate, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Параметры", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-12">
+                @if (id == 0)
+                {
+                    <div id="property-0" class="input-group property">
+                        <input name="PropertyNames" class="form-control" required />
+                        <input name="PropertyValues" class="form-control" required />
+                        <div class="input-group-append">
+                            <span class="input-group-text btn btn-default" onclick="DeleteProperty(0)"> -</span>
+                        </div>
+                    </div>
+                }
+                else
+                {
+                    for (var i = 0; i < Model.Car.Properties.Count; i++)
+                    {
+                        <div id="property-@(0-i-1)" class="input-group">
+                            <input name="PropertyNames" class="form-control" value="@Model.Car.Properties[i].Name" required />
+                            <input name="PropertyValues" class="form-control" value="@Model.Car.Properties[i].Text" required />
+                            <div class="input-group-append">
+                                <span class="input-group-text btn btn-default" onclick="DeleteProperty(@(0 - i - 1))"> -</span>
+                            </div>
+                        </div>
+                    }
+                }
+                <div id="add-property-button" class="input-group">
+                    <span class="btn btn-secondary" onclick="AddProperty()">+</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            @Html.Label("Фото", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-12">
+                @if (id == 0)
+                {
+                    <div id="photo-0" class="input-group photo">
+
+                        <input name="Images" type="file" accept=".jpg" class="form-control-file" required />
+                        <input name="Alts" class="form-control" required />
+                        <div class="input-group-append">
+                            <span class="input-group-text btn btn-default" onclick="DeletePhoto(0)">-</span>
+                        </div>
+
+                    </div>
+                }
+                else
+                {
+                    for (var i = 0; i < Model.Car.Images.Count; i++)
+                    {
+                        <div id="photo-@(0-i-1)" class="input-group photo">
+                            <div class="input-group-prepend">
+                                <img style="height:40px" src="@String.Format("data:image/gif;base64,{0}",Convert.ToBase64String(Model.Car.Images[i].Photo))" />
+                            </div>
+                            <input type="hidden" name="Photos" value="@Model.Car.Images[i].Id" />
+                            <input name="Alts" class="form-control" value="@Model.Car.Images[i].Text" required />
+                            <div class="input-group-append">
+                                <span class="input-group-text btn btn-default" onclick="DeletePhoto(@(0-i-1))">-</span>
+                            </div>
+                        </div>
+                    }
+                }
+                <div id="add-photo-button" class="input-group">
+                    <span class="btn btn-secondary" onclick="AddPhoto()">+</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Create" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+    var CountProperty = 0;
+    var CountPhoto = 0;
+    function AddProperty() {
+    CountProperty++;
+    $("#add-property-button").before('<div id="property-' + CountProperty + '" class="input-group property">' +
+        '<input id="property-name-' + CountProperty + '" name="PropertyNames" class="form-control" required/>' +
+        '<input id="property-value-' + CountProperty + '" name="PropertyValues" class="form-control" required /> '+
+        '<div class="input-group-append">' +
+            '<span class="input-group-text btn btn-default" onclick="DeleteProperty(' + CountProperty + ')"> -</span> ' +
+            '</div> '+
+        '</div> ');
+    //var target = $('#property-name-' + CountProperty);
+    //target.autocomplete({ source: target.attr("data-autocomplete-source") });
+    //target = $('#property-value-' + CountProperty);
+    //target.autocomplete({ source: target.attr("data-autocomplete-source") });
+    }
+    function DeleteProperty(id) {
+    if ($(".property").length > 1)
+    $("#property-" + id).remove();
+
+    }
+
+    function AddPhoto() {
+    CountPhoto++;
+    $("#add-photo-button").before('<div id="photo-' + CountPhoto + '" class="input-group photo">' +
+        '<input name="Images" type="file" accept=".jpg" class="form-control-file" required />'+
+        '<input name="Alts" class="form-control" required />'+
+        '<div class="input-group-append">'+
+            '<span class="input-group-text btn btn-default" onclick="DeletePhoto(' + CountPhoto + ')">-</span>'+
+            '</div>'+
+        '</div>');
+    }
+    function DeletePhoto(id) {
+    if ($(".photo").length>1)
+    $("#photo-" + id).remove();
+
+    }
+
+    </script>
+}

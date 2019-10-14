@@ -58,12 +58,16 @@
   <ItemGroup>
     <Compile Include="Abstracts\RentRepository.cs" />
     <Compile Include="EF\Contexts\IdentityContext.cs" />
+    <Compile Include="EF\Contexts\LogContext.cs" />
     <Compile Include="EF\Contexts\RentContext.cs" />
     <Compile Include="EF\Initializers\IdentityInitializer.cs" />
+    <Compile Include="EF\Initializers\LogInitializer.cs" />
     <Compile Include="EF\Initializers\RentInitializer.cs" />
     <Compile Include="Entities\Identity\ApplicationRole.cs" />
     <Compile Include="Entities\Identity\ApplicationUser.cs" />
     <Compile Include="Entities\Identity\Profile.cs" />
+    <Compile Include="Entities\Log\ActionLog.cs" />
+    <Compile Include="Entities\Log\ExceptionLog.cs" />
     <Compile Include="Entities\Rent\Confirm.cs" />
     <Compile Include="Entities\Rent\Crash.cs" />
     <Compile Include="Entities\Rent\Entity.cs" />
@@ -83,13 +87,17 @@
     <Compile Include="Interfaces\ICreator.cs" />
     <Compile Include="Interfaces\IDisplayer.cs" />
     <Compile Include="Interfaces\IIdentityUnitOfWork.cs" />
+    <Compile Include="Interfaces\ILogUnitOfWork.cs" />
     <Compile Include="Interfaces\IRemover.cs" />
     <Compile Include="Interfaces\IRentUnitOfWork.cs" />
     <Compile Include="Interfaces\IUnitOfWork.cs" />
     <Compile Include="Interfaces\IUpdater.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\Reporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ClientManager.cs" />
     <Compile Include="Services\IdentityUnitOfWork.cs" />
+    <Compile Include="Services\LogUnitOfWork.cs" />
     <Compile Include="Services\RentUnitOfWork.cs" />
     <Compile Include="Services\Repository.cs" />
     <Compile Include="Services\UnitOfWork.cs" />
@@ -98,8 +106,6 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Entities\Log\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

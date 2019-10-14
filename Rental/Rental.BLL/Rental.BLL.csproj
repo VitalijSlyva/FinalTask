@@ -65,6 +65,8 @@
     <Compile Include="Abstracts\Service.cs" />
     <Compile Include="DTO\Identity\ProfileDTO.cs" />
     <Compile Include="DTO\Identity\User.cs" />
+    <Compile Include="DTO\Log\ActionLogDTO.cs" />
+    <Compile Include="DTO\Log\ExceptionLogDTO.cs" />
     <Compile Include="DTO\Rent\BrandDTO.cs" />
     <Compile Include="DTO\Rent\CarcassDTO.cs" />
     <Compile Include="DTO\Rent\CarDTO.cs" />
@@ -79,10 +81,13 @@
     <Compile Include="DTO\Rent\ReturnDTO.cs" />
     <Compile Include="DTO\Rent\TransmissionDTO.cs" />
     <Compile Include="Infrastructure\IdentityMapperDTO.cs" />
+    <Compile Include="Infrastructure\LogMapperDTO.cs" />
     <Compile Include="Infrastructure\RentMapperDTO.cs" />
     <Compile Include="Infrastructure\ServiceModuleBLL.cs" />
     <Compile Include="Interfaces\IClientService.cs" />
     <Compile Include="Interfaces\IIdentityMapperDTO.cs" />
+    <Compile Include="Interfaces\ILogMapperDTO.cs" />
+    <Compile Include="Interfaces\ILogService.cs" />
     <Compile Include="Interfaces\IManagerService.cs" />
     <Compile Include="Interfaces\IAdminService.cs" />
     <Compile Include="Interfaces\IAccountService.cs" />
@@ -92,12 +97,11 @@
     <Compile Include="Services\AccountService.cs" />
     <Compile Include="Services\AdminService.cs" />
     <Compile Include="Services\ClientService.cs" />
+    <Compile Include="Services\LogService.cs" />
     <Compile Include="Services\ManagerService.cs" />
     <Compile Include="Services\RentService.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DTO\Log\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <None Include="App.config" />
     <None Include="packages.config" />

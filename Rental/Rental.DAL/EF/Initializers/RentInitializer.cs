@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Rental.DAL.EF.Initializers
 {
-    internal class RentInitializer: DropCreateDatabaseAlways<RentContext>
+    internal class RentInitializer: DropCreateDatabaseIfModelChanges<RentContext>
     {
         protected override void Seed(RentContext context)
         {

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Rental.BLL.DTO.Identity;
+using Rental.BLL.DTO.Log;
 using Rental.BLL.Interfaces;
 using Rental.WEB.Attributes;
 using Rental.WEB.Interfaces;
@@ -22,6 +23,8 @@ namespace Rental.WEB.Controllers
 
         private IIdentityMapperDM _identityMapperDM;
 
+        private ILogService _logService;
+
         private IAuthenticationManager _authenticationManager
         {
             get
@@ -30,25 +33,39 @@ namespace Rental.WEB.Controllers
             }
         }
 
-        public AccountController(IAccountService accountService, IIdentityMapperDM identityMapperDM)
+        public AccountController(IAccountService accountService, IIdentityMapperDM identityMapperDM,ILogService logService)
         {
             _accountService = accountService;
             _identityMapperDM = identityMapperDM;
+            _logService = logService;
         }
 
-        // GET: Account
+        public void CreateLog(string action,string authorId)
+        {
+            ActionLogDTO log = new ActionLogDTO()
+            {
+                Action=action,
+                Time=DateTime.Now,
+                AuthorId=authorId
+            };
+            _logService.CreateActionLog(log);
+        }
+
+        [ExceptionLogger]
         [NoAuthorize]
         public ActionResult Login()
         {
             return View();
         }
 
+        [ExceptionLogger]
         [NoAuthorize]
         public ActionResult Register()
         {
             return View();
         }
 
+        [ExceptionLogger]
         [NoAuthorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -66,19 +83,23 @@ namespace Rental.WEB.Controllers
                 {
                     _authenticationManager.SignOut();
                     _authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = true }, claim);
+                    CreateLog("Вошел", User.Identity.GetUserId());
                     return RedirectToAction("Index", "Home");
                 }
             }
             return View(login);
         }
 
+        [ExceptionLogger]
         [Authorize]
-        public ActionResult Logout()
+        public async Task<ActionResult> Logout()
         {
+            CreateLog("Вышел", User.Identity.GetUserId());
             _authenticationManager.SignOut();
             return RedirectToAction("Index", "Home");
         }
 
+        [ExceptionLogger]
         [NoAuthorize]
         [ValidateAntiForgeryToken]
         [HttpPost]
@@ -98,6 +119,7 @@ namespace Rental.WEB.Controllers
             return View(register);
         }
 
+        [ExceptionLogger]
         [Authorize]
         public async Task<ActionResult> ShowUser()
         {
