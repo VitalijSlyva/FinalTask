@@ -1,4 +1,5 @@
-﻿using Rental.BLL.Abstracts;
+﻿using Microsoft.AspNet.Identity;
+using Rental.BLL.Abstracts;
 using Rental.BLL.DTO.Identity;
 using Rental.BLL.DTO.Rent;
 using Rental.BLL.Interfaces;
@@ -42,7 +43,7 @@ namespace Rental.BLL.Services
         {
             try
             {
-                var test1 = RentUnitOfWork.Returns.Find(x => x.OrderId == id && x.Crash != null);
+                var test1 = RentUnitOfWork.Returns.Find(x => x.OrderId == id && x.Crash != null&&x.Crash.Count>0);
                 if (_answer(test1))
                     return "Возвращен с повреждениями";
                 var test2 = RentUnitOfWork.Returns.Find(x => x.OrderId == id);
@@ -74,7 +75,7 @@ namespace Rental.BLL.Services
             {
                 profileDTO.Id = profileDTO.User.Id;
                 Profile profile = IdentityMapperDTO.ToProfile.Map<ProfileDTO, Profile>(profileDTO);
-                profile.ApplicationUser = await IdentityUnitOfWork.UserManager.FindByIdAsync(profileDTO.User.Id);
+                profile.ApplicationUser = IdentityUnitOfWork.UserManager.FindById(profileDTO.User.Id);
                 IdentityUnitOfWork.ClientManager.Create(profile);
                 IdentityUnitOfWork.Save();
             }
@@ -104,9 +105,10 @@ namespace Rental.BLL.Services
             try
             {
                 Order order = RentMapperDTO.ToOrder.Map<OrderDTO, Order>(orderDTO);
+                order.Car = RentUnitOfWork.Cars.Get(orderDTO.Car.Id);
                 order.ClientId = orderDTO.Profile.Id;
                 int price =(int)(order.DateEnd - order.DateStart).TotalDays * order.Car.Price;
-                order.Payment = new Payment() { IsPaid = false, Price = price };
+                order.Payment =new[] { new Payment() { IsPaid = false, Price = price }};
                 RentUnitOfWork.Orders.Create(order);
                 RentUnitOfWork.Save();
             }
@@ -145,13 +147,13 @@ namespace Rental.BLL.Services
             }
         }
 
-        public async Task UpdateProfileAsync(ProfileDTO profileDTO)
+        public void UpdateProfile(ProfileDTO profileDTO)
         {
             try
             {
                 profileDTO.Id = profileDTO.User.Id;
                 Profile profile = IdentityMapperDTO.ToProfile.Map<ProfileDTO, Profile>(profileDTO);
-                profile.ApplicationUser = await IdentityUnitOfWork.UserManager.FindByIdAsync(profileDTO.User.Id);
+                profile.ApplicationUser = IdentityUnitOfWork.UserManager.FindById(profileDTO.User.Id);
                 IdentityUnitOfWork.ClientManager.Update(profile);
                 IdentityUnitOfWork.Save();
             }

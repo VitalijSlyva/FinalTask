@@ -14,6 +14,7 @@ namespace Rental.WEB.Models.View_Models.Account
         public string Email { get; set; }
 
         [Required(ErrorMessage = "Поле должно быть заполнено")]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Слишком короткий")]
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }

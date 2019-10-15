@@ -10,9 +10,11 @@ namespace Rental.DAL.Entities.Rent
     { 
         public string ManagerId { get; set; }
 
-        public int? CrashId { get; set; }
+        //   public int? CrashId { get; set; }
 
-        public virtual Crash Crash { get; set; }
+        // public virtual Crash Crash { get; set; }
+
+        public virtual ICollection<Crash> Crash { get; set; }
 
         public bool IsReturned { get; set; }
 

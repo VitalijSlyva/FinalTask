@@ -24,7 +24,7 @@ namespace Rental.BLL.Services
         {
             try
             {
-                var orders = RentUnitOfWork.Orders.Show().Where(x => x.Confirm == null);
+                var orders = RentUnitOfWork.Orders.Show().Where(x => x.Confirm == null||x.Confirm.Count==0);
                 return RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
             }
             catch (Exception e)
@@ -38,7 +38,7 @@ namespace Rental.BLL.Services
         {
             try
             {
-                var orders = RentUnitOfWork.Orders.Show().Where(x => x.Confirm != null && x.Return == null && x.Confirm.IsConfirmed);
+                var orders = RentUnitOfWork.Orders.Show().Where(x => x.Confirm != null&&x.Confirm.Count>0 &&( x.Return == null||x.Return.Count==0 )&& x.Confirm.First().IsConfirmed);
                 return RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
             }
             catch (Exception e)
@@ -55,9 +55,9 @@ namespace Rental.BLL.Services
                 var order = RentUnitOfWork.Orders.Get(id);
                 if (order == null)
                     return null;
-                if (forConfirm && order.Confirm != null)
+                if (forConfirm && order.Confirm != null&&order.Confirm.Count>0)
                     return null;
-                if (!forConfirm && (order.Return != null || order.Confirm == null || !order.Confirm.IsConfirmed))
+                if (!forConfirm && ((order.Return != null &&order.Return.Count>0 ) || order.Confirm == null||order.Confirm.Count==0 || !order.Confirm.First().IsConfirmed))
                     return null;
                 return RentMapperDTO.ToOrderDTO.Map<Order, OrderDTO>(order);
             }
@@ -72,7 +72,7 @@ namespace Rental.BLL.Services
         {
             try
             {
-                if (RentUnitOfWork.Orders.Get(confirmDTO.Order.Id).Confirm == null)
+                if (RentUnitOfWork.Orders.Get(confirmDTO.Order.Id).Confirm == null|| RentUnitOfWork.Orders.Get(confirmDTO.Order.Id).Confirm.Count==0)
                 {
                     var confirm = RentMapperDTO.ToConfirm.Map<ConfirmDTO, Confirm>(confirmDTO);
                     confirm.ManagerId = confirmDTO.User.Id;
@@ -91,17 +91,21 @@ namespace Rental.BLL.Services
         {
             try
             {
-                var returnCar= new Return();
-                returnCar.ManagerId = returnDTO.User.Id;
-                returnCar.IsReturned = true;
-                returnCar.Order = RentUnitOfWork.Orders.Get(returnDTO.Order.Id);
-                if (returnDTO.Crash != null)
+                var order = RentUnitOfWork.Orders.Get(returnDTO.Order.Id);
+                if ((order.Return == null || order.Return.Count == 0) && order.Confirm != null && order.Confirm.Count > 0 &&order.Confirm.First().IsConfirmed)
                 {
-                    returnCar.Crash = new Crash() { Description = returnCar.Crash.Description };
-                    returnCar.Crash.Payment = new Payment() { IsPaid = false, Price = returnCar.Crash.Payment.Price };
+                    var returnCar = new Return();
+                    returnCar.ManagerId = returnDTO.User.Id;
+                    returnCar.IsReturned = true;
+                    returnCar.Order = RentUnitOfWork.Orders.Get(returnDTO.Order.Id);
+                    if (returnDTO.Crash != null)
+                    {
+                        returnCar.Crash = new[] { new Crash() { Description = returnDTO.Crash.Description } };
+                        returnCar.Crash.First().Payment = new[] { new Payment() { IsPaid = false, Price = returnDTO.Crash.Payment.Price } };
+                    }
+                    RentUnitOfWork.Returns.Create(returnCar);
+                    RentUnitOfWork.Save();
                 }
-                RentUnitOfWork.Returns.Create(returnCar);
-                RentUnitOfWork.Save();
             }
             catch (Exception e)
             {

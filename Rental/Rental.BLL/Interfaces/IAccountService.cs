@@ -10,7 +10,7 @@ namespace Rental.BLL.Interfaces
 {
     public interface IAccountService :IDisposable
     {
-        Task CreateAsync(User client);
+        Task<string> CreateAsync(User client);
 
         Task<ClaimsIdentity> AuthenticateAsync(User client);
 

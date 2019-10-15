@@ -12,6 +12,7 @@ using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
+    [ExceptionLogger]
     public class RentController : Controller
     {
         private IRentService _rentService;
@@ -24,7 +25,6 @@ namespace Rental.WEB.Controllers
             _rentMapperDM = rentMapper;
         }
 
-        [ExceptionLogger]
         public ActionResult Index()
         {
             var cars = _rentMapperDM.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(_rentService.GetCars());
@@ -33,7 +33,6 @@ namespace Rental.WEB.Controllers
             return View(indexVM);
         }
 
-        [ExceptionLogger]
         public ActionResult Car(int?id)
         {
             if (id != null)

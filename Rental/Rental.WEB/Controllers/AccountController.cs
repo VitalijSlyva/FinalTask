@@ -17,6 +17,7 @@ using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
+    [ExceptionLogger]
     public class AccountController : Controller
     {
         private IAccountService _accountService;
@@ -51,21 +52,18 @@ namespace Rental.WEB.Controllers
             _logService.CreateActionLog(log);
         }
 
-        [ExceptionLogger]
         [NoAuthorize]
         public ActionResult Login()
         {
             return View();
         }
 
-        [ExceptionLogger]
         [NoAuthorize]
         public ActionResult Register()
         {
             return View();
         }
 
-        [ExceptionLogger]
         [NoAuthorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -83,23 +81,21 @@ namespace Rental.WEB.Controllers
                 {
                     _authenticationManager.SignOut();
                     _authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = true }, claim);
-                    CreateLog("Вошел", User.Identity.GetUserId());
-                    return RedirectToAction("Index", "Home");
+        //            CreateLog("Вошел", User.Identity.GetUserId());
+                    return RedirectToAction("Index", "Rent");
                 }
             }
             return View(login);
         }
 
-        [ExceptionLogger]
         [Authorize]
         public async Task<ActionResult> Logout()
         {
-            CreateLog("Вышел", User.Identity.GetUserId());
+       //     CreateLog("Вышел", User.Identity.GetUserId());
             _authenticationManager.SignOut();
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index", "Rent");
         }
 
-        [ExceptionLogger]
         [NoAuthorize]
         [ValidateAntiForgeryToken]
         [HttpPost]
@@ -113,13 +109,15 @@ namespace Rental.WEB.Controllers
                     Password = register.Password,
                     Name = register.Name,
                 };
-                await _accountService.CreateAsync(user);
-                return await Login(new LoginVM() { Email = register.Email, Password = register.Password });
+                string result= await _accountService.CreateAsync(user);
+                if (result.Length == 0)
+                    return await Login(new LoginVM() { Email = register.Email, Password = register.Password });
+                else
+                    ModelState.AddModelError("",result);
             }
             return View(register);
         }
 
-        [ExceptionLogger]
         [Authorize]
         public async Task<ActionResult> ShowUser()
         {

@@ -12,7 +12,7 @@
         <h2>@Model.Model</h2>
         <h3>@Model.Brand.Name</h3>
         <h4>@Model</h4>
-        <p><a class="btn btn-dark @(Model.IsDeleted?"disabled":"") " href="@Url.Action("MakeOrder","Client",new { id=Model.Id})">Орендовать</a></p>
+        <p><a class="btn btn-dark @(Model.IsDeleted?"disabled":"") " href="@Url.Action("MakeOrder","Client",new { carId=Model.Id})">Орендовать</a></p>
     </div>
     <div class="col-md-12">
         <ul class="list-group">

@@ -14,6 +14,7 @@ using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
+    [ExceptionLogger]
     [Authorize(Roles = "manager")]
     [AuthorizeWithoutBann]
     public class ManagerController : Controller
@@ -42,7 +43,6 @@ namespace Rental.WEB.Controllers
             _logService.CreateActionLog(log);
         }
 
-        [ExceptionLogger]
         public ActionResult Confirm(int? id)
         {
             if (id != null)
@@ -56,7 +56,6 @@ namespace Rental.WEB.Controllers
             return new HttpNotFoundResult();
         }
 
-        [ExceptionLogger]
         [HttpPost]
         public ActionResult Confirm(ConfirmDM confirmDM)
         {
@@ -67,7 +66,7 @@ namespace Rental.WEB.Controllers
             if (ModelState.IsValid)
             {
                 ConfirmDTO confirm = _rentMapperDM.ToConfirmDTO.Map<ConfirmDM, ConfirmDTO>(confirmDM);
-                confirm.User.Id = User.Identity.GetUserId();
+                confirm.User = new BLL.DTO.Identity.User() { Id = User.Identity.GetUserId() };
                 _managerService.ConfirmOrder(confirm);
                 CreateLog("Подтвердил заказ"+confirm.Order.Id, User.Identity.GetUserId());
                 return RedirectToAction("ShowConfirms", "Manager", null);
@@ -77,7 +76,6 @@ namespace Rental.WEB.Controllers
             return View(confirmDM);
         }
 
-        [ExceptionLogger]
         public ActionResult ShowConfirms()
         {
             var orders = _managerService.GetForConfirms();
@@ -86,7 +84,6 @@ namespace Rental.WEB.Controllers
             return View(confirmsVM);
         }
 
-        [ExceptionLogger]
         public ActionResult ShowReturns()
         {
             var orders = _managerService.GetForReturns();
@@ -95,7 +92,6 @@ namespace Rental.WEB.Controllers
             return View(returnsVM);
         }
 
-        [ExceptionLogger]
         public ActionResult Return(int? id)
         {
             if (id != null)
@@ -109,22 +105,23 @@ namespace Rental.WEB.Controllers
             return new HttpNotFoundResult();
         }
 
-        [ExceptionLogger]
         [HttpPost]
         public ActionResult Return(ReturnDM returnDM,bool withCrash=false)
         {
 
-            if (ModelState.IsValid||!withCrash)
-            {
+        //    if (ModelState.IsValid||!withCrash)
+     //       {
                 ReturnDTO returnDTO = _rentMapperDM.ToReturnDTO.Map<ReturnDM, ReturnDTO>(returnDM);
-                returnDTO.User.Id = User.Identity.GetUserId();
+                returnDTO.User = new BLL.DTO.Identity.User() { Id = User.Identity.GetUserId() };
+                if (withCrash == false)
+                returnDTO.Crash =null;
                 _managerService.ReturnCar(returnDTO);
                 CreateLog("Отклонил заказ" + returnDTO.Order.Id, User.Identity.GetUserId());
                 return RedirectToAction("ShowReturns", "Manager", null);
-            }
-            var orderDTO = _managerService.GetOrder(returnDM.Order.Id, false);
-            returnDM = new ReturnDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
-            return View(returnDM);
+       //     }
+            //var orderDTO = _managerService.GetOrder(returnDM.Order.Id, false);
+            //returnDM = new ReturnDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
+            //return View(returnDM);
         }
 
         protected override void Dispose(bool disposing)

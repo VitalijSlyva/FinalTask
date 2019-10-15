@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Rental.DAL.EF.Initializers
 {
-    internal class LogInitializer:DropCreateDatabaseIfModelChanges<LogContext>
+    internal class LogInitializer: DropCreateDatabaseIfModelChanges<LogContext>
     {
         protected override void Seed(LogContext context)
         {

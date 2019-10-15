@@ -10,7 +10,7 @@
         <li class="list-group-item">
             <div>
                 <h6>@i.Id</h6>
-                <h3>@i.Car.Brand @i.Car.Model</h3>
+                <h3>@i.Car.Brand.Name @i.Car.Model</h3>
                 <p>@i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</p>
                 <p>@(i.Payment.IsPaid?"Оплачен":"Неоплачен")</p>
                 <a class="btn btn-outline-dark" href="@Url.Action("Confirm","Manager",new { id=i.Id})">Подтвердить</a>

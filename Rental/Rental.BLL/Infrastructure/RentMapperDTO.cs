@@ -104,7 +104,7 @@ namespace Rental.BLL.Infrastructure
             get
             {
                 return new MapperConfiguration(cfg => cfg.CreateMap<Crash, CrashDTO>()
-                            .ForMember(x => x.Payment, c => c.MapFrom(k => ToPaymentDTO.Map<Payment, PaymentDTO>(k.Payment))))
+                            .ForMember(x => x.Payment, c => c.MapFrom(k => ToPaymentDTO.Map<Payment, PaymentDTO>(k.Payment.FirstOrDefault()))))
                     .CreateMapper();
             }
         }
@@ -114,7 +114,7 @@ namespace Rental.BLL.Infrastructure
             get
             {
                 return new MapperConfiguration(cfg => cfg.CreateMap<CrashDTO, Crash>()
-                            .ForMember(x => x.Payment, c => c.MapFrom(k => ToPaymentDTO.Map<PaymentDTO, Payment>(k.Payment))))
+                            .ForMember(x => x.Payment, c => c.MapFrom(k => ToPaymentDTO.Map<IEnumerable<PaymentDTO>,ICollection<Payment>>( new[] { k.Payment }))))
                     .CreateMapper();
             }
         }
@@ -142,7 +142,7 @@ namespace Rental.BLL.Infrastructure
             get
             {
                 return new MapperConfiguration(cfg => cfg.CreateMap<Order,OrderDTO>()
-                            .ForMember(x => x.Payment, c => c.MapFrom(k => ToPaymentDTO.Map<Payment, PaymentDTO>(k.Payment)))
+                            .ForMember(x => x.Payment, c => c.MapFrom(k => ToPaymentDTO.Map<Payment, PaymentDTO>(k.Payment.FirstOrDefault())))
                             .ForMember(x => x.Car, c => c.MapFrom(k => ToCarDTO.Map<Car, CarDTO>(k.Car))))
                             .CreateMapper();
             }
@@ -153,7 +153,7 @@ namespace Rental.BLL.Infrastructure
             get
             {
                 return new MapperConfiguration(cfg => cfg.CreateMap<OrderDTO, Order>()
-                            .ForMember(x => x.Payment, c => c.MapFrom(k => ToPayment.Map<PaymentDTO, Payment>(k.Payment)))
+                            .ForMember(x => x.Payment, c => c.MapFrom(k => ToPayment.Map<IEnumerable<PaymentDTO>,ICollection<Payment>>(new[] { k.Payment })))
                             .ForMember(x => x.Car, c => c.MapFrom(k => ToCar.Map<CarDTO, Car>(k.Car))))
                             .CreateMapper();
             }
@@ -219,7 +219,7 @@ namespace Rental.BLL.Infrastructure
             {
                 return new MapperConfiguration(cfg => cfg.CreateMap<Return, ReturnDTO>()
                             .ForMember(x => x.Order, c => c.MapFrom(k => ToOrderDTO.Map<Order, OrderDTO>(k.Order)))
-                            .ForMember(x => x.Crash, c => c.MapFrom(k => ToCrashDTO.Map<Crash, CrashDTO>(k.Crash))))
+                            .ForMember(x => x.Crash, c => c.MapFrom(k => ToCrashDTO.Map<Crash, CrashDTO>(k.Crash.FirstOrDefault()))))
                     .CreateMapper();
             }
         }
@@ -230,7 +230,7 @@ namespace Rental.BLL.Infrastructure
             {
                 return new MapperConfiguration(cfg => cfg.CreateMap<ReturnDTO, Return>()
                             .ForMember(x => x.Order, c => c.MapFrom(k => ToOrder.Map<OrderDTO, Order>(k.Order)))
-                            .ForMember(x => x.Crash, c => c.MapFrom(k => ToCrash.Map<CrashDTO, Crash>(k.Crash))))
+                            .ForMember(x => x.Crash, c => c.MapFrom(k => ToCrash.Map<IEnumerable<CrashDTO>, ICollection<Crash>>(new[]{k.Crash}))))
                     .CreateMapper();
             }
         }

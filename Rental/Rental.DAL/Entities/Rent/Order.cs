@@ -22,16 +22,22 @@ namespace Rental.DAL.Entities.Rent
 
         public DateTime DateEnd { get; set; }
 
-        public int? PaymentId { get; set; }
+        //public int? PaymentId { get; set; }
 
-        public virtual Payment Payment { get; set; }
+        //public virtual Payment Payment { get; set; }
 
-        public int? ReturnId { get; set; }
+        public virtual ICollection<Payment> Payment { get; set; }
 
-        public virtual Return Return { get; set; }
+        //public int? ReturnId { get; set; }
 
-        public int? ConfirmId { get; set; }
+        //public virtual Return Return { get; set; }
 
-        public virtual Confirm Confirm { get; set; }
+        public virtual ICollection<Return> Return { get; set; }
+
+        //public int? ConfirmId { get; set; }
+
+        //public virtual Confirm Confirm { get; set; }
+
+        public virtual ICollection<Confirm> Confirm { get; set; }
     }
 }

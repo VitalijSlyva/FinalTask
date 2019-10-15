@@ -23,26 +23,6 @@ namespace Rental.DAL.EF.Contexts
 
         }
 
-        protected override void OnModelCreating(DbModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Order>()
-            .HasOptional(f => f.Confirm)
-            .WithRequired(s => s.Order);
-            modelBuilder.Entity<Crash>()
-            .HasOptional(f => f.Payment)
-            .WithRequired(s => s.Crash);
-            modelBuilder.Entity<Crash>()
-            .HasOptional(f => f.Return)
-            .WithRequired(s => s.Crash);
-            modelBuilder.Entity<Return>()
-            .HasOptional(f => f.Order)
-            .WithRequired(s => s.Return);
-            modelBuilder.Entity<Payment>()
-            .HasOptional(f => f.Order)
-            .WithRequired(s => s.Payment);
-            base.OnModelCreating(modelBuilder);
-        }
-
         public DbSet<Brand> Brands { get; set; }
 
         public DbSet<Car> Cars { get; set; }

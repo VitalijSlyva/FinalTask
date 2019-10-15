@@ -11,15 +11,15 @@
         <h3>@i.Name</h3>
         <p>@i.Email</p>
         <p>@Model.Roles[i.Id]</p>
-        @(Model.Banns[i.Id] ? "<p>Забанен</p>")
+        <p> @(Model.Banns[i.Id] ? "Забанен" : "")</p>
         @if (Model.Banns[i.Id])
         {
-            <a href="@Url.Action("UnbanUser","Admin",new { userId=i.Id})" class="btn btn-success" 
+            <a href="@Url.Action("UnbanUser","Admin",new { id=i.Id})" class="btn btn-success" 
                onclick="return confirm('Поддтвердите действие разбана пользователя @i.Name.')">Разбанить</a>
         }
         else
         {
-            <a href="@Url.Action("BanUser","Admin",new { userId=i.Id})" class="btn btn-success" 
+            <a href="@Url.Action("BanUser","Admin",new { id=i.Id})" class="btn btn-success" 
                onclick="return confirm('Поддтвердите действие бана пользователя @i.Name.')">Забанить</a>
         }
     </div>

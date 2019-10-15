@@ -40,17 +40,17 @@ namespace Rental.BLL.Services
             }
         }
 
-        public async Task CreateAsync(User client)
+        public async Task<string> CreateAsync(User client)
         {
             try
             {
                 ApplicationUser user = await IdentityUnitOfWork.UserManager.FindByEmailAsync(client.Email);
                 if (user == null)
                 {
-                    user = new ApplicationUser() { UserName = client.Email, Email = client.Email };
+                    user = new ApplicationUser() {UserName=client.Email, Email = client.Email,Name=client.Name };
                     var result = await IdentityUnitOfWork.UserManager.CreateAsync(user, client.Password);
                     if (result.Errors.Count() > 0)
-                        throw new Exception();
+                        return result.Errors.FirstOrDefault();
                     var role = await IdentityUnitOfWork.RoleManager.FindByNameAsync("client");
                     if (role == null)
                     {
@@ -58,15 +58,18 @@ namespace Rental.BLL.Services
                         await IdentityUnitOfWork.RoleManager.CreateAsync(role);
                     }
                     await IdentityUnitOfWork.UserManager.AddToRoleAsync(user.Id, "client");
+                    return "";
                 }
                 else
                 {
+                    return "Пользователь уже существует;";
                 }
             }
             catch(Exception e)
             {
                 CreateLog(e, "AccountService", "CreateAsync");
             }
+            return "Произошла ошибка";
         }
 
         public async Task<User> GetUserAsync(string id)

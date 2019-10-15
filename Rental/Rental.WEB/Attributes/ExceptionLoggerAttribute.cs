@@ -12,8 +12,7 @@ namespace Rental.WEB.Attributes
 {
     public class ExceptionLoggerAttribute : FilterAttribute,IExceptionFilter
     {
-        [Inject]
-        private ILogService _logService;
+        private ILogService _logService= (ILogService)DependencyResolver.Current.GetService(typeof(ILogService));
 
         public void OnException(ExceptionContext filterContext)
         {

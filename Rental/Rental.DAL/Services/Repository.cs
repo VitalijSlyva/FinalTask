@@ -22,6 +22,7 @@ namespace Rental.DAL.Services
         public override void Create(T item)
         {
             _context.Entry(item).State = EntityState.Added;
+            _context.SaveChanges();
         }
 
         /// <summary>

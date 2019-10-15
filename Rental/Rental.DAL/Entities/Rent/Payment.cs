@@ -14,12 +14,12 @@ namespace Rental.DAL.Entities.Rent
 
         public int Price { get; set; }
 
-        public int? CrashId { get; set; }
-
-        public virtual Crash Crash { get; set; }
-
         public int? OrderId { get; set; }
 
         public virtual Order Order { get; set; }
+
+        public int? CrashId { get; set; }
+
+        public virtual Crash Crash { get; set; }
     }
 }

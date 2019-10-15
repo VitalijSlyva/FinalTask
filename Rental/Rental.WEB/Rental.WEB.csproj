@@ -348,7 +348,7 @@
     <Content Include="Views\Manager\ShowReturns.cshtml" />
     <Content Include="Views\Manager\Return.cshtml" />
     <Content Include="Views\Account\Login.cshtml" />
-    <Content Include="Views\Account\Register.cshtml" />
+    <Content Include="Views\Shared\Register.cshtml" />
     <Content Include="Views\Account\ShowUser.cshtml" />
     <Content Include="Views\Client\CreateProfile.cshtml" />
     <Content Include="Views\Client\UpdateProfile.cshtml" />

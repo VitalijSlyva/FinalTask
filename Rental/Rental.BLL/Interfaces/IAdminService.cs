@@ -16,11 +16,11 @@ namespace Rental.BLL.Interfaces
 
         void UpdateCar(CarDTO carDTO);
 
-        Task BanUserAsync(string userId);
+        void BanUser(string userId);
 
-        Task UnbanUserAsync(string userId);
+        void UnbanUser(string userId);
 
-        void CreateManager(User user);
+        string CreateManager(User user);
 
         IEnumerable<User> GetUsers();
 

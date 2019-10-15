@@ -18,7 +18,7 @@ namespace Rental.BLL.Interfaces
 
         Task CreateProfileAsync(ProfileDTO profileDTO);
 
-        Task UpdateProfileAsync(ProfileDTO profileDTO);
+        void UpdateProfile(ProfileDTO profileDTO);
 
         Task<ProfileDTO> ShowProfileAsync(string id);
 

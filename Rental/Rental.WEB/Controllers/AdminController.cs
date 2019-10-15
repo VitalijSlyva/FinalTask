@@ -19,6 +19,7 @@ using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
+    [ExceptionLogger]
     [Authorize(Roles ="admin")]
     public class AdminController : Controller
     {
@@ -42,7 +43,6 @@ namespace Rental.WEB.Controllers
             _logService = log;
         }
 
-
         public void CreateLog(string action, string authorId)
         {
             ActionLogDTO log = new ActionLogDTO()
@@ -54,7 +54,6 @@ namespace Rental.WEB.Controllers
             _logService.CreateActionLog(log);
         }
 
-        [ExceptionLogger]
         public async Task<ActionResult> GetUsers()
         {
             var users = _adminService.GetUsers();
@@ -75,48 +74,44 @@ namespace Rental.WEB.Controllers
             return View(getUsersVM);
         }
 
-        [ExceptionLogger]
         public ActionResult BanUser(string id)
         {
             if (!String.IsNullOrEmpty(id))
             {
-                _adminService.BanUserAsync(id);
+                _adminService.BanUser(id);
                 CreateLog("Забанил пользователя "+id, User.Identity.GetUserId());
             }
             return RedirectToAction("GetUsers");
         }
 
-        [ExceptionLogger]
         public ActionResult UnbanUser(string id)
         {
             if (!String.IsNullOrEmpty(id))
             {
-                _adminService.UnbanUserAsync(id);
+                _adminService.UnbanUser(id);
                 CreateLog("Разбанил пользователя " + id, User.Identity.GetUserId());
             }
             return RedirectToAction("GetUsers");
         }
 
-        [ExceptionLogger]
         public ActionResult CreateCar()
         {
             return View();
         }
 
-        [ExceptionLogger]
         public ActionResult GetCars()
         {
             var cars = _rentService.GetCars();
-            var carsDM = _identityMapperDM.ToUserDM.Map<IEnumerable<CarDTO>, List<CarDM>>(cars);
+            var carsDM = _rentMapperDM.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(cars);
             GetCarsVM carsVM = new GetCarsVM() {  CarsDM = carsDM };
             return View(carsVM);
         }
 
-        [ExceptionLogger]
         private CarDTO _createCarDTO(CreateVM model)
         {
             CarDTO carDTO = _rentMapperDM.ToCarDTO.Map<CarDM, CarDTO>(model.Car);
             List<PropertyDTO> properties = new List<PropertyDTO>();
+            if(model.PropertyNames!=null&&model.PropertyNames.Length>0)
             for (int i = 0; i < model.PropertyNames.Count(); i++)
                 properties.Add(new PropertyDTO() { Name = model.PropertyNames[i], Text = model.PropertyValues[i] });
             carDTO.Properties = properties;
@@ -141,7 +136,6 @@ namespace Rental.WEB.Controllers
             return carDTO;
         }
 
-        [ExceptionLogger]
         [HttpPost]
         public ActionResult CreateCar(CreateVM model)
         {
@@ -155,17 +149,15 @@ namespace Rental.WEB.Controllers
             return View(model);
         }
 
-        [ExceptionLogger]
         public ActionResult UpdateCar(int? id)
         {
             if (id == null)
                 return new HttpNotFoundResult();
             CarDM car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(_rentService.GetCar(id));
-            return View("Create", new CreateVM() { Car=car });
+            return View("CreateCar", new CreateVM() { Car=car });
 
         }
 
-        [ExceptionLogger]
         [HttpPost]
         public ActionResult UpdateCar(CreateVM model)
         {
@@ -179,24 +171,21 @@ namespace Rental.WEB.Controllers
             return View("Create", model );
         }
 
-        [ExceptionLogger]
         public ActionResult Delete(int? id)
         {
             if (id == null)
                 return new HttpNotFoundResult();
             _adminService.DeleteCar(id.Value);
             CreateLog("Убрал автомобиль " + id, User.Identity.GetUserId());
-            return RedirectToAction("GatCars");
+            return RedirectToAction("GetCars");
         }
 
-        [ExceptionLogger]
         public ActionResult CreateManager()
         {
             ViewBag.CreatingManger = true;
             return View("Register");
         }
 
-        [ExceptionLogger]
         [HttpPost]
         public ActionResult CreateManager(RegisterVM register)
         {
@@ -208,9 +197,14 @@ namespace Rental.WEB.Controllers
                     Password = register.Password,
                     Name = register.Name,
                 };
-                _adminService.CreateManager(user);
-                CreateLog("Добавил менеджера", User.Identity.GetUserId());
-                return RedirectToAction("GetUsers");
+                string result = _adminService.CreateManager(user);
+                if (result.Length == 0)
+                {
+                    CreateLog("Добавил менеджера", User.Identity.GetUserId());
+                    return RedirectToAction("GetUsers");
+                }
+                else
+                    ModelState.AddModelError("", result);
             }
             ViewBag.CreatingManger = true;
             return View("Register", register);

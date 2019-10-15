@@ -14,8 +14,10 @@ namespace Rental.DAL.Entities.Rent
 
         public string Description { get; set; }
 
-        public int? PaymentId { get; set; }
+        //public int? PaymentId { get; set; }
 
-        public virtual Payment Payment { get; set; }
+        //public virtual Payment Payment { get; set; }
+
+        public virtual ICollection<Payment> Payment { get; set; }
     }
 }

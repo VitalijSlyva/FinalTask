@@ -33,7 +33,7 @@ namespace Rental.WEB.Models.Domain_Models.Identity
 
         [Required(ErrorMessage = "Поле должно быть заполнено")]
         [DataType(DataType.Date, ErrorMessage = "Неверная дата")]
-        [Display(Name = "Дата выдачи")]
+        [Display(Name = "Дата завершеня действия")]
         public DateTime DateOfExpiry { get; set; }
 
         [Required(ErrorMessage = "Поле должно быть заполнено")]

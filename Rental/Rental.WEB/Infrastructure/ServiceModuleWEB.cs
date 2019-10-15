@@ -1,11 +1,15 @@
 ﻿using Ninject.Modules;
+using Ninject.Web.Mvc.FilterBindingSyntax;
 using Rental.BLL.Interfaces;
 using Rental.BLL.Services;
+using Rental.WEB.Attributes;
+using Rental.WEB.Controllers;
 using Rental.WEB.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
+using System.Web.Mvc;
 
 namespace Rental.WEB.Infrastructure
 {
@@ -22,6 +26,7 @@ namespace Rental.WEB.Infrastructure
             Bind<IIdentityMapperDM>().To<IdentityMapperDM>();
             Bind<IRentMapperDM>().To<RentMapperDM>();
             Bind<ILogMapperDM>().To<LogMapperDM>();
+
         }
     }
 }
