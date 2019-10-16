@@ -26,6 +26,7 @@ namespace Rental.WEB.Attributes
             };
             _logService.CreateExeptionLog(exceptionLogDTO);
             filterContext.ExceptionHandled = true;
+            filterContext.Result = new ViewResult() { ViewName = "CustomError" };
         } 
     }
 }

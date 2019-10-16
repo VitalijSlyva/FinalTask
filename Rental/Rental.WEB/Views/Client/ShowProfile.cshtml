@@ -1,13 +1,11 @@
 ﻿@model Rental.WEB.Models.Domain_Models.Identity.ProfileDM
 
 @{
-    ViewBag.Title = "ShowProfile";
+    ViewBag.Title = "Профиль";
 }
 
-<h2>ShowProfile</h2>
-
 <div>
-    <h4>ProfileDM</h4>
+    <h4>Профиль</h4>
     <hr />
     <dl class="dl-horizontal">
         <dt>
@@ -115,4 +113,5 @@
         </dd>
 
     </dl>
+    <a class="btn btn-default btn-dark" href="@Url.Action("UpdateProfile","Client")">Изменить</a>
 </div>

@@ -23,24 +23,13 @@ namespace Rental.WEB.Controllers
 
         private IRentMapperDM _rentMapperDM;
 
-        private ILogService _logService;
+        private ILogWriter _logWriter;
 
-        public ManagerController(IManagerService managerService, IRentMapperDM rentMapper, ILogService log)
+        public ManagerController(IManagerService managerService, IRentMapperDM rentMapper, ILogWriter log)
         {
             _managerService = managerService;
             _rentMapperDM = rentMapper;
-            _logService = log;
-        }
-
-        public void CreateLog(string action, string authorId)
-        {
-            ActionLogDTO log = new ActionLogDTO()
-            {
-                Action = action,
-                Time = DateTime.Now,
-                AuthorId = authorId
-            };
-            _logService.CreateActionLog(log);
+            _logWriter = log;
         }
 
         public ActionResult Confirm(int? id)
@@ -68,7 +57,7 @@ namespace Rental.WEB.Controllers
                 ConfirmDTO confirm = _rentMapperDM.ToConfirmDTO.Map<ConfirmDM, ConfirmDTO>(confirmDM);
                 confirm.User = new BLL.DTO.Identity.User() { Id = User.Identity.GetUserId() };
                 _managerService.ConfirmOrder(confirm);
-                CreateLog("Подтвердил заказ"+confirm.Order.Id, User.Identity.GetUserId());
+                _logWriter.CreateLog("Подтвердил заказ"+confirm.Order.Id, User.Identity.GetUserId());
                 return RedirectToAction("ShowConfirms", "Manager", null);
             }
             var orderDTO = _managerService.GetOrder(confirmDM.Order.Id,true);
@@ -116,7 +105,7 @@ namespace Rental.WEB.Controllers
                 if (withCrash == false)
                 returnDTO.Crash =null;
                 _managerService.ReturnCar(returnDTO);
-                CreateLog("Отклонил заказ" + returnDTO.Order.Id, User.Identity.GetUserId());
+                _logWriter.CreateLog("Отклонил заказ" + returnDTO.Order.Id, User.Identity.GetUserId());
                 return RedirectToAction("ShowReturns", "Manager", null);
        //     }
             //var orderDTO = _managerService.GetOrder(returnDM.Order.Id, false);

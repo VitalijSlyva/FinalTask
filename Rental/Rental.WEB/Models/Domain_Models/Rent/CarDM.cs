@@ -21,7 +21,6 @@ namespace Rental.WEB.Models.Domain_Models.Rent
         public string Number { get; set; }
 
         [Required(ErrorMessage = "Поле должно быть заполнено")]
-        [DataType(DataType.Currency)]
         [Display(Name = "Цена за сутки")]
         [Range(1,100000,ErrorMessage ="Неверное число")]
         public int Price { get; set; }

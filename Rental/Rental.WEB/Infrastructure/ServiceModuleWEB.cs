@@ -26,6 +26,7 @@ namespace Rental.WEB.Infrastructure
             Bind<IIdentityMapperDM>().To<IdentityMapperDM>();
             Bind<IRentMapperDM>().To<RentMapperDM>();
             Bind<ILogMapperDM>().To<LogMapperDM>();
+            Bind<ILogWriter>().To<LogWriter>();
 
         }
     }

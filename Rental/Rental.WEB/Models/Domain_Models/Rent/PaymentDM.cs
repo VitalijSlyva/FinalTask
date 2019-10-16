@@ -16,7 +16,6 @@ namespace Rental.WEB.Models.Domain_Models.Rent
         public bool IsPaid { get; set; }
 
         [Required(ErrorMessage = "Поле должно быть заполнено")]
-        [DataType(DataType.Currency)]
         [Display(Name = "Сумма")]
         [Range(1, 10000000,ErrorMessage ="Неверное число")]
         public int Price { get; set; }

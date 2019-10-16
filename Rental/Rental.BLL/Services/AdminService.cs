@@ -213,9 +213,29 @@ namespace Rental.BLL.Services
                 oldCar.Properties.Clear();
                 oldCar.Images.Clear();
                 RentUnitOfWork.Save();
-
-                oldCar.Brand.Name = carDTO.Brand.Name;
-                oldCar.Carcass.Type = carDTO.Carcass.Type;
+                if (carDTO.Brand.Name != oldCar.Brand.Name)
+                {
+                    Brand brand = RentUnitOfWork.Brands.Find(x => x.Name == carDTO.Brand.Name).FirstOrDefault();
+                    if (brand == null) {
+                        brand = new Brand()
+                        {
+                            Name =carDTO.Brand.Name
+                        };
+                    }
+                    oldCar.Brand = brand ;
+                }
+                if (carDTO.Carcass.Type != oldCar.Carcass.Type)
+                {
+                    Carcass carcass= RentUnitOfWork.Carcasses.Find(x => x.Type == carDTO.Carcass.Type).FirstOrDefault();
+                    if (carcass == null)
+                    {
+                        carcass = new Carcass()
+                        {
+                            Type=carDTO.Carcass.Type
+                        };
+                    }
+                    oldCar.Carcass = carcass;
+                }
                 oldCar.Carrying = carDTO.Carrying;
                 oldCar.DateOfCreate = oldCar.DateOfCreate;
                 oldCar.Doors = carDTO.Doors;
@@ -225,9 +245,32 @@ namespace Rental.BLL.Services
                 oldCar.Model = carDTO.Model;
                 oldCar.Number = carDTO.Number;
                 oldCar.Price = carDTO.Price;
-                oldCar.Quality.Text = carDTO.Quality.Text;
-                oldCar.Transmission.Category = carDTO.Transmission.Category;
-                oldCar.Transmission.Count = carDTO.Transmission.Count;
+                if (carDTO.Quality.Text != oldCar.Quality.Text)
+                {
+                    Quality quality = RentUnitOfWork.Qualities.Find(x => x.Text == carDTO.Quality.Text).FirstOrDefault();
+                    if (quality == null)
+                    {
+                        quality = new Quality()
+                        {
+                            Text = carDTO.Quality.Text
+                        };
+                    }
+                    oldCar.Quality = quality;
+                }
+                if (carDTO.Transmission.Category != oldCar.Transmission.Category|| carDTO.Transmission.Count != oldCar.Transmission.Count)
+                {
+                    Transmission transmission = RentUnitOfWork.Transmissions.Find(x => carDTO.Transmission.Category == x.Category && carDTO.Transmission.Count == x.Count)
+                        .FirstOrDefault();
+                    if (transmission == null)
+                    {
+                        transmission = new Transmission()
+                        {
+                            Count= carDTO.Transmission.Count,
+                            Category=carDTO.Transmission.Category
+                        };
+                    }
+                    oldCar.Transmission= transmission;
+                }
                 oldCar.Кoominess = carDTO.Кoominess;
 
                 List<Property> properties = new List<Property>();

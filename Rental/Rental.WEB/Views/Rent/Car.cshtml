@@ -1,22 +1,58 @@
 ﻿@model Rental.WEB.Models.Domain_Models.Rent.CarDM
 
 @{
-    ViewBag.Title = "Car";
+    ViewBag.Title = Model.Model;
 }
+
+@Styles.Render("~/Content/styles/rent/car")
 
 <div class="row">
     <div class="col-md-5">
-        <img />
+        <div id="my-pics" class="carousel slide " data-ride="carousel" data-interval="false">
+            <!-- Indicators -->
+            @if (Model.Images.Count > 1)
+            {
+                <ol class="carousel-indicators">
+                    @for (int j = 0; j < Model.Images.Count; j++)
+                    {
+                        <li data-target="#my-pics" data-slide-to="@j" class="@(j == 0 ? "active" : "")"></li>
+                    }
+                </ol>
+            }
+            <!-- Content -->
+            <div class="carousel-inner" role="listbox">
+                <!-- Slide 1 -->
+                @for (int j = 0; j < Model.Images.Count; j++)
+                {
+                    <div class="item @(j==0?"active":"")">
+                        <img src="@String.Format("data:image/gif;base64,{0}", Convert.ToBase64String(Model.Images[j].Photo))" alt="@Model.Images[j].Text">
+                    </div>
+                }
+            </div>
+            @if (Model.Images.Count > 1)
+            {
+                <!-- Previous/Next controls -->
+                <a class="left carousel-control" href="#my-pics" role="button" data-slide="prev">
+                    <span class="icon-prev" aria-hidden="true"></span>
+                    <span class="sr-only">Previous</span>
+                </a>
+                <a class="right carousel-control" href="#my-pics" role="button" data-slide="next">
+                    <span class="icon-next" aria-hidden="true"></span>
+                    <span class="sr-only">Next</span>
+                </a>
+
+
+            }
+        </div>
     </div>
     <div class="col-md-7">
-        <h2>@Model.Model</h2>
-        <h3>@Model.Brand.Name</h3>
-        <h4>@Model</h4>
-        <p><a class="btn btn-dark @(Model.IsDeleted?"disabled":"") " href="@Url.Action("MakeOrder","Client",new { carId=Model.Id})">Орендовать</a></p>
+        <h2>@Model.Brand.Name @Model.Model</h2>
+        <h4>@Model.Price за сутки</h4>
+        <p><a class="btn btn-default btn-dark @(Model.IsDeleted?"disabled":"") " href="@Url.Action("MakeOrder","Client",new { carId=Model.Id})">Орендовать</a></p>
     </div>
-    <div class="col-md-12">
+    <div id="properties" class="col-md-12">
         <ul class="list-group">
-            <li class="list-group-item active">Характеристики</li>
+            <li class="list-group-item black">Характеристики</li>
             <li class="list-group-item">Качество: @Model.Quality.Text</li>
             <li class="list-group-item">Номер: @Model.Number</li>
             <li class="list-group-item">Количество дверей: @Model.Doors</li>
@@ -32,7 +68,7 @@
             {
                 foreach (var i in Model.Properties)
                 {
-                  <li class="list-group-item">@i.Name: @i.Text</li>
+                    <li class="list-group-item">@i.Name: @i.Text</li>
                 }
             }
         </ul>

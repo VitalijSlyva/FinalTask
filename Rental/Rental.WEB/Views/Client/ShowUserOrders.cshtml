@@ -4,18 +4,26 @@
     ViewBag.Title = "ShowUserOrders";
 }
 
+@Styles.Render("~/Content/styles/client/show-orders")
+
 <div class="row">
-@foreach(var i in Model.OrdersDM)
-{
-    <div class="col-12">
-        <h6>@i.Id</h6>
-        <h4>@i.Car.Brand.Name @i.Car.Model</h4>
-        <p>@i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</p>
-        <p>@(i.Payment!=null&&i.Payment.IsPaid?i.Payment.Price.ToString():"Не оплачен")</p>
-        <p>
-            @Model.Statuses[i.Id]
-        </p>
+    <div class="col-md-4" style="background-color:black; height:1000px;">
+        sd
     </div>
-}
+    <div class="col-md-8">
+        @foreach (var i in Model.OrdersDM)
+        {
+        <div class="col-12">
+            <h3>
+                <b>Сатус: </b>
+                @Model.Statuses[i.Id]
+            </h3>
+            <h4><b> Номер:</b> @i.Id</h4>
+            <h4><b>Автомобиль:</b> @i.Car.Brand.Name @i.Car.Model</h4>
+            <h4><b>Период:</b> @i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</h4>
+            <h4><b>Сумма: </b>@(i.Payment != null && i.Payment.IsPaid ? i.Payment.Price.ToString() : i.Payment.Price.ToString() + "Не оплачен")</h4>
+        </div>
+        <hr />
+        }
+    </div>
 </div>
-    

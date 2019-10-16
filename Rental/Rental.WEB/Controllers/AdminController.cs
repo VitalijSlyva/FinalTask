@@ -31,27 +31,16 @@ namespace Rental.WEB.Controllers
 
         private IRentMapperDM _rentMapperDM;
 
-        private ILogService _logService;
+        private ILogWriter _logWriter;
 
         public AdminController(IAdminService adminService, IIdentityMapperDM identityMapperDM,
-            IRentMapperDM rentMapperDM,IRentService rentService,ILogService log)
+            IRentMapperDM rentMapperDM,IRentService rentService,ILogWriter log)
         {
             _adminService = adminService;
             _identityMapperDM = identityMapperDM;
             _rentMapperDM = rentMapperDM;
             _rentService = rentService;
-            _logService = log;
-        }
-
-        public void CreateLog(string action, string authorId)
-        {
-            ActionLogDTO log = new ActionLogDTO()
-            {
-                Action = action,
-                Time = DateTime.Now,
-                AuthorId = authorId
-            };
-            _logService.CreateActionLog(log);
+            _logWriter = log;
         }
 
         public async Task<ActionResult> GetUsers()
@@ -79,7 +68,7 @@ namespace Rental.WEB.Controllers
             if (!String.IsNullOrEmpty(id))
             {
                 _adminService.BanUser(id);
-                CreateLog("Забанил пользователя "+id, User.Identity.GetUserId());
+                _logWriter.CreateLog("Забанил пользователя "+id, User.Identity.GetUserId());
             }
             return RedirectToAction("GetUsers");
         }
@@ -89,7 +78,7 @@ namespace Rental.WEB.Controllers
             if (!String.IsNullOrEmpty(id))
             {
                 _adminService.UnbanUser(id);
-                CreateLog("Разбанил пользователя " + id, User.Identity.GetUserId());
+                _logWriter.CreateLog("Разбанил пользователя " + id, User.Identity.GetUserId());
             }
             return RedirectToAction("GetUsers");
         }
@@ -143,7 +132,7 @@ namespace Rental.WEB.Controllers
             {
                 CarDTO carDTO = _createCarDTO(model);
                 _adminService.CreateCar(carDTO);
-                CreateLog("Добавил автомобиль " , User.Identity.GetUserId());
+                _logWriter.CreateLog("Добавил автомобиль " , User.Identity.GetUserId());
                 return RedirectToAction("GetCars");
             }
             return View(model);
@@ -165,7 +154,7 @@ namespace Rental.WEB.Controllers
             {
                 CarDTO carDTO = _createCarDTO(model);
             _adminService.UpdateCar(carDTO);
-                CreateLog("Обновил данные про автомобиль " + model.Car.Id, User.Identity.GetUserId());
+                _logWriter.CreateLog("Обновил данные про автомобиль " + model.Car.Id, User.Identity.GetUserId());
                 return RedirectToAction("GetCars");
             }
             return View("Create", model );
@@ -176,7 +165,7 @@ namespace Rental.WEB.Controllers
             if (id == null)
                 return new HttpNotFoundResult();
             _adminService.DeleteCar(id.Value);
-            CreateLog("Убрал автомобиль " + id, User.Identity.GetUserId());
+            _logWriter.CreateLog("Убрал автомобиль " + id, User.Identity.GetUserId());
             return RedirectToAction("GetCars");
         }
 
@@ -200,7 +189,7 @@ namespace Rental.WEB.Controllers
                 string result = _adminService.CreateManager(user);
                 if (result.Length == 0)
                 {
-                    CreateLog("Добавил менеджера", User.Identity.GetUserId());
+                    _logWriter.CreateLog("Добавил менеджера", User.Identity.GetUserId());
                     return RedirectToAction("GetUsers");
                 }
                 else

@@ -31,7 +31,12 @@ namespace Rental.WEB
 
         private static void RegistreRentBundles(BundleCollection bundles)
         {
-            bundles.Add(new StyleBundle("~/Content/styles-rent/index").Include("~/Content/styles-rent/index.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/shared/layout").Include("~/Content/styles/shared/layout.css"));
+       
+            bundles.Add(new StyleBundle("~/Content/styles/rent/index").Include("~/Content/styles/rent/index.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/rent/car").Include("~/Content/styles/rent/car.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/client/show-orders").Include("~/Content/styles/client/show-orders.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/client/show-payments").Include("~/Content/styles/client/show-payments.css"));
         }
     }
 }

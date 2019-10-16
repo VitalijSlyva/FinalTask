@@ -4,18 +4,26 @@
     ViewBag.Title = "ShowPayments";
 }
 
+@Styles.Render("~/Content/styles/client/show-payments")
+
 <div class="row">
-    @foreach(var i in Model.Payments)
-    {
-        <div class="col-12">
-            <p>@i.Id</p>
-            <p>@i.Price</p>
-            <p>@(i.IsPaid?"Оплачен":"Неоплачен")</p>
-            @if (!i.IsPaid)
-            {
-                <a class="btn btn-success" href="@Url.Action("MakePayment","Client",new { id=i.Id})">Оплатить</a>
-            }
-        </div>
-    }
+    <div class="col-md-4" style="background-color:black; height:1000px;">
+        sd
+    </div>
+    <div class="col-md-8">
+        @foreach (var i in Model.Payments)
+        {
+            <div class="col-12">
+                <h4><b>Идентификационный номер; </b> @i.Id</h4>
+                <h4><b>Сумма: </b>@i.Price</h4>
+                <h4><b>Статус: </b>@(i.IsPaid ? "Оплачен" : "Неоплачен")</h4>
+                @if (!i.IsPaid)
+                {
+                    <a class="btn btn-default btn-dark" href="@Url.Action("MakePayment","Client",new { id=i.Id})">Оплатить</a>
+                }
+            </div>
+            <hr />
+        }
+    </div>
 </div>
 

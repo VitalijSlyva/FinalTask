@@ -1,0 +1,130 @@
+﻿body{
+    padding: 0!important;
+    background-color:white;
+}
+/**/
+#colorful-nav .bg-black{
+    background-color:black;
+}
+/**/
+#colorful-nav {
+    padding-bottom: 0px;
+    border: 1px transparent;
+}
+
+    #colorful-nav .navbar {
+        margin-bottom: 0px;
+    }
+
+#colorful-nav {
+    background-color: transparent;
+}
+
+    #colorful-nav .navbar-nav {
+        border-radius: 10px;
+        float: none;
+        height: 160px;
+    }
+
+    #colorful-nav .navbar-collapse {
+        border-top: 0;
+    }
+
+    #colorful-nav ul > li {
+        float: left;
+        text-align: center;
+        width: 14.2%;
+        padding-bottom: 13px;
+        transition: 0.2s padding-top;
+    }
+
+        #colorful-nav ul > li:hover {
+            padding-top: 20px;
+        }
+
+    #colorful-nav .navbar-nav > a {
+        padding-top: 25px;
+        color: white;
+    }
+
+    #colorful-nav ul > a:hover,
+    #colorful-nav ul > a:focus {
+        background-color: transparent;
+        text-decoration: none;
+    }
+
+    #colorful-nav .glyphicon {
+        font-size: 30px;
+        margin-bottom: 10px;
+        padding-top: 20px;
+        color: white;
+    }
+
+    #colorful-nav .icon-bar {
+        background-color: white;
+    }
+
+    #colorful-nav .navbar-toggle {
+        float: left;
+        border-color: black;
+        margin-left: 25px;
+        margin-top: 25px;
+        margin-bottom: 20px;
+    }
+
+    #colorful-nav .navbar-brand {
+        height: 100px;
+    }
+
+    #colorful-nav h5 {
+        color: white;
+    }
+
+    #colorful-nav .nav-item-custom{
+        background-color: black;
+    }
+
+@media screen and (max-width: 767px) {
+
+    #colorful-nav ul > li {
+        text-align: center!important;
+        width: 100%!important;
+    }
+
+        #colorful-nav ul > li:hover {
+            padding-top: 0px;
+        }
+}
+
+
+.btn-dark, dark {
+    color: white;
+    background-color: black;
+}
+
+#body {
+    min-height: 80vh;
+}
+
+footer{
+    padding-top:20px;
+    box-sizing:border-box;
+    background-color:black;
+    margin-top:25px;
+}
+
+footer a{
+    cursor:pointer;
+}
+
+footer img{
+    height:50px;
+    width:50px;
+    margin:3px;
+}
+
+#user-page {
+    box-sizing: padding-box;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}

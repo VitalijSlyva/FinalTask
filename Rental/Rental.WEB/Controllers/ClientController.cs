@@ -30,27 +30,16 @@ namespace Rental.WEB.Controllers
 
         private IRentMapperDM _rentMapperDM;
 
-        private ILogService _logService;
+        private ILogWriter _logWriter;
 
         public ClientController(IClientService clientService, IIdentityMapperDM identityMapperDM,
-            IRentMapperDM rentMapperDM, IRentService rentService, ILogService log)
+            IRentMapperDM rentMapperDM, IRentService rentService, ILogWriter log)
         {
             _clientService = clientService;
             _identityMapperDM = identityMapperDM;
             _rentMapperDM = rentMapperDM;
             _rentService = rentService;
-            _logService = log;
-        }
-
-        public void CreateLog(string action, string authorId)
-        {
-            ActionLogDTO log = new ActionLogDTO()
-            {
-                Action = action,
-                Time = DateTime.Now,
-                AuthorId = authorId
-            };
-            _logService.CreateActionLog(log);
+            _logWriter = log;
         }
 
         public async Task<ActionResult> CreateProfile()
@@ -68,7 +57,7 @@ namespace Rental.WEB.Controllers
                 ProfileDTO profileDTO = _identityMapperDM.ToProfileDTO.Map<ProfileDM, ProfileDTO>(profileDM);
                 profileDTO.User = new User() { Id = User.Identity.GetUserId() };
                 _clientService.CreateProfileAsync(profileDTO);
-                CreateLog("Добавил паспортные данные", User.Identity.GetUserId());
+                _logWriter.CreateLog("Добавил паспортные данные", User.Identity.GetUserId());
                 return RedirectToAction("ShowProfile");
             }
             return View(profileDM);
@@ -90,7 +79,7 @@ namespace Rental.WEB.Controllers
                 ProfileDTO profileDTO = _identityMapperDM.ToProfileDTO.Map<ProfileDM, ProfileDTO>(profileDM);
                 profileDTO.User = new User() { Id = User.Identity.GetUserId() };
                 _clientService.UpdateProfile(profileDTO);
-                CreateLog("Обновил паспортные данные", User.Identity.GetUserId());
+                _logWriter.CreateLog("Обновил паспортные данные", User.Identity.GetUserId());
                 return RedirectToAction("ShowProfile");
             }
             return View(profileDM);
@@ -100,7 +89,7 @@ namespace Rental.WEB.Controllers
         {
             var profile = await _clientService.ShowProfileAsync(User.Identity.GetUserId());
             if (profile == null)
-                return new HttpNotFoundResult();
+                return RedirectToAction("CreateProfile");
             var profileDM = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(profile);
             return View(profileDM);
         }
@@ -140,7 +129,7 @@ namespace Rental.WEB.Controllers
                 orderDTO.Profile = await _clientService.ShowProfileAsync(User.Identity.GetUserId());
                 await _clientService.MakeOrderAsync(orderDTO);
                 var paymentId = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).Last().Payment.Id;
-                CreateLog("Заказал авто", User.Identity.GetUserId());
+                _logWriter.CreateLog("Заказал авто", User.Identity.GetUserId());
                 return RedirectToAction("MakePayment", "Client",new { id=paymentId});
          //   }
            // var carDTO = _rentService.GetCar(orderDM.Car.Id);
@@ -167,7 +156,7 @@ namespace Rental.WEB.Controllers
             if (ModelState.IsValid)
             {
                 _clientService.CreatePayment(paymentDM.Id, paymentDM.TransactionId);
-                CreateLog("Произвел оплату" +paymentDM.Id, User.Identity.GetUserId());
+                _logWriter.CreateLog("Произвел оплату" +paymentDM.Id, User.Identity.GetUserId());
                 return RedirectToAction("Index", "Rent");
             }
             return View(paymentDM);

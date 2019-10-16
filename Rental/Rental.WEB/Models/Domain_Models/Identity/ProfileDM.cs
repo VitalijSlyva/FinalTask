@@ -51,7 +51,7 @@ namespace Rental.WEB.Models.Domain_Models.Identity
 
         [Required(ErrorMessage = "Поле должно быть заполнено")]
         [DataType(DataType.Date, ErrorMessage = "Неверная дата")]
-        [Display(Name = "Дата вылдачи")]
+        [Display(Name = "Дата выдачи")]
         public DateTime DateOfIssue { get; set; }
 
         [Required(ErrorMessage = "Поле должно быть заполнено")]

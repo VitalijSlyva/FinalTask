@@ -24,7 +24,7 @@ namespace Rental.WEB.Controllers
 
         private IIdentityMapperDM _identityMapperDM;
 
-        private ILogService _logService;
+        private ILogWriter _logWriter;
 
         private IAuthenticationManager _authenticationManager
         {
@@ -34,22 +34,11 @@ namespace Rental.WEB.Controllers
             }
         }
 
-        public AccountController(IAccountService accountService, IIdentityMapperDM identityMapperDM,ILogService logService)
+        public AccountController(IAccountService accountService, IIdentityMapperDM identityMapperDM,ILogWriter log)
         {
             _accountService = accountService;
             _identityMapperDM = identityMapperDM;
-            _logService = logService;
-        }
-
-        public void CreateLog(string action,string authorId)
-        {
-            ActionLogDTO log = new ActionLogDTO()
-            {
-                Action=action,
-                Time=DateTime.Now,
-                AuthorId=authorId
-            };
-            _logService.CreateActionLog(log);
+            _logWriter = log;
         }
 
         [NoAuthorize]
