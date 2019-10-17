@@ -1,28 +1,44 @@
 ﻿@model Rental.WEB.Models.View_Models.Admin.GetUsersVM
 
 @{
-    ViewBag.Title = "GetUsers";
+    ViewBag.Title = "Пользователи";
 }
 
+@Styles.Render("~/Content/styles/admin/get-users")
+
 <div class="row">
-    @foreach(var i in Model.UsersDM)
-    {
-    <div class="col-12">
-        <h3>@i.Name</h3>
-        <p>@i.Email</p>
-        <p>@Model.Roles[i.Id]</p>
-        <p> @(Model.Banns[i.Id] ? "Забанен" : "")</p>
-        @if (Model.Banns[i.Id])
+    <div class="col-md-4" style="background-color:black; height:1000px;">
+        sd
+    </div>
+    <div class=" col-md-8">
+        @foreach (var i in Model.UsersDM)
         {
-            <a href="@Url.Action("UnbanUser","Admin",new { id=i.Id})" class="btn btn-success" 
-               onclick="return confirm('Поддтвердите действие разбана пользователя @i.Name.')">Разбанить</a>
-        }
-        else
-        {
-            <a href="@Url.Action("BanUser","Admin",new { id=i.Id})" class="btn btn-success" 
-               onclick="return confirm('Поддтвердите действие бана пользователя @i.Name.')">Забанить</a>
+            <div class="col-md-12">
+                <div class="col-md-10">
+                    @if (!String.IsNullOrEmpty(i.Name))
+                    {
+                        <h5><b>Логин: </b>@i.Name</h5>
+                    }
+                    <h5><b>Почта: </b> @i.Email</h5>
+                    <h4><b>Роль: </b>@Model.Roles[i.Id]</h4>
+                    <h4 class="text-danger"><b> @(Model.Banns[i.Id] ? "Забанен" : "")</b></h4>
+                    <p><b>Номер:</b>@i.Id</p>
+                </div>
+                <div class="col-md-2 text-right">
+                    @if (Model.Banns[i.Id])
+                    {
+                        <a href="@Url.Action("UnbanUser","Admin",new { id=i.Id})" class="btn btn-success btn-dark"
+                           onclick="return confirm('Поддтвердите действие разбана пользователя @i.Name.')">Разбанить</a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("BanUser","Admin",new { id=i.Id})" class="btn btn-danger btn-dark"
+                           onclick="return confirm('Поддтвердите действие бана пользователя @i.Name.')">Забанить</a>
+                    }
+                </div>
+
+            </div>
+            <hr />
         }
     </div>
-    }
 </div>
-

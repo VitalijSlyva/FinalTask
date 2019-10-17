@@ -2,11 +2,11 @@
 
 @{
     int? id = Model?.Car?.Id ?? 0;
-    ViewBag.Title = "CreateCar";
-    //string[] pNames = Model?.Car?.Properties?.Select(x => x.Name)?.ToArray() ?? new string[0];
-    //string[] pValues = Model?.Car?.Properties?.Select(x => x.Text)?.ToArray() ?? new string[0];
+    ViewBag.Title = "Добавить";
 
 }
+
+@Styles.Render("~/Content/styles/admin/create-car")
 
 @using (Html.BeginForm(id==0? "CreateCar" : "UpdateCar", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
 {
@@ -134,57 +134,61 @@
         <div class="form-group">
             @Html.LabelFor(model => model.Car.DateOfCreate, htmlAttributes: new { @class = "control-label col-md-2" })
             <div class="col-md-10">
-                @Html.EditorFor(model => model.Car.DateOfCreate, new { htmlAttributes = new { @class = "form-control" } })
+                @Html.EditorFor(model => model.Car.DateOfCreate, new { htmlAttributes = new { @class = "form-control", @Value = (Model?.Car?.DateOfCreate.ToString("yyyy-MM-dd")) } })
                 @Html.ValidationMessageFor(model => model.Car.DateOfCreate, "", new { @class = "text-danger" })
             </div>
         </div>
 
         <div class="form-group">
             @Html.Label("Параметры", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-12">
+            <div class=" col-md-10">
                 @if (id == 0)
                 {
                     <div id="property-0" class="input-group property">
-                        <input name="PropertyNames" class="form-control" required />
-                        <input name="PropertyValues" class="form-control" required />
+                        <input name="PropertyNames" class="form-control" placeholder="Свойство" required />
+                        <input name="PropertyValues" class="form-control" placeholder="Значение" required />
                         <div class="input-group-append">
-                            <span class="input-group-text btn btn-default" onclick="DeleteProperty(0)"> -</span>
+                            <span class="input-group-text btn btn-default btn-dark" onclick="DeleteProperty(0)">Убрать</span>
                         </div>
                     </div>
+                    <br id="property-br-0" />
+
                 }
                 else
                 {
                     for (var i = 0; i < Model.Car.Properties.Count; i++)
                     {
-                        <div id="property-@(0-i-1)" class="input-group">
-                            <input name="PropertyNames" class="form-control" value="@Model.Car.Properties[i].Name" required />
-                            <input name="PropertyValues" class="form-control" value="@Model.Car.Properties[i].Text" required />
+                        <div id="property-@(0-i-1)" class="input-group property">
+                            <input name="PropertyNames" class="form-control" placeholder="Свойство" value="@Model.Car.Properties[i].Name" required />
+                            <input name="PropertyValues" class="form-control" placeholder="Значение" value="@Model.Car.Properties[i].Text" required />
                             <div class="input-group-append">
-                                <span class="input-group-text btn btn-default" onclick="DeleteProperty(@(0 - i - 1))"> -</span>
+                                <span class="input-group-text btn btn-default btn-dark" onclick="DeleteProperty(@(0 - i - 1))">Убрать</span>
                             </div>
                         </div>
+                        <br id="property-br-@(0-i-1)" />
                     }
                 }
-                <div id="add-property-button" class="input-group">
-                    <span class="btn btn-secondary" onclick="AddProperty()">+</span>
+                <div id="add-property-button">
+                    <span class="btn btn-default btn-dark" onclick="AddProperty()">Добавить свойство</span>
                 </div>
             </div>
-        </div>
 
+        </div>
+        <br />
         <div class="form-group">
             @Html.Label("Фото", htmlAttributes: new { @class = "control-label col-md-2" })
-            <div class="col-12">
+            <div class="col-md-10">
                 @if (id == 0)
                 {
                     <div id="photo-0" class="input-group photo">
-
                         <input name="Images" type="file" accept=".jpg" class="form-control-file" required />
-                        <input name="Alts" class="form-control" required />
+                        <input name="Alts" placeholder="Описание" class="form-control" required />
                         <div class="input-group-append">
-                            <span class="input-group-text btn btn-default" onclick="DeletePhoto(0)">-</span>
+                            <span class="input-group-text btn btn-default btn-dark" onclick="DeletePhoto(0)">Убрать</span>
                         </div>
 
                     </div>
+                    <br id="photo-br-0" />
                 }
                 else
                 {
@@ -192,25 +196,26 @@
                     {
                         <div id="photo-@(0-i-1)" class="input-group photo">
                             <div class="input-group-prepend">
-                                <img style="height:40px" src="@String.Format("data:image/gif;base64,{0}",Convert.ToBase64String(Model.Car.Images[i].Photo))" />
+                                <img style="height:70px" src="@String.Format("data:image/gif;base64,{0}",Convert.ToBase64String(Model.Car.Images[i].Photo))" />
                             </div>
                             <input type="hidden" name="Photos" value="@Model.Car.Images[i].Id" />
                             <input name="Alts" class="form-control" value="@Model.Car.Images[i].Text" required />
                             <div class="input-group-append">
-                                <span class="input-group-text btn btn-default" onclick="DeletePhoto(@(0-i-1))">-</span>
+                                <span class="input-group-text btn btn-default btn-dark" onclick="DeletePhoto(@(0-i-1))">Убрать</span>
                             </div>
                         </div>
+                        <br id="photo-br-@(0-i-1)" />
                     }
                 }
                 <div id="add-photo-button" class="input-group">
-                    <span class="btn btn-secondary" onclick="AddPhoto()">+</span>
+                    <span class="btn btn-default btn-dark" onclick="AddPhoto()">Добавить фото</span>
                 </div>
             </div>
         </div>
-
+        <hr />
         <div class="form-group">
             <div class="col-md-offset-2 col-md-10">
-                <input type="submit" value="Create" class="btn btn-default" />
+                <input type="submit" value="Сохранить" class="btn btn-success btn-dark" />
             </div>
         </div>
     </div>
@@ -224,12 +229,13 @@
     function AddProperty() {
     CountProperty++;
     $("#add-property-button").before('<div id="property-' + CountProperty + '" class="input-group property">' +
-        '<input id="property-name-' + CountProperty + '" name="PropertyNames" class="form-control" required/>' +
-        '<input id="property-value-' + CountProperty + '" name="PropertyValues" class="form-control" required /> '+
+        '<input id="property-name-' + CountProperty + '" placeholder="Свойство" name="PropertyNames" class="form-control" required/>' +
+        '<input id="property-value-' + CountProperty + '" placeholder="Значение" name="PropertyValues" class="form-control" required /> '+
         '<div class="input-group-append">' +
-            '<span class="input-group-text btn btn-default" onclick="DeleteProperty(' + CountProperty + ')"> -</span> ' +
-            '</div> '+
-        '</div> ');
+            '<span class="input-group-text btn btn-default btn-dark" onclick="DeleteProperty(' + CountProperty + ')">Убрать</span> ' +
+        '</div> ' +
+        '</div>'+
+        ' <br id="property-br-' + CountProperty + '" />');
     //var target = $('#property-name-' + CountProperty);
     //target.autocomplete({ source: target.attr("data-autocomplete-source") });
     //target = $('#property-value-' + CountProperty);
@@ -237,7 +243,8 @@
     }
     function DeleteProperty(id) {
     //if ($(".property").length > 1)
-    $("#property-" + id).remove();
+        $("#property-" + id).remove();
+    $("#property-br-" + id).remove();
 
     }
 
@@ -245,15 +252,18 @@
     CountPhoto++;
     $("#add-photo-button").before('<div id="photo-' + CountPhoto + '" class="input-group photo">' +
         '<input name="Images" type="file" accept=".jpg" class="form-control-file" required />'+
-        '<input name="Alts" class="form-control" required />'+
+        '<input name="Alts" placeholder="Описание" class="form-control" required />'+
         '<div class="input-group-append">'+
-            '<span class="input-group-text btn btn-default" onclick="DeletePhoto(' + CountPhoto + ')">-</span>'+
-            '</div>'+
-        '</div>');
+            '<span class="input-group-text btn btn-default btn-dark" onclick="DeletePhoto(' + CountPhoto + ')">Убрать</span>'+
+        '</div>' +
+        '</div>'+
+        '<br id="photo-br-' + CountPhoto + '" />');
     }
     function DeletePhoto(id) {
-    if ($(".photo").length>1)
-    $("#photo-" + id).remove();
+        if ($(".photo").length > 1) {
+            $("#photo-" + id).remove();
+            $("#photo-br-" + id).remove();
+        }
 
     }
 

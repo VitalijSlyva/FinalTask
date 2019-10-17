@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNet.Identity;
+using Rental.BLL.DTO.Identity;
 using Rental.BLL.DTO.Log;
 using Rental.BLL.DTO.Rent;
 using Rental.BLL.Interfaces;
 using Rental.WEB.Attributes;
 using Rental.WEB.Interfaces;
+using Rental.WEB.Models.Domain_Models.Identity;
 using Rental.WEB.Models.Domain_Models.Rent;
 using Rental.WEB.Models.View_Models.Manager;
 using System;
@@ -23,13 +25,16 @@ namespace Rental.WEB.Controllers
 
         private IRentMapperDM _rentMapperDM;
 
+        private IIdentityMapperDM _identityMapperDM;
+
         private ILogWriter _logWriter;
 
-        public ManagerController(IManagerService managerService, IRentMapperDM rentMapper, ILogWriter log)
+        public ManagerController(IManagerService managerService, IRentMapperDM rentMapper, ILogWriter log,IIdentityMapperDM identityMapperDM)
         {
             _managerService = managerService;
             _rentMapperDM = rentMapper;
             _logWriter = log;
+            _identityMapperDM = identityMapperDM;
         }
 
         public ActionResult Confirm(int? id)
@@ -40,6 +45,7 @@ namespace Rental.WEB.Controllers
                 if (orderDTO == null)
                     return new HttpNotFoundResult();
                 ConfirmDM confirm = new ConfirmDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
+                confirm.Order.Profile = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(orderDTO.Profile);
                 return View(confirm);
             }
             return new HttpNotFoundResult();
@@ -62,6 +68,7 @@ namespace Rental.WEB.Controllers
             }
             var orderDTO = _managerService.GetOrder(confirmDM.Order.Id,true);
             confirmDM.Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO);
+            confirmDM.Order.Profile = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(orderDTO.Profile);
             return View(confirmDM);
         }
 
@@ -97,6 +104,8 @@ namespace Rental.WEB.Controllers
         [HttpPost]
         public ActionResult Return(ReturnDM returnDM,bool withCrash=false)
         {
+
+            //ПРОВЕРКУ ДОБАВЬ ЧТО ОТМЕЧЕН ПУНКТ ВОЗВРАТА
 
         //    if (ModelState.IsValid||!withCrash)
      //       {

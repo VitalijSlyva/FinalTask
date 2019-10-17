@@ -54,7 +54,7 @@ namespace Rental.BLL.Services
                     return "Одобрен";
                 var test4 = RentUnitOfWork.Confirms.Find(x => x.OrderId == id && !x.IsConfirmed);
                 if (_answer(test4))
-                    return "Отклонен по причине:" + test4.First().Description;
+                    return "Отклонен (" + test4.First().Description+")";
                 return "На рассмотрении";
             }
             catch (Exception e)

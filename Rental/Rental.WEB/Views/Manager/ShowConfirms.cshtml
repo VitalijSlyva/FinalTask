@@ -1,20 +1,30 @@
 ﻿@model Rental.WEB.Models.View_Models.Manager.ShowConfirmsVM
 
 @{
-    ViewBag.Title = "ShowConfirms";
+    ViewBag.Title = "Подтвердить";
 }
 
-<ul class="list-group">
-    @foreach (var i in Model.Orders)
-    {
-        <li class="list-group-item">
-            <div>
-                <h6>@i.Id</h6>
-                <h3>@i.Car.Brand.Name @i.Car.Model</h3>
-                <p>@i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</p>
-                <p>@(i.Payment.IsPaid?"Оплачен":"Неоплачен")</p>
-                <a class="btn btn-outline-dark" href="@Url.Action("Confirm","Manager",new { id=i.Id})">Подтвердить</a>
+@Styles.Render("~/Content/styles/manager/show-confirms")
+
+<div class="row">
+    <div class="col-md-4" style="background-color:black; height:1000px;">
+        sd
+    </div>
+    <div class=" col-md-8">
+        @foreach (var i in Model.Orders)
+        {
+            <div class="col-md-12">
+                <div class="col-md-10">
+                    <h4><b>Номер: </b>@i.Id</h4>
+                    <h4><b>Автомобиль: </b> @i.Car.Brand.Name @i.Car.Model</h4>
+                    <h4><b>Период: </b> с @i.DateStart.ToShortDateString() по @i.DateEnd.ToShortDateString()</h4>
+                    <h4 class="text-danger"><b>Оплата: </b>@(i.Payment.IsPaid ? "Оплачен" : "Неоплачен")</h4>
+                </div>
+                <div class="col-md-2">
+                    <a class="btn btn-success btn-dark" href="@Url.Action("Confirm","Manager",new { id=i.Id})">Подтвердить</a>
+                </div>
             </div>
-        </li>
-    }
-</ul>
+            <hr />
+        }
+    </div>
+</div>

@@ -10,27 +10,179 @@
     
 <div class="form-horizontal">
     @Html.HiddenFor(x => x.Order.Id)
-    @Html.DisplayFor(x => Model.Order.Profile.Name)
-    @Html.DisplayFor(x => Model.Order.Profile.Surname)
-    @Html.DisplayFor(x => Model.Order.Profile.Patronymic)
-    @Html.DisplayFor(x => Model.Order.Profile.Sex)
-    @Html.DisplayFor(x => Model.Order.Profile.DateOfBirth)
-    @Html.DisplayFor(x => Model.Order.Profile.Authory)
-    @Html.DisplayFor(x => Model.Order.Profile.DateOfExpiry)
-    @Html.DisplayFor(x => Model.Order.Profile.DateOfIssue)
-    @Html.DisplayFor(x => Model.Order.Profile.Nationality)
-    @Html.DisplayFor(x => Model.Order.Profile.Number)
-    @Html.DisplayFor(x => Model.Order.Profile.PlaceOfBirth)
-    @Html.DisplayFor(x => Model.Order.Profile.Record)
-    @Html.DisplayFor(x => Model.Order.Profile.RNTRC)
+    <div class="row">
+        <div class="col-md-5">
+            <h3>Паспортные данные клиента:</h3>
+        </div>
+        <div class="col-md-7">
+            <dl class="dl-horizontal">
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.Surname)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.Surname)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.Name)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.Name)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.Patronymic)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.Patronymic)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.Sex)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.Sex)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.DateOfBirth)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.DateOfBirth)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.DateOfExpiry)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.DateOfExpiry)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.Number)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.Number)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.Nationality)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.Nationality)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.Record)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.Record)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.DateOfIssue)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.DateOfIssue)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.RNTRC)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.RNTRC)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.Authory)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.Authory)
+                </dd>
+
+                <dt>
+                    @Html.DisplayNameFor(model => model.Order.Profile.PlaceOfBirth)
+                </dt>
+
+                <dd>
+                    @Html.DisplayFor(model => model.Order.Profile.PlaceOfBirth)
+                </dd>
+
+            </dl>
+        </div>
+    </div>
     <hr />
-    @Html.DisplayFor(x => Model.Order.Car.Brand)
-    @Html.DisplayFor(x => Model.Order.Car.Model)
-    @Html.DisplayFor(x => x.Order.DateStart)
-    @Html.DisplayFor(x => x.Order.DateEnd)
-    @Html.DisplayFor(x => x.Order.WithDriver)
-    @Html.DisplayFor(x => x.Order.Payment.Price)
-    @Html.DisplayFor(x => x.Order.Payment.IsPaid)
+    <h3>Заказ:</h3>
+    <div>
+        <dl class="dl-horizontal">
+            <dt>
+                Автомобиль
+            </dt>
+
+            <dd>
+                @Model.Order.Car.Brand.Name @Model.Order.Car.Model
+            </dd>
+
+            <dt>
+                Период
+            </dt>
+
+            <dd>
+                с @Model.Order.DateStart.ToShortDateString() по @Model.Order.DateEnd.ToShortDateString()
+            </dd>
+
+            <dt>
+                С водителем
+            </dt>
+
+            <dd>
+                @if (Model.Order.WithDriver)
+                {
+                    @:Да
+                }
+                else
+                {
+                    @:Нет
+                }
+            </dd>
+            <dt>
+                Сумма
+            </dt>
+
+            <dd>
+                @Html.DisplayFor(x => x.Order.Payment.Price)
+            </dd>
+
+            <dt>
+                Оплачен
+            </dt>
+
+            <dd>
+                @if (Model.Order.Payment.IsPaid)
+                {
+                    @:Да
+                }
+                else
+                {
+                    @:Нет
+                }
+            </dd>
+
+        </dl>
+    </div>
+    <hr />
     @Html.ValidationSummary(true, "", new { @class = "text-danger" })
     <div class="form-group">
         @Html.LabelFor(model => model.IsConfirmed, htmlAttributes: new { @class = "control-label col-md-2" })
@@ -52,7 +204,7 @@
 
     <div class="form-group">
         <div class="col-md-offset-2 col-md-10">
-            <input type="submit" value="Подтвердить" class="btn btn-default" />
+            <input type="submit" value="Подтвердить" class="btn btn-default btn-dark" />
         </div>
     </div>
 </div>

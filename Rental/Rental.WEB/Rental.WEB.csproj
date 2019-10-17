@@ -228,8 +228,13 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\styles\admin\create-car.css" />
+    <Content Include="Content\styles\admin\get-cars.css" />
+    <Content Include="Content\styles\admin\get-users.css" />
     <Content Include="Content\styles\client\show-orders.css" />
     <Content Include="Content\styles\client\show-payments.css" />
+    <Content Include="Content\styles\manager\show-confirms.css" />
+    <Content Include="Content\styles\manager\show-returns.css" />
     <Content Include="Content\styles\rent\car.css" />
     <Content Include="Content\styles\rent\index.css" />
     <Content Include="Content\styles\shared\layout.css" />

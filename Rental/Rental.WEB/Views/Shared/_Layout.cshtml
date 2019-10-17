@@ -42,53 +42,110 @@
                         @if (User.IsInRole("client"))
                         {
                             <li class="nav-item-custom" style="width:25%;">
-                                <a href="@Url.Action("Index","Rent")">
+                                <a href="@Url.Action("Index", "Rent")">
                                     <span class="glyphicon glyphicon-home"></span>
                                     <h5>ГЛАВНАЯ</h5>
                                 </a>
                             </li>
                             <li class="nav-item-custom" style="width:25%;">
-                                <a href="@Url.Action("ShowProfile","Client")">
+                                <a href="@Url.Action("ShowProfile", "Client")">
                                     <span class="glyphicon glyphicon-user"></span>
                                     <h5>ПРОФИЛЬ</h5>
                                 </a>
                             </li>
                             <li class="nav-item-custom" style="width:25%;">
-                                <a href="@Url.Action("ShowUserOrders","Client")">
+                                <a href="@Url.Action("ShowUserOrders", "Client")">
                                     <span class="glyphicon glyphicon-list-alt"></span>
                                     <h5>ЗАКАЗЫ</h5>
                                 </a>
                             </li>
                             <li class="nav-item-custom" style="width:25%;">
-                                <a href="@Url.Action("ShowPayments","Client")">
+                                <a href="@Url.Action("ShowPayments", "Client")">
                                     <span class="glyphicon glyphicon-btc"></span>
                                     <h5>ТРАНЗАКЦИИ</h5>
                                 </a>
                             </li>
-                            @*<li class="nav-item-custom"><a href="#"><span class="glyphicon glyphicon-info-sign"></span><h5>ABOUT</h5></a></li>
-                            <li class="nav-item-custom"><a href="#"><span class="glyphicon glyphicon-earphone"></span><h5>CONTACT</h5></a></li>
-                            <li class="nav-item-custom"><a href="#"><span class="glyphicon glyphicon-search"></span><h5>SEARCH</h5></a></li>*@
                         }
                         else
                         {
-                            <li class="nav-item-custom" style="width:33%;">
-                                <a href="@Url.Action("Index","Rent")">
-                                    <span class="glyphicon glyphicon-home"></span>
-                                    <h5>ГЛАВНАЯ</h5>
-                                </a>
-                            </li>
-                            <li class="nav-item-custom" style="width:33%;">
-                                <a href="@Url.Action("Login","Account")">
-                                    <span class="glyphicon glyphicon-log-in"></span>
-                                    <h5>ВОЙТИ</h5>
-                                </a>
-                            </li>
-                            <li class="nav-item-custom" style="width:33%;">
-                                <a href="@Url.Action("Register","Account")">
-                                    <span class="glyphicon glyphicon-registration-mark"></span>
-                                    <h5>РЕГИСТРАЦИЯ</h5>
-                                </a>
-                            </li>
+                            if (User.IsInRole("admin"))
+                            {
+                                <li class="nav-item-custom" style="width:20%;">
+                                    <a href="@Url.Action("Index", "Rent")">
+                                        <span class="glyphicon glyphicon-home"></span>
+                                        <h5>ГЛАВНАЯ</h5>
+                                    </a>
+                                </li>
+                                <li class="nav-item-custom" style="width:20%;">
+                                    <a href="@Url.Action("GetUsers", "Admin")">
+                                        <span class="glyphicon glyphicon-user"></span>
+                                        <h5>ПОЛЬЗОВАТЕЛИ</h5>
+                                    </a>
+                                </li>
+                                <li class="nav-item-custom" style="width:20%;">
+                                    <a href="@Url.Action("GetCars", "Admin")">
+                                        <span class="glyphicon glyphicon-list"></span>
+                                        <h5>АВТОМОБИЛИ</h5>
+                                    </a>
+                                </li>
+                                <li class="nav-item-custom" style="width:20%;">
+                                    <a href="@Url.Action("CreateManager", "Admin")">
+                                        <span class="glyphicon glyphicon-plus-sign"></span>
+                                        <h5>НОВЫЙ МЕНЕДЖЕР</h5>
+                                    </a>
+                                </li>
+                                <li class="nav-item-custom" style="width:20%;">
+                                    <a href="@Url.Action("CreateCar", "Admin")">
+                                        <span class="glyphicon glyphicon-plus"></span>
+                                        <h5>НОВЫЙ АВТОМОБИЛЬ</h5>
+                                    </a>
+                                </li>
+                            }
+                            else
+                            {
+                                if (User.IsInRole("manager"))
+                                {
+                                    <li class="nav-item-custom" style="width:33%;">
+                                        <a href="@Url.Action("Index", "Rent")">
+                                            <span class="glyphicon glyphicon-home"></span>
+                                            <h5>ГЛАВНАЯ</h5>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item-custom" style="width:33%;">
+                                        <a href="@Url.Action("ShowConfirms", "Manager")">
+                                            <span class="glyphicon glyphicon-ok"></span>
+                                            <h5>Подтвердить</h5>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item-custom" style="width:33%;">
+                                        <a href="@Url.Action("ShowReturns", "Manager")">
+                                            <span class="glyphicon glyphicon-arrow-left"></span>
+                                            <h5>Возврат</h5>
+                                        </a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="nav-item-custom" style="width:33%;">
+                                        <a href="@Url.Action("Index", "Rent")">
+                                            <span class="glyphicon glyphicon-home"></span>
+                                            <h5>ГЛАВНАЯ</h5>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item-custom" style="width:33%;">
+                                        <a href="@Url.Action("Login", "Account")">
+                                            <span class="glyphicon glyphicon-log-in"></span>
+                                            <h5>ВОЙТИ</h5>
+                                        </a>
+                                    </li>
+                                    <li class="nav-item-custom" style="width:33%;">
+                                        <a href="@Url.Action("Register", "Account")">
+                                            <span class="glyphicon glyphicon-registration-mark"></span>
+                                            <h5>РЕГИСТРАЦИЯ</h5>
+                                        </a>
+                                    </li>
+                                }
+                            }
                         }
                     </ul>
                 </div>

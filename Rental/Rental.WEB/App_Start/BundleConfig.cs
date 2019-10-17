@@ -37,6 +37,11 @@ namespace Rental.WEB
             bundles.Add(new StyleBundle("~/Content/styles/rent/car").Include("~/Content/styles/rent/car.css"));
             bundles.Add(new StyleBundle("~/Content/styles/client/show-orders").Include("~/Content/styles/client/show-orders.css"));
             bundles.Add(new StyleBundle("~/Content/styles/client/show-payments").Include("~/Content/styles/client/show-payments.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/admin/get-users").Include("~/Content/styles/admin/get-users.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/admin/get-cars").Include("~/Content/styles/admin/get-cars.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/admin/create-car").Include("~/Content/styles/admin/create-car.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/manager/show-returns").Include("~/Content/styles/manager/show-returns.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/manager/show-confirms").Include("~/Content/styles/manager/show-confirms.css"));
         }
     }
 }

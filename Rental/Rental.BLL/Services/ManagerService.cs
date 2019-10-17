@@ -1,6 +1,9 @@
-﻿using Rental.BLL.Abstracts;
+﻿using Microsoft.AspNet.Identity;
+using Rental.BLL.Abstracts;
+using Rental.BLL.DTO.Identity;
 using Rental.BLL.DTO.Rent;
 using Rental.BLL.Interfaces;
+using Rental.DAL.Entities.Identity;
 using Rental.DAL.Entities.Rent;
 using Rental.DAL.Interfaces;
 using System;
@@ -59,7 +62,10 @@ namespace Rental.BLL.Services
                     return null;
                 if (!forConfirm && ((order.Return != null &&order.Return.Count>0 ) || order.Confirm == null||order.Confirm.Count==0 || !order.Confirm.First().IsConfirmed))
                     return null;
-                return RentMapperDTO.ToOrderDTO.Map<Order, OrderDTO>(order);
+                var orderDTO = RentMapperDTO.ToOrderDTO.Map<Order, OrderDTO>(order);
+                orderDTO.Profile =IdentityMapperDTO.ToProfileDTO.Map<Profile,ProfileDTO>
+                                        (IdentityUnitOfWork.UserManager.FindById(order.ClientId).Profile);
+                return orderDTO;
             }
             catch (Exception e)
             {

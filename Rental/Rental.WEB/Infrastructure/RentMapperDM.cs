@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Rental.BLL.DTO.Rent;
 using Rental.WEB.Interfaces;
+using Rental.WEB.Models.Domain_Models.Identity;
 using Rental.WEB.Models.Domain_Models.Rent;
 using System;
 using System.Collections.Generic;
@@ -154,7 +155,8 @@ namespace Rental.WEB.Infrastructure
             {
                 return new MapperConfiguration(cfg => cfg.CreateMap<OrderDTO, OrderDM>()
                             .ForMember(x => x.Payment, c => c.MapFrom(k => ToPaymentDM.Map<PaymentDTO, PaymentDM>(k.Payment)))
-                            .ForMember(x => x.Car, c => c.MapFrom(k => ToCarDM.Map<CarDTO, CarDM>(k.Car))))
+                            .ForMember(x => x.Car, c => c.MapFrom(k => ToCarDM.Map<CarDTO, CarDM>(k.Car)))
+                            .ForMember(x=>x.Profile,c=>c.MapFrom(k=>new ProfileDM())))
                             .CreateMapper();
             }
         }

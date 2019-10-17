@@ -21,7 +21,12 @@
             <h4><b> Номер:</b> @i.Id</h4>
             <h4><b>Автомобиль:</b> @i.Car.Brand.Name @i.Car.Model</h4>
             <h4><b>Период:</b> @i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</h4>
-            <h4><b>Сумма: </b>@(i.Payment != null && i.Payment.IsPaid ? i.Payment.Price.ToString() : i.Payment.Price.ToString() + "Не оплачен")</h4>
+            <h4><b>Сумма: </b>@(i.Payment.Price.ToString())</h4>
+            @if (i.Payment != null && !i.Payment.IsPaid)
+            {
+            <h3 class="text-danger">Не оплачен</h3>
+            }
+
         </div>
         <hr />
         }
