@@ -27,12 +27,31 @@ namespace Rental.WEB
                       "~/Content/site.css"));
 
             RegistreRentBundles(bundles);
+
+
+            bundles.Add(new ScriptBundle("~/bundles/jqueryui").Include(
+                "~/Scripts/jquery-ui-{version}.js"));
+
+            bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
+                  "~/Content/themes/base/core.css",
+                  "~/Content/themes/base/resizable.css",
+                  "~/Content/themes/base/selectable.css",
+                  "~/Content/themes/base/accordion.css",
+                  "~/Content/themes/base/autocomplete.css",
+                  "~/Content/themes/base/button.css",
+                  "~/Content/themes/base/dialog.css",
+                  "~/Content/themes/base/slider.css",
+                  "~/Content/themes/base/tabs.css",
+                  "~/Content/themes/base/datepicker.css",
+                  "~/Content/themes/base/progressbar.css",
+                  "~/Content/themes/base/theme.css"));
         }
 
         private static void RegistreRentBundles(BundleCollection bundles)
         {
             bundles.Add(new StyleBundle("~/Content/styles/shared/layout").Include("~/Content/styles/shared/layout.css"));
-       
+            bundles.Add(new StyleBundle("~/Content/styles/shared/filter").Include("~/Content/styles/shared/filter.css"));
+
             bundles.Add(new StyleBundle("~/Content/styles/rent/index").Include("~/Content/styles/rent/index.css"));
             bundles.Add(new StyleBundle("~/Content/styles/rent/car").Include("~/Content/styles/rent/car.css"));
             bundles.Add(new StyleBundle("~/Content/styles/client/show-orders").Include("~/Content/styles/client/show-orders.css"));

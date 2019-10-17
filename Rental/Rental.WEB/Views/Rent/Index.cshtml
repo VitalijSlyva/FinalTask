@@ -2,13 +2,68 @@
 
 @{
     ViewBag.Title = "Home Page";
+    int f = 0;
+    int n = 0;
 }
 
 @Styles.Render("~/Content/styles/rent/index")
 
+@Styles.Render("~/Content/styles/shared/filter")
+
 <div class="row">
-    <div class="col-md-4" style="background-color:black; height:1000px;">
-        sd
+    <div id="filter" class="col-md-4">
+        @using (Html.BeginForm())
+        {
+            <div id="button-container" class="container-fluid text-center">
+                <input id="start-filters" type="submit" value="Отфильтровать" class="btn btn-warning">
+                <input type="reset" value="Сбросить" class="btn btn-default" onclick="document.location='@Url.Action("Index", "Rent")'" />
+            </div>
+            if (Model.PriceMax > 0 && Model.PriceMax != Model.PriceMin)
+            {
+                <div id="filter-item" class="col-md-12">
+                    <input type="hidden" name="PriceMax" value="@Model.PriceMax" />
+                    <input type="hidden" name="PriceMin" value="@Model.PriceMin" />
+                    <input type="hidden" name="CurrentPriceMin" id="current-price-min" value="@Model.CurrentPriceMin" />
+                    <input type="hidden" name="CurrentPriceMax" id="current-price-max" value="@Model.CurrentPriceMax" />
+                    <div class="row text-warning" id="price-box">
+                        <span class="col-md-6 col-lg-6 col-sm-6 col-xs-6" id="price-min"></span>
+                        <span class="col-md-6 col-lg-6 col-sm-6 col-xs-6 text-right" id="price-max"> </span>
+                    </div>
+                    <br />
+                    <div id="price-range"></div>
+
+                </div>
+            }
+
+            <br />
+            <br />
+            <br />
+            <br />
+
+            foreach (var i in Model.Filters.GroupBy(x => x.Name))
+            {
+                <div class="">
+                    <div class="btn btn-default dropdown-toggle" data-toggle="collapse" data-target="#filter-collapse-@f">
+                        @( i.Key) <span class="glyphicon glyphicon-menu-down"></span>
+                    </div>
+                    <div class="collapse" id="filter-collapse-@(f++)">
+                        <ul class="filter-items">
+                            @foreach (var j in i)
+                            {
+                                <li>
+                                    <input type="hidden" name="Filters[@n].Name" value="@j.Name" />
+                                    <input type="hidden" name="Filters[@n].Text" value="@j.Text" />
+                                    <input id="it@(n)" type="checkbox" name='Filters[@(n)].Checked' value="true"
+                                           @(j.Checked ? "checked=\"checked\"" : "") />
+                                    <label for="it@(n++)" class="text-warning">@j.Text</label>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <br />
+            }
+        }
     </div>
     <div class="col-md-8">
 
@@ -18,7 +73,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <!-- Carousel container -->
-                        <div id="my-pics-@i.Id" class="carousel slide " data-ride="carousel" data-interval="false" >
+                        <div id="my-pics-@i.Id" class="carousel slide " data-ride="carousel" data-interval="false">
                             <!-- Indicators -->
                             @if (i.Images.Count > 1)
                             {
@@ -29,31 +84,31 @@
                                     }
                                 </ol>
                             }
-                                <!-- Content -->
-                                <div class="carousel-inner" role="listbox">
-                                    <!-- Slide 1 -->
-                                    @for (int j = 0; j < i.Images.Count; j++)
-                                    {
-                                        <div class="item @(j==0?"active":"")">
-                                            <img src="@String.Format("data:image/gif;base64,{0}", Convert.ToBase64String(i.Images[j].Photo))" alt="@i.Images[j].Text">
-                                        </div>
-                                    }
-                                </div>
-                                @if (i.Images.Count > 1)
+                            <!-- Content -->
+                            <div class="carousel-inner" role="listbox">
+                                <!-- Slide 1 -->
+                                @for (int j = 0; j < i.Images.Count; j++)
                                 {
-                                    <!-- Previous/Next controls -->
-                                    <a class="left carousel-control" href="#my-pics-@i.Id" role="button" data-slide="prev">
-                                        <span class="icon-prev" aria-hidden="true"></span>
-                                        <span class="sr-only">Previous</span>
-                                    </a>
-                                    <a class="right carousel-control" href="#my-pics-@i.Id" role="button" data-slide="next">
-                                        <span class="icon-next" aria-hidden="true"></span>
-                                        <span class="sr-only">Next</span>
-                                    </a>
-
-
+                                    <div class="item @(j==0?"active":"")">
+                                        <img src="@String.Format("data:image/gif;base64,{0}", Convert.ToBase64String(i.Images[j].Photo))" alt="@i.Images[j].Text">
+                                    </div>
                                 }
                             </div>
+                            @if (i.Images.Count > 1)
+                            {
+                                <!-- Previous/Next controls -->
+                                <a class="left carousel-control" href="#my-pics-@i.Id" role="button" data-slide="prev">
+                                    <span class="icon-prev" aria-hidden="true"></span>
+                                    <span class="sr-only">Previous</span>
+                                </a>
+                                <a class="right carousel-control" href="#my-pics-@i.Id" role="button" data-slide="next">
+                                    <span class="icon-next" aria-hidden="true"></span>
+                                    <span class="sr-only">Next</span>
+                                </a>
+
+
+                            }
+                        </div>
                     </div>
                     <div class="col-md-6">
                         <h2>@i.Brand.Name @i.Model</h2>
@@ -84,9 +139,30 @@
                     </div>
                     <div class="col-md-12">
 
-                   </div>
+                    </div>
                 </div>
             </div>
         }
     </div>
 </div>
+
+@section scripts{
+    <script>
+    $(function () {
+            $("#price-range").slider({
+                range: true,
+                min: parseInt(@((int)Model.PriceMin)),
+                max:parseInt(@((int)Model.PriceMax)),
+                values: [parseInt(@Model.CurrentPriceMin), parseInt(@Model.CurrentPriceMax)],
+                slide: function (event, ui) {
+                document.getElementById("price-min").innerText =ui.values[0];
+               document.getElementById("price-max").innerText =ui.values[1];
+                    $("#current-price-min").val(ui.values[0]);
+                    $("#current-price-max").val( ui.values[1]);
+                }
+            });
+           document.getElementById("price-min").innerText =@Model.CurrentPriceMin;
+        document.getElementById("price-max").innerText =@Model.CurrentPriceMax;
+        });
+    </script>
+}

@@ -2,13 +2,46 @@
 
 @{
     ViewBag.Title = "Подтвердить";
+    int f = 0;
+    int n = 0;
 }
 
 @Styles.Render("~/Content/styles/manager/show-confirms")
+@Styles.Render("~/Content/styles/shared/filter")
 
 <div class="row">
-    <div class="col-md-4" style="background-color:black; height:1000px;">
-        sd
+    <div id="filter" class="col-md-4" >
+        @using (Html.BeginForm())
+        {
+            <div id="button-container" class="container-fluid text-center">
+                <input id="start-filters" type="submit" value="Отфильтровать" class="btn btn-warning">
+                <input type="reset" value="Сбросить" class="btn btn-default" onclick="document.location='@Url.Action("ShowConfirms", "Manager")'" />
+            </div>
+            <br />
+            foreach (var i in Model.Filters.GroupBy(x => x.Name))
+            {
+                <div class="">
+                    <div class="btn btn-default dropdown-toggle" data-toggle="collapse" data-target="#filter-collapse-@f">
+                        @( i.Key) <span class="glyphicon glyphicon-menu-down"></span>
+                    </div>
+                    <div class="collapse" id="filter-collapse-@(f++)">
+                        <ul class="filter-items">
+                            @foreach (var j in i)
+                            {
+                                <li>
+                                    <input type="hidden" name="Filters[@n].Name" value="@j.Name" />
+                                    <input type="hidden" name="Filters[@n].Text" value="@j.Text" />
+                                    <input id="it@(n)" type="checkbox" name='Filters[@(n)].Checked' value="true"
+                                           @(j.Checked ? "checked=\"checked\"" : "") />
+                                    <label for="it@(n++)" class="text-warning">@j.Text</label>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <br />
+            }
+        }
     </div>
     <div class=" col-md-8">
         @foreach (var i in Model.Orders)

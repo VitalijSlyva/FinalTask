@@ -1,0 +1,16 @@
+﻿#filter {
+    box-sizing: border-box;
+    padding: 15px 10px 15px 10px;
+    background-color: black;
+}
+
+#filter li label,#price-min,#price-max{
+    color:white!important;
+}
+
+    #filter li {
+        list-style-type: none;
+    }
+    #filter .filter-items{
+    margin-top:10px;
+    }

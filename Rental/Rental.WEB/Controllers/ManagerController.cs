@@ -72,19 +72,77 @@ namespace Rental.WEB.Controllers
             return View(confirmDM);
         }
 
-        public ActionResult ShowConfirms()
+        public ActionResult ShowConfirms(ShowConfirmsVM model)
         {
             var orders = _managerService.GetForConfirms();
             var ordersDM = _rentMapperDM.ToOrderDM.Map<IEnumerable<OrderDTO>, List<OrderDM>>(orders);
-            ShowConfirmsVM confirmsVM = new ShowConfirmsVM() { Orders=ordersDM };
+            var filters = new List<Models.View_Models.Shared.Filter>();
+            if(ordersDM!=null && ordersDM.Count > 0)
+            {
+                if (model.Filters == null || model.Filters.Count == 0)
+                {
+                    void CreateFilters(string name, Func<OrderDM, string> value)
+                    {
+                        filters.AddRange(ordersDM.Select(x => value(x)).Distinct()
+                            .Select(x => new Models.View_Models.Shared.Filter() { Name = name, Text = x, Checked = false }));
+                    }
+                    CreateFilters("Автомобиль", x => x.Car.Brand.Name+" "+x.Car.Model);
+                    CreateFilters("Статус", x => x.Payment.IsPaid ? "Оплачен" : "Неоплачен");}
+                else
+                {
+                    filters = model.Filters;
+                    void FilterTest(string name, Func<OrderDM, string> value)
+                    {
+                        if (ordersDM.Count > 0 && model.Filters.Any(f => f.Name == name && f.Checked))
+                        {
+                            ordersDM = ordersDM.Where(p => model.Filters.Any(f => f.Name == name && f.Text == value(p) && f.Checked)).ToList();
+                        }
+                    }
+
+                    FilterTest("Автомобиль", x => x.Car.Brand.Name + x.Car.Model);
+                    FilterTest("Статус", x => x.Payment.IsPaid ? "Оплачен" : "Неоплачен");
+                }
+            }
+            ShowConfirmsVM confirmsVM = new ShowConfirmsVM() {
+                Orders = ordersDM,
+                Filters = filters
+            };
             return View(confirmsVM);
         }
 
-        public ActionResult ShowReturns()
+        public ActionResult ShowReturns(ShowReturnsVM model)
         {
             var orders = _managerService.GetForReturns();
             var ordersDM = _rentMapperDM.ToOrderDM.Map<IEnumerable<OrderDTO>, List<OrderDM>>(orders);
-            ShowReturnsVM returnsVM = new ShowReturnsVM() { Orders = ordersDM };
+
+            var filters = new List<Models.View_Models.Shared.Filter>();
+            if (ordersDM != null && ordersDM.Count > 0)
+            {
+                if (model.Filters == null || model.Filters.Count == 0)
+                {
+                    void CreateFilters(string name, Func<OrderDM, string> value)
+                    {
+                        filters.AddRange(ordersDM.Select(x => value(x)).Distinct()
+                            .Select(x => new Models.View_Models.Shared.Filter() { Name = name, Text = x, Checked = false }));
+                    }
+                    CreateFilters("Автомобиль", x => x.Car.Brand.Name + x.Car.Model);
+                }
+                else
+                {
+                    filters = model.Filters;
+                    void FilterTest(string name, Func<OrderDM, string> value)
+                    {
+                        if (ordersDM.Count > 0 && model.Filters.Any(f => f.Name == name && f.Checked))
+                        {
+                            ordersDM = ordersDM.Where(p => model.Filters.Any(f => f.Name == name && f.Text == value(p) && f.Checked)).ToList();
+                        }
+                    }
+
+                    FilterTest("Автомобиль", x => x.Car.Brand.Name + " " + x.Car.Model);
+                }
+            }
+
+            ShowReturnsVM returnsVM = new ShowReturnsVM() { Orders = ordersDM, Filters=filters };
             return View(returnsVM);
         }
 

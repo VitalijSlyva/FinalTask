@@ -221,6 +221,7 @@
     <Compile Include="Models\View_Models\Manager\ShowConfirmsVM.cs" />
     <Compile Include="Models\View_Models\Manager\ShowReturnsVM.cs" />
     <Compile Include="Models\View_Models\Rent\IndexVM.cs" />
+    <Compile Include="Models\View_Models\Shared\Filter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -237,6 +238,7 @@
     <Content Include="Content\styles\manager\show-returns.css" />
     <Content Include="Content\styles\rent\car.css" />
     <Content Include="Content\styles\rent\index.css" />
+    <Content Include="Content\styles\shared\filter.css" />
     <Content Include="Content\styles\shared\layout.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
