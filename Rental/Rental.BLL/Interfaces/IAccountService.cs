@@ -15,5 +15,7 @@ namespace Rental.BLL.Interfaces
         Task<ClaimsIdentity> AuthenticateAsync(User client);
 
         Task<User> GetUserAsync(string id);
+
+        bool IsBanned(string id);
     }
 }

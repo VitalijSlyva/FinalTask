@@ -86,5 +86,10 @@ namespace Rental.BLL.Services
                 return null;
             }
         }
+
+        public bool IsBanned(string id)
+        {
+            return IdentityUnitOfWork.UserManager.IsInRole(id, "banned");
+        }
     }
 }

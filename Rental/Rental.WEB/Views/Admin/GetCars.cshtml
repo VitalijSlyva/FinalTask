@@ -1,16 +1,92 @@
-﻿@model Rental.WEB.Models.View_Models.Admin.GetCarsVM
+﻿@using Rental.WEB.Helpers
+@model Rental.WEB.Models.View_Models.Admin.GetCarsVM
 
 @{
     ViewBag.Title = "Машины";
+    int f = 0;
+    int n = 0;
 }
 
 @Styles.Render("~/Content/styles/admin/get-cars")
 
+@Styles.Render("~/Content/styles/shared/filter")
+
 <div class="row">
-    <div class="col-md-4" style="background-color:black; height:1000px;">
-        sd
+    <div id="filter" class="col-md-4">
+        @using (Html.BeginForm("GetCars", "Admin", FormMethod.Post, new { id = "filters" }))
+        {           
+            <input type="hidden" value="@Model.SelectedMode" name="selectedMode" />
+
+            <div id="button-container" class="container-fluid text-center">
+                <button id="start-filters" type="submit" value="1" name="sortMode" class="btn btn-warning">Отфильтровать</button>
+                <input type="reset" value="Сбросить" class="btn btn-default" onclick="document.location='@Url.Action("GetCars", "Admin")'" />
+            </div>
+            if (Model.PriceMax > 0 && Model.PriceMax != Model.PriceMin)
+            {
+                <div id="filter-item" class="col-md-12">
+                    <input type="hidden" name="PriceMax" value="@Model.PriceMax" />
+                    <input type="hidden" name="PriceMin" value="@Model.PriceMin" />
+                    <input type="hidden" name="CurrentPriceMin" id="current-price-min" value="@Model.CurrentPriceMin" />
+                    <input type="hidden" name="CurrentPriceMax" id="current-price-max" value="@Model.CurrentPriceMax" />
+                    <div class="row text-warning" id="price-box">
+                        <span class="col-md-6 col-lg-6 col-sm-6 col-xs-6" id="price-min"></span>
+                        <span class="col-md-6 col-lg-6 col-sm-6 col-xs-6 text-right" id="price-max"> </span>
+                    </div>
+                    <br />
+                    <div id="price-range"></div>
+
+                </div>
+            }
+
+            <br />
+            <br />
+            <br />
+            <br />
+
+            foreach (var i in Model.Filters.GroupBy(x => x.Name))
+            {
+                <div class="">
+                    <div class="btn btn-default dropdown-toggle" data-toggle="collapse" data-target="#filter-collapse-@f">
+                        @( i.Key) <span class="glyphicon glyphicon-menu-down"></span>
+                    </div>
+                    <div class="collapse" id="filter-collapse-@(f++)">
+                        <ul class="filter-items">
+                            @foreach (var j in i)
+                            {
+                                <li>
+                                    <input type="hidden" name="Filters[@n].Name" value="@j.Name" />
+                                    <input type="hidden" name="Filters[@n].Text" value="@j.Text" />
+                                    <input id="it@(n)" type="checkbox" name='Filters[@(n)].Checked' value="true"
+                                           @(j.Checked ? "checked=\"checked\"" : "") />
+                                    <label for="it@(n++)" class="text-warning">@j.Text</label>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <br />
+            }
+        }
     </div>
     <div class=" col-md-8">
+        <div>
+            <div class="dropdown">
+                <button class="btn btn-secondary btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @Model.SortModes[Model.SelectedMode - 1]
+                    <span class="glyphicon  @((Model.SelectedMode - 1)%2==0?"glyphicon-arrow-up":"glyphicon-arrow-down")"></span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    @for (int i = 0; i < Model.SortModes.Count; i++)
+                    {<div class="dropdown-item">
+                            <button class="btn " type="submit" name="sortMode" form="filters" value="@(i+1)">
+                                @Model.SortModes[i]
+                                <span class="glyphicon  @(i%2==0?"glyphicon-arrow-up":"glyphicon-arrow-down")"></span>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
         @foreach (var i in Model.CarsDM)
         {
             <div class="col-md-12">
@@ -24,7 +100,7 @@
                     {
                         <div>
                             <a class="btn btn-danger btn-dark" href="@Url.Action("Delete","Admin",new { id=i.Id})"
-                                onclick="return confirm('Поддтвердите действие удаления автомобиля с номером @i.Number.')">Удалить</a>
+                               onclick="return confirm('Поддтвердите действие удаления автомобиля с номером @i.Number.')">Удалить</a>
                         </div>
                         <br />
                         <div>
@@ -39,5 +115,35 @@
             </div>
             <hr />
         }
+        @if (Model.PageInfo.TotalPages > 1)
+        {
+            <br />
+            <div class="text-right">
+                <div class="btn-group">
+                    @Html.PageLinks(Model.PageInfo, "filters")
+                </div>
+            </div>
+        }
     </div>
 </div>
+
+@section scripts{
+    <script>
+    $(function () {
+            $("#price-range").slider({
+                range: true,
+                min: parseInt(@((int)Model.PriceMin)),
+                max:parseInt(@((int)Model.PriceMax)),
+                values: [parseInt(@Model.CurrentPriceMin), parseInt(@Model.CurrentPriceMax)],
+                slide: function (event, ui) {
+                document.getElementById("price-min").innerText =ui.values[0];
+               document.getElementById("price-max").innerText =ui.values[1];
+                    $("#current-price-min").val(ui.values[0]);
+                    $("#current-price-max").val( ui.values[1]);
+                }
+            });
+           document.getElementById("price-min").innerText =@Model.CurrentPriceMin;
+        document.getElementById("price-max").innerText =@Model.CurrentPriceMax;
+        });
+    </script>
+}

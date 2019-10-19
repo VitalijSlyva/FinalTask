@@ -8,6 +8,7 @@ using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Identity;
 using Rental.WEB.Models.Domain_Models.Rent;
 using Rental.WEB.Models.View_Models.Manager;
+using Rental.WEB.Models.View_Models.Shared;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -72,8 +73,12 @@ namespace Rental.WEB.Controllers
             return View(confirmDM);
         }
 
-        public ActionResult ShowConfirms(ShowConfirmsVM model)
+        public ActionResult ShowConfirms(ShowConfirmsVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
         {
+            if (sortMode == 0)
+            {
+                sortMode = selectedMode;
+            }
             var orders = _managerService.GetForConfirms();
             var ordersDM = _rentMapperDM.ToOrderDM.Map<IEnumerable<OrderDTO>, List<OrderDM>>(orders);
             var filters = new List<Models.View_Models.Shared.Filter>();
@@ -99,19 +104,61 @@ namespace Rental.WEB.Controllers
                         }
                     }
 
-                    FilterTest("Автомобиль", x => x.Car.Brand.Name + x.Car.Model);
+                    FilterTest("Автомобиль", x => x.Car.Brand.Name + " " + x.Car.Model);
                     FilterTest("Статус", x => x.Payment.IsPaid ? "Оплачен" : "Неоплачен");
                 }
             }
+
+            var sortModes = new List<string>();
+            sortModes.Add("По номеру");
+            sortModes.Add("По номеру");
+            sortModes.Add("По статусу");
+            sortModes.Add("По статусу");
+            sortModes.Add("По атомобилю");
+            sortModes.Add("По автомобилю");
+            switch (sortMode)
+            {
+                case 1:
+                    ordersDM = ordersDM.OrderBy(x => x.Id).ToList();
+                    break;
+                case 2:
+                    ordersDM = ordersDM.OrderByDescending(x => x.Id).ToList();
+                    break;
+                case 3:
+                    ordersDM = ordersDM.OrderBy(x => x.Payment.IsPaid).ToList();
+                    break;
+                case 4:
+                    ordersDM = ordersDM.OrderByDescending(x => x.Payment.IsPaid).ToList();
+                    break;
+                case 5:
+                    ordersDM = ordersDM.OrderBy(x => x.Car.Brand.Name+" "+x.Car.Model).ToList();
+                    break;
+                case 6:
+                    ordersDM = ordersDM.OrderByDescending(x => x.Car.Brand.Name + " " + x.Car.Model).ToList();
+                    break;
+            }
+
+            int pageSize = 2;
+            int count = ordersDM.Count;
+            ordersDM = ordersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
+
             ShowConfirmsVM confirmsVM = new ShowConfirmsVM() {
                 Orders = ordersDM,
-                Filters = filters
+                Filters = filters,
+                PageInfo=pageInfo,
+                SortModes = sortModes,
+                SelectedMode = sortMode
             };
             return View(confirmsVM);
         }
 
-        public ActionResult ShowReturns(ShowReturnsVM model)
+        public ActionResult ShowReturns(ShowReturnsVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
         {
+            if (sortMode == 0)
+            {
+                sortMode = selectedMode;
+            }
             var orders = _managerService.GetForReturns();
             var ordersDM = _rentMapperDM.ToOrderDM.Map<IEnumerable<OrderDTO>, List<OrderDM>>(orders);
 
@@ -125,7 +172,7 @@ namespace Rental.WEB.Controllers
                         filters.AddRange(ordersDM.Select(x => value(x)).Distinct()
                             .Select(x => new Models.View_Models.Shared.Filter() { Name = name, Text = x, Checked = false }));
                     }
-                    CreateFilters("Автомобиль", x => x.Car.Brand.Name + x.Car.Model);
+                    CreateFilters("Автомобиль", x => x.Car.Brand.Name + " " + x.Car.Model);
                 }
                 else
                 {
@@ -142,7 +189,39 @@ namespace Rental.WEB.Controllers
                 }
             }
 
-            ShowReturnsVM returnsVM = new ShowReturnsVM() { Orders = ordersDM, Filters=filters };
+            var sortModes = new List<string>();
+            sortModes.Add("По номеру");
+            sortModes.Add("По номеру");
+            sortModes.Add("По атомобилю");
+            sortModes.Add("По автомобилю");
+            switch (sortMode)
+            {
+                case 1:
+                    ordersDM = ordersDM.OrderBy(x => x.Id).ToList();
+                    break;
+                case 2:
+                    ordersDM = ordersDM.OrderByDescending(x => x.Id).ToList();
+                    break;
+                case 3:
+                    ordersDM = ordersDM.OrderBy(x => x.Car.Brand.Name + " " + x.Car.Model).ToList();
+                    break;
+                case 4:
+                    ordersDM = ordersDM.OrderByDescending(x => x.Car.Brand.Name + " " + x.Car.Model).ToList();
+                    break;
+            }
+
+            int pageSize = 2;
+            int count = ordersDM.Count;
+            ordersDM = ordersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
+
+            ShowReturnsVM returnsVM = new ShowReturnsVM() {
+                Orders = ordersDM,
+                Filters =filters,
+                PageInfo =pageInfo,
+                SortModes = sortModes,
+                SelectedMode = sortMode
+            };
             return View(returnsVM);
         }
 
@@ -162,23 +241,26 @@ namespace Rental.WEB.Controllers
         [HttpPost]
         public ActionResult Return(ReturnDM returnDM,bool withCrash=false)
         {
-
-            //ПРОВЕРКУ ДОБАВЬ ЧТО ОТМЕЧЕН ПУНКТ ВОЗВРАТА
-
-        //    if (ModelState.IsValid||!withCrash)
-     //       {
+            if (withCrash&&(returnDM.Crash==null||String.IsNullOrEmpty(returnDM.Crash.Description)
+                ||returnDM.Crash.Payment==null||returnDM.Crash.Payment.Price<=0))
+            {
+                ModelState.AddModelError("","Не все поля заполнены корректно");
+            }else
+            {
+               returnDM.IsReturned = true;
                 ReturnDTO returnDTO = _rentMapperDM.ToReturnDTO.Map<ReturnDM, ReturnDTO>(returnDM);
                 returnDTO.User = new BLL.DTO.Identity.User() { Id = User.Identity.GetUserId() };
                 if (withCrash == false)
-                returnDTO.Crash =null;
+                    returnDTO.Crash = null;
                 _managerService.ReturnCar(returnDTO);
                 _logWriter.CreateLog("Отклонил заказ" + returnDTO.Order.Id, User.Identity.GetUserId());
                 return RedirectToAction("ShowReturns", "Manager", null);
-       //     }
-            //var orderDTO = _managerService.GetOrder(returnDM.Order.Id, false);
-            //returnDM = new ReturnDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
-            //return View(returnDM);
+            }
+            var orderDTO = _managerService.GetOrder(returnDM.Order.Id, false);
+            returnDM = new ReturnDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
+            return View(returnDM);
         }
+
 
         protected override void Dispose(bool disposing)
         {

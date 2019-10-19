@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using Rental.WEB.Models.View_Models.Shared;
 
 namespace Rental.WEB.Controllers
 {
@@ -25,9 +26,12 @@ namespace Rental.WEB.Controllers
             _rentMapperDM = rentMapper;
         }
 
-        public ActionResult Index(IndexVM model)
+        public ActionResult Index(IndexVM model,int sortMode=0,int page=1,int selectedMode=1)
         {
-
+            if (sortMode == 0)
+            {
+                sortMode = selectedMode;
+            }
             var cars = _rentMapperDM.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(_rentService.GetCars());
             var filters = new List<Models.View_Models.Shared.Filter>();
             int? minPrice = 0,
@@ -36,7 +40,7 @@ namespace Rental.WEB.Controllers
                  maxCurPrice = 0;
             if (cars != null && cars.Count > 0)
             {
-                if (model.Filters == null || model.Filters.Count == 0)
+                if (model?.Filters == null || model?.Filters?.Count == 0)
                 {
                     void CreateFilters(string name,Func<CarDM,string> value)
                     {
@@ -77,14 +81,59 @@ namespace Rental.WEB.Controllers
                     cars = cars.Where(p => p.Price >= model.CurrentPriceMin && p.Price <= model.CurrentPriceMax).ToList();
                 }
             }
+
+            var sortModes = new List<string>();
+            sortModes.Add("По марке");
+            sortModes.Add("По марке");
+            sortModes.Add("По цене");
+            sortModes.Add("По цене");
+            sortModes.Add("По объему двигателя");
+            sortModes.Add("По объему двигателя");
+            sortModes.Add("По вместительности");
+            sortModes.Add("По вместительности");
+            switch (sortMode)
+            {
+                case 1:
+                    cars = cars.OrderBy(x => x.Brand.Name).ToList();
+                    break;
+                case 2:
+                    cars = cars.OrderByDescending(x => x.Brand.Name).ToList();
+                    break;
+                case 3:
+                    cars = cars.OrderBy(x => x.Price).ToList();
+                    break;
+                case 4:
+                    cars = cars.OrderByDescending(x => x.Price).ToList();
+                    break;
+                case 5:
+                    cars = cars.OrderBy(x => x.EngineVolume).ToList();
+                    break;
+                case 6:
+                    cars = cars.OrderByDescending(x => x.EngineVolume).ToList();
+                    break;
+                case 7:
+                    cars = cars.OrderBy(x => x.Кoominess).ToList();
+                    break;
+                case 8:
+                    cars = cars.OrderByDescending(x => x.Кoominess).ToList();
+                    break;
+            }
+
+            int pageSize = 2;
+            int count = cars.Count;
+            cars = cars.Skip((page - 1) * pageSize).Take(pageSize).ToList();
+            PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
             IndexVM indexVM = new IndexVM()
             {
                 Cars = cars,
-                CurrentPriceMax=maxCurPrice,
-                CurrentPriceMin=minCurPrice,
-                PriceMax=maxPrice,
-                PriceMin=minPrice,
-                Filters=filters
+                CurrentPriceMax = maxCurPrice,
+                CurrentPriceMin = minCurPrice,
+                PriceMax = maxPrice,
+                PriceMin = minPrice,
+                Filters = filters,
+                PageInfo = pageInfo,
+                SortModes = sortModes,
+                SelectedMode=sortMode
             };
             return View(indexVM);
         }

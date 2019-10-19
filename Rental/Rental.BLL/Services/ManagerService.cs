@@ -20,7 +20,7 @@ namespace Rental.BLL.Services
                                 IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper,ILogService log)
                 : base(mapperDTO, rentUnit, identityUnit, identityMapper,log)
         {
-
+            
         }
 
         public IEnumerable<OrderDTO> GetForConfirms()

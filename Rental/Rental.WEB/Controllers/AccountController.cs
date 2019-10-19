@@ -58,8 +58,6 @@ namespace Rental.WEB.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Login(LoginVM login)
         {
-            if (login.Email == null || login.Password == null)
-                ModelState.AddModelError("", "Неверный логин или пароль.");
             if (ModelState.IsValid)
             {
                 User user = new User { Email = login.Email, Password = login.Password };

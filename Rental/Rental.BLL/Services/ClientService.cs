@@ -107,7 +107,8 @@ namespace Rental.BLL.Services
                 Order order = RentMapperDTO.ToOrder.Map<OrderDTO, Order>(orderDTO);
                 order.Car = RentUnitOfWork.Cars.Get(orderDTO.Car.Id);
                 order.ClientId = orderDTO.Profile.Id;
-                int price =(int)(order.DateEnd - order.DateStart).TotalDays * order.Car.Price+(orderDTO.WithDriver? (int)(order.DateEnd - order.DateStart).TotalDays*300 : 0);
+                int price =((int)(order.DateEnd - order.DateStart).TotalDays+1) * order.Car.Price+
+                    (orderDTO.WithDriver? ((int)(order.DateEnd - order.DateStart).TotalDays + 1) * 300 : 0);
                 order.Payment =new[] { new Payment() { IsPaid = false, Price = price }};
                 RentUnitOfWork.Orders.Create(order);
                 RentUnitOfWork.Save();

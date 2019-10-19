@@ -12,5 +12,11 @@ namespace Rental.WEB.Models.View_Models.Manager
         public List<OrderDM> Orders { get; set; }
 
         public List<Filter> Filters { get; set; }
+
+        public PageInfo PageInfo { get; set; }
+
+        public List<string> SortModes { get; set; }
+
+        public int SelectedMode;
     }
 }

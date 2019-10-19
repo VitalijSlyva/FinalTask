@@ -20,6 +20,12 @@ namespace Rental.WEB.Models.View_Models.Rent
         public int? CurrentPriceMin { get; set; }
 
         public int? CurrentPriceMax { get; set; }
+
+        public PageInfo PageInfo { get; set; }
+
+        public List<string> SortModes { get; set; }
+
+        public int SelectedMode;
     }
     
 }

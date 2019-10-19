@@ -1,4 +1,5 @@
-﻿@model Rental.WEB.Models.View_Models.Manager.ShowConfirmsVM
+﻿@using Rental.WEB.Helpers
+@model Rental.WEB.Models.View_Models.Manager.ShowConfirmsVM
 
 @{
     ViewBag.Title = "Подтвердить";
@@ -10,11 +11,13 @@
 @Styles.Render("~/Content/styles/shared/filter")
 
 <div class="row">
-    <div id="filter" class="col-md-4" >
-        @using (Html.BeginForm())
+    <div id="filter" class="col-md-4">
+        @using (Html.BeginForm("ShowConfirms", "Manager", FormMethod.Post, new { id = "filters" }))
         {
+            <input type="hidden" value="@Model.SelectedMode" name="selectedMode" />
+
             <div id="button-container" class="container-fluid text-center">
-                <input id="start-filters" type="submit" value="Отфильтровать" class="btn btn-warning">
+                <button id="start-filters" type="submit" value="1" name="sortMode" class="btn btn-warning">Отфильтровать</button>
                 <input type="reset" value="Сбросить" class="btn btn-default" onclick="document.location='@Url.Action("ShowConfirms", "Manager")'" />
             </div>
             <br />
@@ -44,6 +47,24 @@
         }
     </div>
     <div class=" col-md-8">
+        <div>
+            <div class="dropdown">
+                <button class="btn btn-secondary btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    @Model.SortModes[Model.SelectedMode - 1]
+                    <span class="glyphicon  @((Model.SelectedMode - 1)%2==0?"glyphicon-arrow-up":"glyphicon-arrow-down")"></span>
+                </button>
+                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                    @for (int i = 0; i < Model.SortModes.Count; i++)
+                    {<div class="dropdown-item">
+                            <button class="btn " type="submit" name="sortMode" form="filters" value="@(i+1)">
+                                @Model.SortModes[i]
+                                <span class="glyphicon  @(i%2==0?"glyphicon-arrow-up":"glyphicon-arrow-down")"></span>
+                            </button>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
         @foreach (var i in Model.Orders)
         {
             <div class="col-md-12">
@@ -58,6 +79,15 @@
                 </div>
             </div>
             <hr />
+        }
+        @if (Model.PageInfo.TotalPages > 1)
+        {
+            <br />
+            <div class="text-right">
+                <div class="btn-group">
+                    @Html.PageLinks(Model.PageInfo, "filters")
+                </div>
+            </div>
         }
     </div>
 </div>

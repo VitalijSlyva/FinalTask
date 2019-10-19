@@ -185,6 +185,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Helpers\PagingHelper.cs" />
     <Compile Include="Infrastructure\IdentityMapperDM.cs" />
     <Compile Include="Infrastructure\LogMapperDM.cs" />
     <Compile Include="Infrastructure\LogWriter.cs" />
@@ -222,6 +223,7 @@
     <Compile Include="Models\View_Models\Manager\ShowReturnsVM.cs" />
     <Compile Include="Models\View_Models\Rent\IndexVM.cs" />
     <Compile Include="Models\View_Models\Shared\Filter.cs" />
+    <Compile Include="Models\View_Models\Shared\PageInfo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
