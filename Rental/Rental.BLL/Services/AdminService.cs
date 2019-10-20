@@ -77,39 +77,42 @@ namespace Rental.BLL.Services
             try
             {
                 Car car = RentMapperDTO.ToCar.Map<CarDTO, Car>(carDTO);
+                car.Fuel = car.Fuel.Trim().ToLower().Replace("  ", " ");
+                car.Model = car.Model.Trim().ToLower().Replace("  ", " ");
+                car.Number = car.Number.Trim().ToUpper().Replace("  ", " ");
                 Brand brand = RentUnitOfWork.Brands.Find(x => x.Name.ToLower().Replace(" ", "") == carDTO.Brand.Name.ToLower().Replace(" ", ""))?.FirstOrDefault();
                 if (brand == null)
                 {
-                    brand = new Brand() { Name = carDTO.Brand.Name.Trim() };
+                    brand = new Brand() { Name = carDTO.Brand.Name.Trim().ToLower().Replace("  ", " ") };
                     RentUnitOfWork.Brands.Create(brand);
                 }
                 car.Brand = brand;
-                Transmission transmission = RentUnitOfWork.Transmissions.Find(x=>x.Category.ToLower().Replace(" ","")==carDTO.Transmission.Category.ToLower().Replace(" ", "")&&
+                Transmission transmission = RentUnitOfWork.Transmissions.Find(x=>x.Category.ToLower().Replace(" ", "") == carDTO.Transmission.Category.ToLower().Replace(" ", "")&&
                 x.Count==carDTO.Transmission.Count)?.FirstOrDefault();
                 if (transmission == null)
                 {
-                    transmission = new Transmission(){Category=carDTO.Transmission.Category,Count=carDTO.Transmission.Count};
+                    transmission = new Transmission(){Category=carDTO.Transmission.Category.Trim().ToLower().Replace("  ", " "), Count=carDTO.Transmission.Count};
                     RentUnitOfWork.Transmissions.Create(transmission);
                 }
                 car.Transmission = transmission;
                 Carcass carcass = RentUnitOfWork.Carcasses.Find(x=>x.Type.ToLower().Replace(" ", "")==carDTO.Carcass.Type.ToLower().Replace(" ", ""))?.FirstOrDefault();
                 if (carcass == null)
                 {
-                    carcass = new Carcass() {Type=carDTO.Carcass.Type };
+                    carcass = new Carcass() {Type=carDTO.Carcass.Type.Trim().ToLower().Replace("  ", " ") };
                     RentUnitOfWork.Carcasses.Create(carcass);
                 }
                 car.Carcass = carcass;
                 Quality quality = RentUnitOfWork.Qualities.Find(x=>x.Text.ToLower().Replace(" ", "")==carDTO.Quality.Text.ToLower().Replace(" ", ""))?.FirstOrDefault();
                 if (quality == null)
                 {
-                    quality = new Quality() {Text=carDTO.Quality.Text };
+                    quality = new Quality() {Text=carDTO.Quality.Text.Trim().ToLower().Replace("  ", " ") };
                     RentUnitOfWork.Qualities.Create(quality);
                 }
                 car.Quality = quality;
                 List<Property> properties = new List<Property>();
                 foreach (var i in carDTO.Properties)
                 {
-                    Property property = new Property() { Name = i.Name, Text = i.Text };
+                    Property property = new Property() { Name = i.Name.Trim().ToLower().Replace("  ", " "), Text = i.Text.Trim().ToLower().Replace("  ", " ") };
                     RentUnitOfWork.Properties.Create(property);
                     properties.Add(property);
                 }
@@ -117,7 +120,7 @@ namespace Rental.BLL.Services
                 List<Image> images = new List<Image>();
                 foreach (var i in carDTO.Images)
                 {
-                    Image image = new Image() { Photo = i.Photo, Text = i.Text.ToLower().Trim() };
+                    Image image = new Image() { Photo = i.Photo, Text = i.Text.Trim().ToLower().Replace("  ", " ") };
                     RentUnitOfWork.Images.Create(image);
                     images.Add(image);
                 }
@@ -219,7 +222,7 @@ namespace Rental.BLL.Services
                     if (brand == null) {
                         brand = new Brand()
                         {
-                            Name =carDTO.Brand.Name
+                            Name = carDTO.Brand.Name.Trim().ToLower().Replace("  ", " ")
                         };
                     }
                     oldCar.Brand = brand ;
@@ -231,7 +234,7 @@ namespace Rental.BLL.Services
                     {
                         carcass = new Carcass()
                         {
-                            Type=carDTO.Carcass.Type
+                            Type=carDTO.Carcass.Type.Trim().ToLower().Replace("  ", " ")
                         };
                     }
                     oldCar.Carcass = carcass;
@@ -240,10 +243,10 @@ namespace Rental.BLL.Services
                 oldCar.DateOfCreate = oldCar.DateOfCreate;
                 oldCar.Doors = carDTO.Doors;
                 oldCar.EngineVolume = carDTO.EngineVolume;
-                oldCar.Fuel = carDTO.Fuel;
+                oldCar.Fuel = carDTO.Fuel.Trim().ToLower().Replace("  ", " ");
                 oldCar.Hoursepower = carDTO.Hoursepower;
-                oldCar.Model = carDTO.Model;
-                oldCar.Number = carDTO.Number;
+                oldCar.Model = carDTO.Model.Trim().ToLower().Replace("  ", " ");
+                oldCar.Number = carDTO.Number.Trim().ToUpper().Replace("  ", " ");
                 oldCar.Price = carDTO.Price;
                 if (carDTO.Quality.Text != oldCar.Quality.Text)
                 {
@@ -252,7 +255,7 @@ namespace Rental.BLL.Services
                     {
                         quality = new Quality()
                         {
-                            Text = carDTO.Quality.Text
+                            Text = carDTO.Quality.Text.Trim().ToLower().Replace("  ", " ")
                         };
                     }
                     oldCar.Quality = quality;
@@ -266,7 +269,7 @@ namespace Rental.BLL.Services
                         transmission = new Transmission()
                         {
                             Count= carDTO.Transmission.Count,
-                            Category=carDTO.Transmission.Category
+                            Category=carDTO.Transmission.Category.Trim().ToLower().Replace("  ", " ")
                         };
                     }
                     oldCar.Transmission= transmission;
@@ -276,7 +279,7 @@ namespace Rental.BLL.Services
                 List<Property> properties = new List<Property>();
                 foreach (var i in carDTO.Properties)
                 {
-                    Property property = new Property() { Name = i.Name, Text = i.Text };
+                    Property property = new Property() { Name = i.Name.Trim().ToLower().Replace("  ", " "), Text = i.Text.Trim().ToLower().Replace("  ", " ") };
                     RentUnitOfWork.Properties.Create(property);
                     properties.Add(property);
                 }
@@ -284,7 +287,7 @@ namespace Rental.BLL.Services
                 List<Image> images = new List<Image>();
                 foreach (var i in carDTO.Images)
                 {
-                    Image image = new Image() { Photo = i.Photo, Text = i.Text.ToLower().Trim() };
+                    Image image = new Image() { Photo = i.Photo, Text = i.Text.Trim().ToLower().Replace("  ", " ") };
                     RentUnitOfWork.Images.Create(image);
                     images.Add(image);
                 }

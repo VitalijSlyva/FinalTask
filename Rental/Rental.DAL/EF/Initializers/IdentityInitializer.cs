@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace Rental.DAL.EF.Initializers
 {
-    internal class IdentityInitializer : DropCreateDatabaseIfModelChanges<IdentityContext>
+    internal class IdentityInitializer : CreateDatabaseIfNotExists<IdentityContext>
     {
         protected override void Seed(IdentityContext context)
         {

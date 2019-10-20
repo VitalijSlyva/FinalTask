@@ -2,7 +2,7 @@
 @model Rental.WEB.Models.View_Models.Client.ShowUserOrdersVM
 
 @{
-    ViewBag.Title = "ShowUserOrders";
+    ViewBag.Title = "Заказы";
     int f = 0;
     int n = 0;
 }
@@ -68,21 +68,34 @@
         </div>
         @foreach (var i in Model.OrdersDM)
         {
-            <div class="col-12">
-                <h3>
-                    <b>Сатус: </b>
-                    @Model.Statuses[i.Id]
-                </h3>
-                <h4><b> Номер:</b> @i.Id</h4>
-                <h4><b>Автомобиль:</b> @i.Car.Brand.Name @i.Car.Model</h4>
-                <h4><b>Период:</b> @i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</h4>
-                <h4><b>Сумма: </b>@(i.Payment.Price.ToString())</h4>
-                @if (i.Payment != null && !i.Payment.IsPaid)
+        <div class="col-12">
+            <h3>
+                <b>Сатус: </b>
+                @Model.Statuses[i.Id]
+            </h3>
+            @if(Model.Statuses[i.Id]== "Одобрен")
+            {
+            <h4 class="text-danger">
+                Забрать автомобиль  @i.DateStart.ToShortDateString() вы можете по адресу Харьков улица Сумская 18
+            </h4>
+            }
+            <h4><b> Номер:</b> @i.Id</h4>
+            <h4><b>Автомобиль:</b> @i.Car.Brand.Name @i.Car.Model</h4>
+            <h4><b>Период:</b> @i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</h4>
+            <h4><b>Сумма: </b>@(i.Payment.Price.ToString())</h4>
+            @if (i.Payment != null && !i.Payment.IsPaid)
+            {
+                <h3 class="text-danger">Не оплачен</h3>
+            }
+            else
+            {
+                if (Model.Statuses[i.Id].Split(' ')[0] == "Отклонен" && i.Payment.IsPaid)
                 {
-                    <h3 class="text-danger">Не оплачен</h3>
+                   <h4 class="text-danger">Деньги будут возвращены в течении 24 часов после отмены заказа</h4>
                 }
+            }
 
-            </div>
+        </div>
             <hr />
         }
         @if (Model.PageInfo.TotalPages > 1)

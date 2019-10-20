@@ -5,12 +5,11 @@
     ViewBag.Title = "Добавить";
     List<object> s = new List<object>()
     {
-        new {Text="Газ" },
-        new {Text="Дизель" },
-        new {Text="Электро" },
-        new {Text="Бензин" }
+        new {Text="газ" },
+        new {Text="дизель" },
+        new {Text="электро" },
+        new {Text="бензин" }
     };
-
 
 }
 
@@ -63,6 +62,7 @@
     <div class="form-group">
         @Html.LabelFor(model => model.Car.Transmission.Category, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
+
             @Html.EditorFor(model => model.Car.Transmission.Category, new { htmlAttributes = new { @class = "form-control", data_autocomplete_source = Url.Action("AutocompleteTransmission", "Admin") } })
             @Html.ValidationMessageFor(model => model.Car.Transmission.Category, "", new { @class = "text-danger" })
         </div>

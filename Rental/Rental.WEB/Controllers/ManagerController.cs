@@ -44,12 +44,12 @@ namespace Rental.WEB.Controllers
             {
                 var orderDTO = _managerService.GetOrder(id.Value,true);
                 if (orderDTO == null)
-                    return new HttpNotFoundResult();
+                    return View("CustomNotFound", "_Layout", "Заказ не найден");
                 ConfirmDM confirm = new ConfirmDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
                 confirm.Order.Profile = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(orderDTO.Profile);
                 return View(confirm);
             }
-            return new HttpNotFoundResult();
+            return View("CustomNotFound", "_Layout", "Заказ не найден");
         }
 
         [HttpPost]
@@ -142,7 +142,10 @@ namespace Rental.WEB.Controllers
             int count = ordersDM.Count;
             ordersDM = ordersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-
+            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            {
+                 return  View("CustomNotFound", "_Layout", "Страница не найдена");
+            }
             ShowConfirmsVM confirmsVM = new ShowConfirmsVM() {
                 Orders = ordersDM,
                 Filters = filters,
@@ -214,7 +217,10 @@ namespace Rental.WEB.Controllers
             int count = ordersDM.Count;
             ordersDM = ordersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-
+            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            {
+                 return  View("CustomNotFound", "_Layout", "Страница не найдена");
+            }
             ShowReturnsVM returnsVM = new ShowReturnsVM() {
                 Orders = ordersDM,
                 Filters =filters,
@@ -231,11 +237,11 @@ namespace Rental.WEB.Controllers
             {
                 var orderDTO = _managerService.GetOrder(id.Value, false);
                 if (orderDTO == null)
-                    return new HttpNotFoundResult();
+                    return View("CustomNotFound", "_Layout", "Заказ не найден");
                 ReturnDM returnDM = new ReturnDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
                 return View(returnDM);
             }
-            return new HttpNotFoundResult();
+            return View("CustomNotFound", "_Layout", "Заказ не найден");
         }
 
         [HttpPost]

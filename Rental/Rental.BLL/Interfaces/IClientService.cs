@@ -27,5 +27,9 @@ namespace Rental.BLL.Interfaces
         PaymentDTO GetPayment(int id);
 
         IEnumerable<PaymentDTO> GetPaymentsForClient(string id);
+
+        bool CanCreateOrder(string id);
+
+        bool CarIsFree(int carId, DateTime startDate, DateTime endDate);
     }
 }

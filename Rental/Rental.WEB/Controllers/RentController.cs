@@ -13,7 +13,7 @@ using Rental.WEB.Models.View_Models.Shared;
 
 namespace Rental.WEB.Controllers
 {
-    [ExceptionLogger]
+   [ExceptionLogger]
     public class RentController : Controller
     {
         private IRentService _rentService;
@@ -26,7 +26,7 @@ namespace Rental.WEB.Controllers
             _rentMapperDM = rentMapper;
         }
 
-        public ActionResult Index(IndexVM model,int sortMode=0,int page=1,int selectedMode=1)
+        public ActionResult Index(IndexVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
         {
             if (sortMode == 0)
             {
@@ -42,7 +42,7 @@ namespace Rental.WEB.Controllers
             {
                 if (model?.Filters == null || model?.Filters?.Count == 0)
                 {
-                    void CreateFilters(string name,Func<CarDM,string> value)
+                    void CreateFilters(string name, Func<CarDM, string> value)
                     {
                         filters.AddRange(cars.Select(x => value(x)).Distinct()
                             .Select(x => new Models.View_Models.Shared.Filter() { Name = name, Text = x, Checked = false }));
@@ -123,6 +123,10 @@ namespace Rental.WEB.Controllers
             int count = cars.Count;
             cars = cars.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
+            if (page < 1 || page > pageInfo.TotalPages||sortMode<1||sortMode>sortModes.Count)
+            {
+               return  View("CustomNotFound", "_Layout", "Страница не найдена");
+            } 
             IndexVM indexVM = new IndexVM()
             {
                 Cars = cars,
@@ -133,7 +137,7 @@ namespace Rental.WEB.Controllers
                 Filters = filters,
                 PageInfo = pageInfo,
                 SortModes = sortModes,
-                SelectedMode=sortMode
+                SelectedMode = sortMode
             };
             return View(indexVM);
         }
@@ -144,10 +148,10 @@ namespace Rental.WEB.Controllers
             {
                 var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(_rentService.GetCar(id.Value));
                 if (car == null)
-                    return new HttpNotFoundResult();
+                    return View("CustomNotFound", "_Layout", "Автомобиль не найден");
                 return View(car);
             }
-            return new HttpNotFoundResult();
+            return View("CustomNotFound", "_Layout", "Автомобиль не найден");
         }
 
         protected override void Dispose(bool disposing)

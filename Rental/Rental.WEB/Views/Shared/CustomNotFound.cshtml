@@ -1,0 +1,11 @@
+﻿@model string
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "Не доступно";
+}
+<h1 class="text-center">@Model</h1>
+<br />
+<br />
+<div class="text-center">
+    <a href="@Url.Action("Index", "Rent")" class=" btn btn-success btn-dark">На главную</a>
+</div>

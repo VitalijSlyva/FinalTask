@@ -27,7 +27,7 @@ namespace Rental.BLL.Services
         {
             try
             {
-                var orders = RentUnitOfWork.Orders.Show().Where(x => x.Confirm == null||x.Confirm.Count==0);
+                var orders = RentUnitOfWork.Orders.Show().Where(x => (x.Confirm == null||x.Confirm.Count==0)&&x.Payment.First().IsPaid);
                 return RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
             }
             catch (Exception e)

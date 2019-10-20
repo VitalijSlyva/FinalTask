@@ -20,7 +20,7 @@ using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
-    //[ExceptionLogger]
+    [ExceptionLogger]
     [Authorize(Roles ="admin")]
     public class AdminController : Controller
     {
@@ -113,7 +113,10 @@ namespace Rental.WEB.Controllers
             int count = usersDM.Count;
             usersDM = usersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-
+            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            {
+                 return  View("CustomNotFound", "_Layout", "Страница не найдена");
+            }
             GetUsersVM getUsersVM = new GetUsersVM() {
                 UsersDM = usersDM,
                 Filters = filters,
@@ -249,7 +252,10 @@ namespace Rental.WEB.Controllers
             int count = cars.Count;
             cars = cars.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-
+            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            {
+                 return  View("CustomNotFound", "_Layout", "Страница не найдена");
+            }
             GetCarsVM carsVM = new GetCarsVM()
             {
                 CarsDM = cars,
@@ -313,7 +319,7 @@ namespace Rental.WEB.Controllers
         public ActionResult UpdateCar(int? id)
         {
             if (id == null)
-                return new HttpNotFoundResult();
+                return View("CustomNotFound", "_Layout", "Автомобиль не найден");
             CarDM car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(_rentService.GetCar(id));
             return View("CreateCar", new CreateVM() { Car=car });
 
@@ -341,7 +347,7 @@ namespace Rental.WEB.Controllers
         public ActionResult Delete(int? id)
         {
             if (id == null)
-                return new HttpNotFoundResult();
+                return View("CustomNotFound", "_Layout", "Автомобиль не найден");
             _adminService.DeleteCar(id.Value);
             _logWriter.CreateLog("Убрал автомобиль " + id, User.Identity.GetUserId());
             return RedirectToAction("GetCars");

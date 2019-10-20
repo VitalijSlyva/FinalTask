@@ -47,7 +47,7 @@ namespace Rental.WEB.Controllers
         {
             if((await _clientService.ShowProfileAsync(User.Identity.GetUserId()))==null)
             return View();
-            return new HttpNotFoundResult();
+            return View("CustomNotFound", "_Layout", "Страница не доступна");
         }
 
         [HttpPost]
@@ -75,7 +75,7 @@ namespace Rental.WEB.Controllers
         public async Task<ActionResult> UpdateProfile()
         {
             if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) == null)
-                return new HttpNotFoundResult();
+                return View("CustomNotFound", "_Layout", "Страница не доступна");
             var profile = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(await _clientService.ShowProfileAsync(User.Identity.GetUserId()));
             return View(profile);
         }
@@ -189,7 +189,10 @@ namespace Rental.WEB.Controllers
             int count = ordersDM.Count;
             ordersDM = ordersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-
+            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            {
+                 return  View("CustomNotFound", "_Layout", "Страница не найдена");
+            }
             var showVM = new ShowUserOrdersVM() {
                 OrdersDM = ordersDM,
                 Statuses =statuses,
@@ -203,19 +206,34 @@ namespace Rental.WEB.Controllers
 
         public async Task<ActionResult> MakeOrder(int? carId)
         {
-            if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) != null&&carId!=null)
+            if (_clientService.CanCreateOrder(User.Identity.GetUserId()))
             {
-                var carDTO=_rentService.GetCar(carId.Value);
-                if(carDTO==null)
-                    return new HttpNotFoundResult();
-                var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
-                return View(new OrderDM() {
-                    Car =car,
-                    DateStart =DateTime.Now,
-                    DateEnd =DateTime.Now
-                });
+                if (carId != null)
+                {
+                    if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) != null)
+                    {
+                        var carDTO = _rentService.GetCar(carId.Value);
+                        if (carDTO == null)
+                            return View("CustomNotFound", "_Layout", "Автомобиль не найден");
+                        var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
+                        return View(new OrderDM()
+                        {
+                            Car = car,
+                            DateStart = DateTime.Now,
+                            DateEnd = DateTime.Now
+                        });
+                    }
+                    else
+                    {
+                        return View("CustomNotFound", "_Layout", "Перед заказом необходимо заполнить паспортные данные");
+                    }
+                }
+                else
+                {
+                    return View("CustomNotFound", "_Layout", "Автомобиль не найден");
+                }
             }
-            return new HttpNotFoundResult();
+            return View("CustomNotFound", "_Layout", "Вы не можете оставить заказ, пока не оплатите все задолженности");
         }
 
         [HttpPost]
@@ -225,14 +243,20 @@ namespace Rental.WEB.Controllers
             {
                 ModelState.AddModelError("", "Проверте корректоность введенных дат");
             }
-            else
-            {
-                var orderDTO = _rentMapperDM.ToOrderDTO.Map<OrderDM, OrderDTO>(orderDM);
-                orderDTO.Profile = await _clientService.ShowProfileAsync(User.Identity.GetUserId());
-                await _clientService.MakeOrderAsync(orderDTO);
-                var paymentId = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).Last().Payment.Id;
-                _logWriter.CreateLog("Заказал авто", User.Identity.GetUserId());
-                return RedirectToAction("MakePayment", "Client", new { id = paymentId });
+            else {
+                if (!_clientService.CarIsFree(orderDM.Car.Id,orderDM.DateStart,orderDM.DateEnd))
+                {
+                    ModelState.AddModelError("", "В данный период машина не доступна");
+                }
+                else
+                {
+                    var orderDTO = _rentMapperDM.ToOrderDTO.Map<OrderDM, OrderDTO>(orderDM);
+                    orderDTO.Profile = await _clientService.ShowProfileAsync(User.Identity.GetUserId());
+                    await _clientService.MakeOrderAsync(orderDTO);
+                    var paymentId = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).Last().Payment.Id;
+                    _logWriter.CreateLog("Заказал авто", User.Identity.GetUserId());
+                    return RedirectToAction("MakePayment", "Client", new { id = paymentId });
+                }
             }
             var carDTO = _rentService.GetCar(orderDM.Car.Id);
             var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
@@ -246,10 +270,10 @@ namespace Rental.WEB.Controllers
             {
                 var paymentDTO = _clientService.GetPayment(id.Value);
                 if(paymentDTO==null)
-                    return new HttpNotFoundResult();
+                    return View("CustomNotFound", "_Layout", "Заказ не найден");
                 return View(_rentMapperDM.ToPaymentDM.Map<PaymentDTO, PaymentDM>(paymentDTO));
             }
-            return new HttpNotFoundResult();
+            return View("CustomNotFound", "_Layout", "Заказ не найден");
         }
 
         [HttpPost] 
@@ -338,7 +362,10 @@ namespace Rental.WEB.Controllers
             int count = payments.Count;
             payments = payments.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-
+            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            {
+                 return  View("CustomNotFound", "_Layout", "Страница не найдена");
+            }
             var paymenthsVM = new ShowPaymentsVM()
             {
                 Payments = payments,

@@ -123,7 +123,7 @@ namespace Rental.BLL.Services
         {
             try
             {
-                IEnumerable<Payment> payments = RentUnitOfWork.Payments.Find(x => x?.Order?.ClientId == id);
+                IEnumerable<Payment> payments = RentUnitOfWork.Payments.Find(x => x?.Order?.ClientId == id||x.Crash?.Return?.Order?.ClientId==id);
                 List<PaymentDTO> paymentsDTO = RentMapperDTO.ToPaymentDTO.Map<IEnumerable<Payment>, List<PaymentDTO>>(payments);
                 return paymentsDTO;
             }
@@ -178,5 +178,21 @@ namespace Rental.BLL.Services
                 return null;
             }
         }
+
+        public bool CanCreateOrder(string id)
+        {
+            var paments = RentUnitOfWork.Payments.Find(x => (x.Order?.ClientId ?? "") == id || (x.Crash?.Return?.Order?.ClientId ?? "") == id).ToList();
+            if(paments.Count()>0)
+            return paments.All(x =>x.IsPaid);
+            return true;
+        }
+
+
+        public bool CarIsFree(int carId, DateTime startDate, DateTime endDate)
+        {
+            return !RentUnitOfWork.Orders.Show().Any(x => x.CarId == carId && ((x.DateStart.Date >= startDate.Date && x.DateStart.Date <=
+            endDate.Date) || (x.DateEnd.Date >= startDate.Date && x.DateEnd.Date <= endDate.Date))&&(x?.Confirm?.FirstOrDefault()?.IsConfirmed??true)!=false);
+        }
+
     }
 }
