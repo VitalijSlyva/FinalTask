@@ -46,7 +46,7 @@ namespace Rental.WEB.Controllers
         public async Task<ActionResult> CreateProfile()
         {
             if((await _clientService.ShowProfileAsync(User.Identity.GetUserId()))==null)
-            return View();
+            return View("CreateProfile");
             return View("CustomNotFound", "_Layout", "Страница не доступна");
         }
 
@@ -77,7 +77,7 @@ namespace Rental.WEB.Controllers
             if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) == null)
                 return View("CustomNotFound", "_Layout", "Страница не доступна");
             var profile = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(await _clientService.ShowProfileAsync(User.Identity.GetUserId()));
-            return View(profile);
+            return View("UpdateProfile", profile);
         }
 
         [HttpPost]
@@ -117,7 +117,7 @@ namespace Rental.WEB.Controllers
             {
                 sortMode = selectedMode;
             }
-            var ordersDTO = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).OrderByDescending(x=>x.DateStart);
+            var ordersDTO = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).OrderByDescending(x=>x.DateStart).ToList();
             var ordersDM = _rentMapperDM.ToOrderDM.Map<IEnumerable<OrderDTO>, List<OrderDM>>(ordersDTO);
             Dictionary<int, string> statuses = new Dictionary<int, string>();
             foreach(var i in ordersDM)
@@ -189,7 +189,7 @@ namespace Rental.WEB.Controllers
             int count = ordersDM.Count;
             ordersDM = ordersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&&ordersDM.Count!=0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
@@ -201,7 +201,7 @@ namespace Rental.WEB.Controllers
                 SortModes = sortModes,
                 SelectedMode = sortMode
             };
-            return View(showVM);
+            return View("ShowUserOrders",showVM);
         }
 
         public async Task<ActionResult> MakeOrder(int? carId)
@@ -261,7 +261,7 @@ namespace Rental.WEB.Controllers
             var carDTO = _rentService.GetCar(orderDM.Car.Id);
             var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
             orderDM.Car = car;
-            return View(orderDM);
+            return View("MakeOrder", orderDM);
         }
 
         public ActionResult MakePayment(int?id)
@@ -294,7 +294,7 @@ namespace Rental.WEB.Controllers
             {
                 sortMode = selectedMode;
             }
-            var paymentsDTO = _clientService.GetPaymentsForClient(User.Identity.GetUserId()).OrderBy(x=>x.IsPaid);
+            var paymentsDTO = _clientService.GetPaymentsForClient(User.Identity.GetUserId()).OrderBy(x=>x.IsPaid).ToList();
             if (paymentsDTO == null)
                 return View(new ShowPaymentsVM());
             var payments = _rentMapperDM.ToPaymentDM.Map<IEnumerable<PaymentDTO>, List<PaymentDM>>(paymentsDTO);
@@ -362,7 +362,7 @@ namespace Rental.WEB.Controllers
             int count = payments.Count;
             payments = payments.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&&payments.Count!=0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
@@ -378,7 +378,7 @@ namespace Rental.WEB.Controllers
                 SortModes = sortModes,
                 SelectedMode = sortMode
             };
-            return View(paymenthsVM);
+            return View("ShowPayments",paymenthsVM);
         }
 
         protected override void Dispose(bool disposing)

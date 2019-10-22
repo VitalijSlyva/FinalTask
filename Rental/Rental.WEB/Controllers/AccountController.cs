@@ -44,13 +44,13 @@ namespace Rental.WEB.Controllers
         [NoAuthorize]
         public ActionResult Login()
         {
-            return View();
+            return View("Login");
         }
 
         [NoAuthorize]
         public ActionResult Register()
         {
-            return View();
+            return View("Register");
         }
 
         [NoAuthorize]
@@ -68,7 +68,6 @@ namespace Rental.WEB.Controllers
                 {
                     _authenticationManager.SignOut();
                     _authenticationManager.SignIn(new AuthenticationProperties { IsPersistent = true }, claim);
-        //            CreateLog("Вошел", User.Identity.GetUserId());
                     return RedirectToAction("Index", "Rent");
                 }
             }
@@ -78,7 +77,6 @@ namespace Rental.WEB.Controllers
         [Authorize]
         public async Task<ActionResult> Logout()
         {
-       //     CreateLog("Вышел", User.Identity.GetUserId());
             _authenticationManager.SignOut();
             return RedirectToAction("Index", "Rent");
         }
@@ -97,12 +95,12 @@ namespace Rental.WEB.Controllers
                     Name = register.Name,
                 };
                 string result= await _accountService.CreateAsync(user);
-                if (result.Length == 0)
+                if (result!=null&&result.Length == 0)
                     return await Login(new LoginVM() { Email = register.Email, Password = register.Password });
                 else
                     ModelState.AddModelError("",result);
             }
-            return View(register);
+            return View("Register",register);
         }
 
         [Authorize]
@@ -111,7 +109,7 @@ namespace Rental.WEB.Controllers
             string id = User.Identity.GetUserId();
             var user = await _accountService.GetUserAsync(id);
             UserDM userProfile = _identityMapperDM.ToUserDM.Map<User, UserDM>(user);
-            return View(userProfile);
+            return View("ShowUser",userProfile);
         }
 
         protected override void Dispose(bool disposing)

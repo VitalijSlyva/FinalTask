@@ -113,7 +113,7 @@ namespace Rental.WEB.Controllers
             int count = usersDM.Count;
             usersDM = usersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&&usersDM.Count>0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
@@ -126,7 +126,7 @@ namespace Rental.WEB.Controllers
                 SortModes=sortModes,
                 SelectedMode=sortMode
             };
-            return View(getUsersVM);
+            return View("GetUsers",getUsersVM);
         }
 
         public ActionResult BanUser(string id)
@@ -151,7 +151,7 @@ namespace Rental.WEB.Controllers
 
         public ActionResult CreateCar()
         {
-            return View();
+            return View("CreateCar");
         }
 
         public ActionResult GetCars(GetCarsVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
@@ -252,7 +252,7 @@ namespace Rental.WEB.Controllers
             int count = cars.Count;
             cars = cars.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&&cars.Count!=0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
@@ -268,7 +268,7 @@ namespace Rental.WEB.Controllers
                 SortModes = sortModes,
                 SelectedMode = sortMode
             };
-            return View(carsVM);
+            return View("GetCars",carsVM);
         }
 
         private CarDTO _createCarDTO(CreateVM model)
@@ -320,7 +320,8 @@ namespace Rental.WEB.Controllers
         {
             if (id == null)
                 return View("CustomNotFound", "_Layout", "Автомобиль не найден");
-            CarDM car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(_rentService.GetCar(id));
+            var carDTO = _rentService.GetCar(id);
+            CarDM car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
             return View("CreateCar", new CreateVM() { Car=car });
 
         }
@@ -371,7 +372,7 @@ namespace Rental.WEB.Controllers
                     Name = register.Name,
                 };
                 string result = _adminService.CreateManager(user);
-                if (result.Length == 0)
+                if (result==null|| result.Length == 0)
                 {
                     _logWriter.CreateLog("Добавил менеджера", User.Identity.GetUserId());
                     return RedirectToAction("GetUsers");

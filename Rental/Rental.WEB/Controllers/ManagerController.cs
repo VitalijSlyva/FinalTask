@@ -45,7 +45,8 @@ namespace Rental.WEB.Controllers
                 var orderDTO = _managerService.GetOrder(id.Value,true);
                 if (orderDTO == null)
                     return View("CustomNotFound", "_Layout", "Заказ не найден");
-                ConfirmDM confirm = new ConfirmDM() { Order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO) };
+                var order = _rentMapperDM.ToOrderDM.Map<OrderDTO, OrderDM>(orderDTO);
+                ConfirmDM confirm = new ConfirmDM() { Order = order };
                 confirm.Order.Profile = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(orderDTO.Profile);
                 return View(confirm);
             }
@@ -142,7 +143,7 @@ namespace Rental.WEB.Controllers
             int count = ordersDM.Count;
             ordersDM = ordersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&&ordersDM.Count!=0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
@@ -153,7 +154,7 @@ namespace Rental.WEB.Controllers
                 SortModes = sortModes,
                 SelectedMode = sortMode
             };
-            return View(confirmsVM);
+            return View("ShowConfirms", confirmsVM);
         }
 
         public ActionResult ShowReturns(ShowReturnsVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
@@ -217,7 +218,7 @@ namespace Rental.WEB.Controllers
             int count = ordersDM.Count;
             ordersDM = ordersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if (page < 1 || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&&ordersDM.Count!=0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
@@ -228,7 +229,7 @@ namespace Rental.WEB.Controllers
                 SortModes = sortModes,
                 SelectedMode = sortMode
             };
-            return View(returnsVM);
+            return View("ShowReturns", returnsVM);
         }
 
         public ActionResult Return(int? id)

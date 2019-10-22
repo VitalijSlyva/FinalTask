@@ -123,7 +123,7 @@ namespace Rental.WEB.Controllers
             int count = cars.Count;
             cars = cars.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if (page < 1 || page > pageInfo.TotalPages||sortMode<1||sortMode>sortModes.Count)
+            if ((page < 1 &&cars.Count!=0) || page > pageInfo.TotalPages||sortMode<1||sortMode>sortModes.Count)
             {
                return  View("CustomNotFound", "_Layout", "Страница не найдена");
             } 
@@ -139,17 +139,18 @@ namespace Rental.WEB.Controllers
                 SortModes = sortModes,
                 SelectedMode = sortMode
             };
-            return View(indexVM);
+            return View("Index",indexVM);
         }
 
         public ActionResult Car(int?id)
         {
             if (id != null)
             {
-                var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(_rentService.GetCar(id.Value));
+                var carDTO = _rentService.GetCar(id.Value);
+                var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
                 if (car == null)
                     return View("CustomNotFound", "_Layout", "Автомобиль не найден");
-                return View(car);
+                return View("Car",car);
             }
             return View("CustomNotFound", "_Layout", "Автомобиль не найден");
         }
