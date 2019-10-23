@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Rental.WEB.Models.View_Models.Shared
+﻿namespace Rental.WEB.Models.View_Models.Shared
 {
+    /// <summary>
+    /// Filter information.
+    /// </summary>
     public class Filter
     {
         public string Name { get; set; }

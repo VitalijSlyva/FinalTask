@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
 using Rental.BLL.DTO.Identity;
-using Rental.BLL.DTO.Log;
 using Rental.BLL.DTO.Rent;
 using Rental.BLL.Interfaces;
 using Rental.WEB.Attributes;
@@ -13,11 +12,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
+    /// <summary>
+    /// Controller for client actions.
+    /// </summary>
     [ExceptionLogger]
     [Authorize(Roles="client")]
     [AuthorizeWithoutBann]
@@ -33,6 +34,14 @@ namespace Rental.WEB.Controllers
 
         private ILogWriter _logWriter;
 
+        /// <summary>
+        /// Create services and mappers for work.
+        /// </summary>
+        /// <param name="clientService">Clent service</param>
+        /// <param name="identityMapperDM">Identity mapper</param>
+        /// <param name="rentMapperDM">Rent mapper</param>
+        /// <param name="rentService">Rent service</param>
+        /// <param name="log">Log service</param>
         public ClientController(IClientService clientService, IIdentityMapperDM identityMapperDM,
             IRentMapperDM rentMapperDM, IRentService rentService, ILogWriter log)
         {
@@ -43,88 +52,137 @@ namespace Rental.WEB.Controllers
             _logWriter = log;
         }
 
+        /// <summary>
+        /// Show view for create prifile.
+        /// </summary>
+        /// <returns>View</returns>
         public async Task<ActionResult> CreateProfile()
         {
-            if((await _clientService.ShowProfileAsync(User.Identity.GetUserId()))==null)
-            return View("CreateProfile");
+            if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) == null)
+                return View("CreateProfile");
+
             return View("CustomNotFound", "_Layout", "Страница не доступна");
         }
 
+        /// <summary>
+        /// Create client profile.
+        /// </summary>
+        /// <param name="profileDM">Profile model</param>
+        /// <returns>View</returns>
         [HttpPost]
         public ActionResult CreateProfile(ProfileDM profileDM)
         {
             if (profileDM.DateOfBirth.Date > DateTime.Now.AddYears(-18).Date
                   || profileDM.DateOfBirth.Date < DateTime.Now.AddYears(-80).Date)
                 ModelState.AddModelError("DateOfBirth", "Неверная дата");
+
             if (profileDM.DateOfExpiry.Date < DateTime.Now.Date)
                 ModelState.AddModelError("DateOfExpiry", "Неверная дата");
+
             if (profileDM.DateOfIssue.Date > DateTime.Now.Date ||
                 profileDM.DateOfIssue.Date < DateTime.Now.AddYears(-50).Date)
                 ModelState.AddModelError("DateOfIssue", "Неверная дата");
+
             if (ModelState.IsValid)
             {
                 ProfileDTO profileDTO = _identityMapperDM.ToProfileDTO.Map<ProfileDM, ProfileDTO>(profileDM);
-                profileDTO.User = new User() { Id = User.Identity.GetUserId() };
-                _clientService.CreateProfileAsync(profileDTO);
+                profileDTO.User = new User()
+                {
+                    Id = User.Identity.GetUserId()
+                };
+                _clientService.CreateProfile(profileDTO);
                 _logWriter.CreateLog("Добавил паспортные данные", User.Identity.GetUserId());
+
                 return RedirectToAction("ShowProfile");
             }
             return View(profileDM);
         }
 
+        /// <summary>
+        /// Show view for update profile.
+        /// </summary>
+        /// <returns>View</returns>
         public async Task<ActionResult> UpdateProfile()
         {
             if ((await _clientService.ShowProfileAsync(User.Identity.GetUserId())) == null)
                 return View("CustomNotFound", "_Layout", "Страница не доступна");
+
             var profile = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(await _clientService.ShowProfileAsync(User.Identity.GetUserId()));
             return View("UpdateProfile", profile);
         }
 
+        /// <summary>
+        /// Update client profile.
+        /// </summary>
+        /// <param name="profileDM">Updated profile model</param>
+        /// <returns>View</returns>
         [HttpPost]
         public ActionResult UpdateProfile(ProfileDM profileDM)
         {
             if (profileDM.DateOfBirth.Date > DateTime.Now.AddYears(-18).Date
                 || profileDM.DateOfBirth.Date<DateTime.Now.AddYears(-80).Date)
                 ModelState.AddModelError("DateOfBirth", "Неверная дата");
+
             if (profileDM.DateOfExpiry.Date < DateTime.Now.Date)
                 ModelState.AddModelError("DateOfExpiry", "Неверная дата");
+
             if (profileDM.DateOfIssue.Date > DateTime.Now.Date||
                 profileDM.DateOfIssue.Date < DateTime.Now.AddYears(-50).Date)
                 ModelState.AddModelError("DateOfIssue", "Неверная дата");
+
             if (ModelState.IsValid)
             {
                 ProfileDTO profileDTO = _identityMapperDM.ToProfileDTO.Map<ProfileDM, ProfileDTO>(profileDM);
                 profileDTO.User = new User() { Id = User.Identity.GetUserId() };
                 _clientService.UpdateProfile(profileDTO);
                 _logWriter.CreateLog("Обновил паспортные данные", User.Identity.GetUserId());
+
                 return RedirectToAction("ShowProfile");
             }
+
             return View(profileDM);
         }
 
+        /// <summary>
+        /// Show profile information.
+        /// </summary>
+        /// <returns>View</returns>
         public async Task<ActionResult> ShowProfile()
         {
             var profile = await _clientService.ShowProfileAsync(User.Identity.GetUserId());
+
             if (profile == null)
                 return RedirectToAction("CreateProfile");
+
             var profileDM = _identityMapperDM.ToProfileDM.Map<ProfileDTO, ProfileDM>(profile);
             return View(profileDM);
         }
 
-        public async Task<ActionResult> ShowUserOrders(ShowUserOrdersVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
+        /// <summary>
+        /// Show user orders.
+        /// </summary>
+        /// <param name="model">View model</param>
+        /// <param name="sortMode">Sort mode</param>
+        /// <param name="page">Page number</param>
+        /// <param name="selectedMode">Selected sort mode</param>
+        /// <returns>View</returns>
+        public ActionResult ShowUserOrders(ShowUserOrdersVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
         {
             if (sortMode == 0)
             {
                 sortMode = selectedMode;
             }
-            var ordersDTO = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).OrderByDescending(x=>x.DateStart).ToList();
+
+            var ordersDTO = _clientService.GetOrdersForClient(User.Identity.GetUserId()).OrderByDescending(x=>x.DateStart).ToList();
             var ordersDM = _rentMapperDM.ToOrderDM.Map<IEnumerable<OrderDTO>, List<OrderDM>>(ordersDTO);
             Dictionary<int, string> statuses = new Dictionary<int, string>();
+
             foreach(var i in ordersDM)
             {
                 statuses.Add(i.Id, _clientService.GetStatus(i.Id));
             }
             var filters = new List<Models.View_Models.Shared.Filter>();
+
             if (ordersDM != null && ordersDM.Count > 0)
             {
                 if (model.Filters == null || model.Filters.Count == 0)
@@ -185,14 +243,16 @@ namespace Rental.WEB.Controllers
                     break;
             }
 
-            int pageSize = 2;
+            int pageSize = 7;
             int count = ordersDM.Count;
             ordersDM = ordersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if ((page < 1&&ordersDM.Count!=0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&& count != 0) || ( page > pageInfo.TotalPages && count != 0)
+                || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
+
             var showVM = new ShowUserOrdersVM() {
                 OrdersDM = ordersDM,
                 Statuses =statuses,
@@ -201,9 +261,15 @@ namespace Rental.WEB.Controllers
                 SortModes = sortModes,
                 SelectedMode = sortMode
             };
+
             return View("ShowUserOrders",showVM);
         }
 
+        /// <summary>
+        /// Show view for making order.
+        /// </summary>
+        /// <param name="carId">Car id</param>
+        /// <returns>View</returns>
         public async Task<ActionResult> MakeOrder(int? carId)
         {
             if (_clientService.CanCreateOrder(User.Identity.GetUserId()))
@@ -215,7 +281,9 @@ namespace Rental.WEB.Controllers
                         var carDTO = _rentService.GetCar(carId.Value);
                         if (carDTO == null)
                             return View("CustomNotFound", "_Layout", "Автомобиль не найден");
+
                         var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
+
                         return View(new OrderDM()
                         {
                             Car = car,
@@ -233,9 +301,15 @@ namespace Rental.WEB.Controllers
                     return View("CustomNotFound", "_Layout", "Автомобиль не найден");
                 }
             }
+
             return View("CustomNotFound", "_Layout", "Вы не можете оставить заказ, пока не оплатите все задолженности");
         }
 
+        /// <summary>
+        /// Make oredr.
+        /// </summary>
+        /// <param name="orderDM">Oredr model</param>
+        /// <returns>View</returns>
         [HttpPost]
         public async Task<ActionResult> MakeOrder(OrderDM orderDM)
         {
@@ -252,18 +326,25 @@ namespace Rental.WEB.Controllers
                 {
                     var orderDTO = _rentMapperDM.ToOrderDTO.Map<OrderDM, OrderDTO>(orderDM);
                     orderDTO.Profile = await _clientService.ShowProfileAsync(User.Identity.GetUserId());
-                    await _clientService.MakeOrderAsync(orderDTO);
-                    var paymentId = (await _clientService.GetOrdersForClientAsync(User.Identity.GetUserId())).Last().Payment.Id;
+                    _clientService.MakeOrder(orderDTO);
+                    var paymentId = _clientService.GetOrdersForClient(User.Identity.GetUserId()).Last().Payment.Id;
                     _logWriter.CreateLog("Заказал авто", User.Identity.GetUserId());
+
                     return RedirectToAction("MakePayment", "Client", new { id = paymentId });
                 }
             }
             var carDTO = _rentService.GetCar(orderDM.Car.Id);
             var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
             orderDM.Car = car;
+
             return View("MakeOrder", orderDM);
         }
 
+        /// <summary>
+        /// Show payment view.
+        /// </summary>
+        /// <param name="id">Payment id</param>
+        /// <returns>View</returns>
         public ActionResult MakePayment(int?id)
         {
             if (id != null)
@@ -271,11 +352,18 @@ namespace Rental.WEB.Controllers
                 var paymentDTO = _clientService.GetPayment(id.Value);
                 if(paymentDTO==null)
                     return View("CustomNotFound", "_Layout", "Заказ не найден");
+
                 return View(_rentMapperDM.ToPaymentDM.Map<PaymentDTO, PaymentDM>(paymentDTO));
             }
+
             return View("CustomNotFound", "_Layout", "Заказ не найден");
         }
 
+        /// <summary>
+        /// Make payment.
+        /// </summary>
+        /// <param name="paymentDM">Payment model</param>
+        /// <returns>View</returns>
         [HttpPost] 
         public ActionResult MakePayment(PaymentDM paymentDM)
         {
@@ -283,17 +371,28 @@ namespace Rental.WEB.Controllers
             {
                 _clientService.CreatePayment(paymentDM.Id, paymentDM.TransactionId);
                 _logWriter.CreateLog("Произвел оплату" +paymentDM.Id, User.Identity.GetUserId());
+
                 return RedirectToAction("Index", "Rent");
             }
+
             return View(paymentDM);
         }
 
+        /// <summary>
+        /// Show all payments.
+        /// </summary>
+        /// <param name="model">View model</param>
+        /// <param name="sortMode">Sort mode</param>
+        /// <param name="page">Page number</param>
+        /// <param name="selectedMode">Selected sort mode</param>
+        /// <returns>View</returns>
         public ActionResult ShowPayments(ShowPaymentsVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
         {
             if (sortMode == 0)
             {
                 sortMode = selectedMode;
             }
+
             var paymentsDTO = _clientService.GetPaymentsForClient(User.Identity.GetUserId()).OrderBy(x=>x.IsPaid).ToList();
             if (paymentsDTO == null)
                 return View(new ShowPaymentsVM());
@@ -303,6 +402,7 @@ namespace Rental.WEB.Controllers
                  maxPrice = 0,
                  minCurPrice = 0,
                  maxCurPrice = 0;
+
             if (payments != null && payments.Count > 0)
             {
                 if (model.Filters == null || model.Filters.Count == 0)
@@ -358,14 +458,15 @@ namespace Rental.WEB.Controllers
                     break;
             }
 
-            int pageSize = 2;
+            int pageSize = 7;
             int count = payments.Count;
             payments = payments.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if ((page < 1&&payments.Count!=0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&&count!=0) || (page > pageInfo.TotalPages && count != 0) || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
+
             var paymenthsVM = new ShowPaymentsVM()
             {
                 Payments = payments,
@@ -378,15 +479,19 @@ namespace Rental.WEB.Controllers
                 SortModes = sortModes,
                 SelectedMode = sortMode
             };
+
             return View("ShowPayments",paymenthsVM);
         }
 
+        /// <summary>
+        /// Dispose services.
+        /// </summary>
+        /// <param name="disposing">Disposing</param>
         protected override void Dispose(bool disposing)
         {
             _rentService.Dispose();
             _clientService.Dispose();
             base.Dispose(disposing);
         }
-
     }
 }

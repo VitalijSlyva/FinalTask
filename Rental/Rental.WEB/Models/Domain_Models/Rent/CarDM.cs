@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Models.Domain_Models.Rent
 {
+    /// <summary>
+    /// Car domain model.
+    /// </summary>
     public class CarDM : EntityDM
     {
         [Required(ErrorMessage = "Поле должно быть заполнено")]

@@ -2,14 +2,12 @@
 using Rental.BLL.DTO.Log;
 using Rental.BLL.Interfaces;
 using Rental.DAL.Entities.Log;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.BLL.Infrastructure
 {
+    /// <summary>
+    /// Mapper for log entity and data transfer objects.
+    /// </summary>
     internal class LogMapperDTO : ILogMapperDTO
     {
         public IMapper ToExceptionLogDTO

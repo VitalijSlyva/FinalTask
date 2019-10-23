@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Rental.BLL.DTO.Rent
+﻿namespace Rental.BLL.DTO.Rent
 {
+    /// <summary>
+    /// Transmission data transfer object.
+    /// </summary>
     public class TransmissionDTO : EntityDTO
     {
         public string Category { get; set; }

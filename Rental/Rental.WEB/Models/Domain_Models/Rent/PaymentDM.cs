@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Rental.WEB.Models.Domain_Models.Rent
 {
+    /// <summary>
+    /// Payment domain model.
+    /// </summary>
     public class PaymentDM : EntityDM
     {
         [Required(ErrorMessage = "Поле должно быть заполнено")]

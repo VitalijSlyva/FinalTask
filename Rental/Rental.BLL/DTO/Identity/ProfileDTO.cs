@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.BLL.DTO.Identity
 {
+    /// <summary>
+    /// Additional information about user.
+    /// </summary>
     public class ProfileDTO
     {
         public string Id { get; set; }

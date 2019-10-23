@@ -2,13 +2,12 @@
 using Rental.BLL.DTO.Log;
 using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Log;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Infrastructure
 {
+    /// <summary>
+    /// Mapper for log data transfer objects and log models.
+    /// </summary>
     public class LogMapperDM : ILogMapperDM
     {
         public IMapper ToExceptionLogDTO

@@ -1,12 +1,11 @@
 ﻿using Rental.DAL.Entities.Log;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Interfaces
 {
+    /// <summary>
+    /// Interface for working with log.
+    /// </summary>
     public interface ILogUnitOfWork :IDisposable
     {
         ICreator<ExceptionLog> ExceptionLogger { get; }
@@ -17,6 +16,9 @@ namespace Rental.DAL.Interfaces
 
         IDisplayer<ExceptionLog> ExceptionReporter { get; }
 
+        /// <summary>
+        /// Save changes.
+        /// </summary>
         void Save();
     }
 }

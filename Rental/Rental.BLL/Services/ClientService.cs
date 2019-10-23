@@ -9,20 +9,35 @@ using Rental.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Rental.BLL.Services
 {
+    /// <summary>
+    /// Service for client actions.
+    /// </summary>
     public class ClientService :Service, IClientService
     {
+        /// <summary>
+        /// Create units and mappers for work.
+        /// </summary>
+        /// <param name="mapperDTO">Mapper for converting database entities to DTO entities</param>
+        /// <param name="rentUnit">Rent unit of work</param>
+        /// <param name="identityUnit">Udentity unit of work</param>
+        /// <param name="identityMapper">Mapper for converting identity entities to BLL classes</param>
+        /// <param name="log">Service for logging</param>
         public ClientService(IRentMapperDTO mapperDTO, IRentUnitOfWork rentUnit,
-                                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper,ILogService log)
-                : base(mapperDTO, rentUnit, identityUnit, identityMapper,log)
+                IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper,ILogService log)
+                 : base(mapperDTO, rentUnit, identityUnit, identityMapper,log)
         {
 
         }
 
+        /// <summary>
+        /// Create payment.
+        /// </summary>
+        /// <param name="id">Client id</param>
+        /// <param name="transactionId">Transaction id</param>
         public void CreatePayment(int id, string transactionId)
         {
             try
@@ -38,38 +53,49 @@ namespace Rental.BLL.Services
                 CreateLog(e, "ClientService", "CreatePayment");
             }
         }
-        
+
+        /// <summary>
+        /// Get status for order.
+        /// </summary>
+        /// <param name="id">Order id</param>
+        /// <returns>Status</returns>
         public string GetStatus(int id)
         {
             try
             {
+                bool isNotEmpty(IEnumerable<object> data)=> data != null && data.Count() > 0;
+
                 var test1 = RentUnitOfWork.Returns.Find(x => x.OrderId == id && x.Crash != null&&x.Crash.Count>0);
-                if (_answer(test1))
+                if (isNotEmpty(test1))
                     return "Возвращен с повреждениями";
+
                 var test2 = RentUnitOfWork.Returns.Find(x => x.OrderId == id);
-                if (_answer(test2))
+                if (isNotEmpty(test2))
                     return "Возвращен";
+
                 var test3 = RentUnitOfWork.Confirms.Find(x => x.OrderId == id && x.IsConfirmed);
-                if (_answer(test3))
+                if (isNotEmpty(test3))
                     return "Одобрен";
+
                 var test4 = RentUnitOfWork.Confirms.Find(x => x.OrderId == id && !x.IsConfirmed);
-                if (_answer(test4))
+                if (isNotEmpty(test4))
                     return "Отклонен (" + test4.First().Description+")";
+
                 return "На рассмотрении";
             }
             catch (Exception e)
             {
                 CreateLog(e, "ClientService", "GetStatus");
+
                 return null;
             }
         }
 
-        private bool _answer(IEnumerable<object> data)
-        {
-            return data != null && data.Count() > 0;
-        }
-
-        public async Task CreateProfileAsync(ProfileDTO profileDTO)
+        /// <summary>
+        /// Create information about client.
+        /// </summary>
+        /// <param name="profileDTO">Profile object</param>
+        public void CreateProfile(ProfileDTO profileDTO)
         {
             try
             {
@@ -85,22 +111,33 @@ namespace Rental.BLL.Services
             }
         }
 
-        public async Task<IEnumerable<OrderDTO>> GetOrdersForClientAsync(string userId)
+        /// <summary>
+        /// Get order by client id.
+        /// </summary>
+        /// <param name="userId">Client id</param>
+        /// <returns>Orders</returns>
+        public IEnumerable<OrderDTO> GetOrdersForClient(string userId)
         {
             try
             {
                 IEnumerable<Order> orders = RentUnitOfWork.Orders.Find(x => x.ClientId == userId);
                 List<OrderDTO> ordersDTO = RentMapperDTO.ToOrderDTO.Map<IEnumerable<Order>, List<OrderDTO>>(orders);
+
                 return ordersDTO;
             }
             catch (Exception e)
             {
                 CreateLog(e, "ClientService", "GetOrdersForClientAsync");
+
                 return null;
             }
         }
 
-        public async Task MakeOrderAsync(OrderDTO orderDTO)
+        /// <summary>
+        /// Make order.
+        /// </summary>
+        /// <param name="orderDTO">Order object</param>
+        public void MakeOrder(OrderDTO orderDTO)
         {
             try
             {
@@ -119,35 +156,55 @@ namespace Rental.BLL.Services
             }
         }
 
+
+        /// <summary>
+        /// Get payments by client id.
+        /// </summary>
+        /// <param name="id">Client id</param>
+        /// <returns>Payments</returns>
         public IEnumerable<PaymentDTO> GetPaymentsForClient(string id)
         {
             try
             {
-                IEnumerable<Payment> payments = RentUnitOfWork.Payments.Find(x => x?.Order?.ClientId == id||x.Crash?.Return?.Order?.ClientId==id);
-                List<PaymentDTO> paymentsDTO = RentMapperDTO.ToPaymentDTO.Map<IEnumerable<Payment>, List<PaymentDTO>>(payments);
+                IEnumerable<Payment> payments = RentUnitOfWork.Payments.Find(x => x?.Order?.ClientId == id||
+                x.Crash?.Return?.Order?.ClientId==id);
+                List<PaymentDTO> paymentsDTO = RentMapperDTO.ToPaymentDTO
+                    .Map<IEnumerable<Payment>, List<PaymentDTO>>(payments);
                 return paymentsDTO;
             }
             catch (Exception e)
             {
                 CreateLog(e, "ClientService", "GetPaymentsForClient");
+
                 return null;
             }
         }
 
+        /// <summary>
+        /// Showm information by id.
+        /// </summary>
+        /// <param name="id">Client id</param>
+        /// <returns>Profile</returns>
         public async  Task<ProfileDTO> ShowProfileAsync(string id)
         {
             try
             {
                 var profile = (await IdentityUnitOfWork.UserManager.FindByIdAsync(id)).Profile;
+
                 return IdentityMapperDTO.ToProfileDTO.Map<Profile, ProfileDTO>(profile);
             }
             catch (Exception e)
             {
                 CreateLog(e, "ClientService", "ShowProfileAsync");
+
                 return null;
             }
         }
 
+        /// <summary>
+        /// Update information about client.
+        /// </summary>
+        /// <param name="profileDTO">New profile object</param>
         public void UpdateProfile(ProfileDTO profileDTO)
         {
             try
@@ -164,34 +221,57 @@ namespace Rental.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Get payment by id.
+        /// </summary>
+        /// <param name="id">Payment id</param>
+        /// <returns>Payment</returns>
         public PaymentDTO GetPayment(int id)
         {
-            try { 
-            var paymentDTO = RentUnitOfWork.Payments.Show().FirstOrDefault(x => x.Id == id);
-            if (paymentDTO == null)
-                return null;
-            return RentMapperDTO.ToPaymentDTO.Map<Payment, PaymentDTO>(paymentDTO);
+            try
+            {
+                var paymentDTO = RentUnitOfWork.Payments.Show().FirstOrDefault(x => x.Id == id);
+                if (paymentDTO == null)
+                    return null;
+
+                return RentMapperDTO.ToPaymentDTO.Map<Payment, PaymentDTO>(paymentDTO);
             }
             catch (Exception e)
             {
                 CreateLog(e, "ClientService", "GetPayment");
+
                 return null;
             }
         }
 
+        /// <summary>
+        /// Client can create order.
+        /// </summary>
+        /// <param name="id">Client id</param>
+        /// <returns>Can make order</returns>
         public bool CanCreateOrder(string id)
         {
-            var paments = RentUnitOfWork.Payments.Find(x => (x.Order?.ClientId ?? "") == id || (x.Crash?.Return?.Order?.ClientId ?? "") == id).ToList();
-            if(paments.Count()>0)
-            return paments.All(x =>x.IsPaid);
+            var paments = RentUnitOfWork.Payments.Find(x => (x.Order?.ClientId ?? "") == id ||
+                (x.Crash?.Return?.Order?.ClientId ?? "") == id).ToList();
+            if (paments.Count() > 0)
+                return paments.All(x => x.IsPaid);
+
             return true;
         }
 
-
+        /// <summary>
+        /// Car is free for order.
+        /// </summary>
+        /// <param name="carId">Car id</param>
+        /// <param name="startDate">Date start order</param>
+        /// <param name="endDate">Date end order</param>
+        /// <returns>Is free</returns>
         public bool CarIsFree(int carId, DateTime startDate, DateTime endDate)
         {
-            return !RentUnitOfWork.Orders.Show().Any(x => x.CarId == carId && ((x.DateStart.Date >= startDate.Date && x.DateStart.Date <=
-            endDate.Date) || (x.DateEnd.Date >= startDate.Date && x.DateEnd.Date <= endDate.Date))&&(x?.Confirm?.FirstOrDefault()?.IsConfirmed??true)!=false);
+            return !RentUnitOfWork.Orders.Show()
+                .Any(x => x.CarId == carId && ((x.DateStart.Date >= startDate.Date && x.DateStart.Date <=endDate.Date) ||
+                (x.DateEnd.Date >= startDate.Date && x.DateEnd.Date <= endDate.Date))&&(x?.Confirm?.FirstOrDefault()
+                ?.IsConfirmed??true)!=false);
         }
 
     }

@@ -2,14 +2,12 @@
 using Rental.BLL.Interfaces;
 using Rental.DAL.Interfaces;
 using Rental.DAL.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.BLL.Infrastructure
 {
+    /// <summary>
+    /// Module for dependency injection.
+    /// </summary>
     public class ServiceModuleBLL : NinjectModule
     {
         private string _rentConnectionString;
@@ -18,6 +16,12 @@ namespace Rental.BLL.Infrastructure
 
         private string _logConnectionString;
 
+        /// <summary>
+        /// Create connections with databases.
+        /// </summary>
+        /// <param name="identityConnectionString">Identity database connection string</param>
+        /// <param name="rentConnectionString">Rent database connection string.</param>
+        /// <param name="logConnectionString">Log database connection string.</param>
         public ServiceModuleBLL(string identityConnectionString,string rentConnectionString, string logConnectionString)
         {
             _identityConnectionString = identityConnectionString;
@@ -25,6 +29,9 @@ namespace Rental.BLL.Infrastructure
             _logConnectionString = logConnectionString;
         }
 
+        /// <summary>
+        /// Create binds.
+        /// </summary>
         public override void Load()
         {
             Bind<IIdentityUnitOfWork>().To<IdentityUnitOfWork>().WithConstructorArgument(_identityConnectionString);

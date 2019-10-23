@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Rental.WEB.Models.Domain_Models.Rent
 {
+    /// <summary>
+    /// Confirm domain model.
+    /// </summary>
     public class ConfirmDM : EntityDM
     {
         public Identity.UserDM User { get; set; }

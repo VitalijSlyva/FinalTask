@@ -1,12 +1,10 @@
 ﻿using Rental.BLL.DTO.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.BLL.DTO.Rent
 {
+    /// <summary>
+    /// Rent data transfer object.
+    /// </summary>
     public class ReturnDTO : EntityDTO
     {
         public User User { get; set; }

@@ -1,12 +1,10 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.WEB.Interfaces
 {
+    /// <summary>
+    /// Interface mapper for log models.
+    /// </summary>
     public interface ILogMapperDM
     {
         IMapper ToExceptionLogDTO { get; }

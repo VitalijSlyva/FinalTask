@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Models.Domain_Models.Rent
 {
+    /// <summary>
+    /// Order domain model.
+    /// </summary>
     public class OrderDM : EntityDM
     {
         public Identity.ProfileDM Profile { set; get; }

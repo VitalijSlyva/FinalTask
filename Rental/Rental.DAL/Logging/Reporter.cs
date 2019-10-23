@@ -3,44 +3,50 @@ using Rental.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Logging
 {
+    /// <summary>
+    /// Reporter for logs.
+    /// </summary>
+    /// <typeparam name="T">Log entity</typeparam>
     public class Reporter<T> : IDisplayer<T> where T : class
     {
         private LogContext _context;
 
+        /// <summary>
+        /// Create context for work.
+        /// </summary>
+        /// <param name="context">Log context</param>
         public Reporter(LogContext context)
         {
             _context = context;
         }
 
         /// <summary>
-        /// Returns IEnumerable elements for predicate.
+        /// Returns logs for predicate.
         /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
+        /// <param name="predicate">Condition</param>
+        /// <returns>Logs</returns>
         public IEnumerable<T> Find(Func<T, bool> predicate)
         {
             return _context.Set<T>().Where(predicate);
         }
 
         /// <summary>
-        /// Take element for id.
+        /// Take log by id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Log id</param>
+        /// <returns>Log</returns>
         public T Get(int id)
         {
             return _context.Set<T>().Find(id);
         }
 
         /// <summary>
-        /// Get all elements from table.
+        /// Get all logs from table.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Logs</returns>
         public IEnumerable<T> Show()
         {
             return _context.Set<T>();

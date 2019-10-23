@@ -3,13 +3,12 @@ using Rental.DAL.Entities.Log;
 using Rental.DAL.Interfaces;
 using Rental.DAL.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Services
 {
+    /// <summary>
+    /// Unit for work with log.
+    /// </summary>
     public class LogUnitOfWork : ILogUnitOfWork
     {
         private LogContext _context;
@@ -22,9 +21,13 @@ namespace Rental.DAL.Services
 
         private IDisplayer<ExceptionLog> _exceptionReporter;
 
-        public LogUnitOfWork(string connectionString)
+        /// <summary>
+        /// Create log context with connection.
+        /// </summary>
+        /// <param name="connection">Connection string</param>
+        public LogUnitOfWork(string connection)
         {
-            _context = new LogContext(connectionString);
+            _context = new LogContext(connection);
         }
 
         public ICreator<ExceptionLog> ExceptionLogger
@@ -67,11 +70,17 @@ namespace Rental.DAL.Services
             }
         }
 
+        /// <summary>
+        /// Save changes.
+        /// </summary>
         public void Save()
         {
             _context.SaveChanges();
         }
 
+        /// <summary>
+        /// Dispose context.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -80,6 +89,10 @@ namespace Rental.DAL.Services
 
         private bool _Disposed = false;
 
+        /// <summary>
+        /// Call method for dispose.
+        /// </summary>
+        /// <param name="disposing">Need disposing</param>
         public virtual void Dispose(bool disposing)
         {
             if (!_Disposed)

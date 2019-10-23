@@ -1,11 +1,10 @@
 ﻿using AutoMapper;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Interfaces
 {
+    /// <summary>
+    /// Interface mapper for identity models.
+    /// </summary>
     public interface IIdentityMapperDM
     {
         IMapper ToUserDM { get; }

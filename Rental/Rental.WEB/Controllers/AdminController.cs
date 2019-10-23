@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNet.Identity;
 using Rental.BLL.DTO.Identity;
-using Rental.BLL.DTO.Log;
 using Rental.BLL.DTO.Rent;
 using Rental.BLL.Interfaces;
 using Rental.WEB.Attributes;
@@ -15,11 +14,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Web;
 using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
+    /// <summary>
+    /// Controller for admin actions.
+    /// </summary>
     [ExceptionLogger]
     [Authorize(Roles ="admin")]
     public class AdminController : Controller
@@ -34,6 +35,14 @@ namespace Rental.WEB.Controllers
 
         private ILogWriter _logWriter;
 
+        /// <summary>
+        /// Create services and mappers for work.
+        /// </summary>
+        /// <param name="adminService">Admin service</param>
+        /// <param name="identityMapperDM">Identity mapper</param>
+        /// <param name="rentMapperDM">Rent mapper</param>
+        /// <param name="rentService">Rent service</param>
+        /// <param name="log">Log service</param>
         public AdminController(IAdminService adminService, IIdentityMapperDM identityMapperDM,
             IRentMapperDM rentMapperDM,IRentService rentService,ILogWriter log)
         {
@@ -44,16 +53,26 @@ namespace Rental.WEB.Controllers
             _logWriter = log;
         }
 
+        /// <summary>
+        /// Show all cars.
+        /// </summary>
+        /// <param name="model">View model</param>
+        /// <param name="sortMode">Sort mode</param>
+        /// <param name="page">Page number</param>
+        /// <param name="selectedMode">Selected sort mode</param>
+        /// <returns>View</returns>
         public async Task<ActionResult> GetUsers(GetUsersVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
         {
             if (sortMode == 0)
             {
                 sortMode = selectedMode;
             }
+
             var users = _adminService.GetUsers();
             var usersDM = _identityMapperDM.ToUserDM.Map<IEnumerable<User>, List<UserDM>>(users);
             var roles = new Dictionary<string, string>();
             var banns = new Dictionary<string, bool>();
+
             foreach(var i in users)
             {
                 string role = (await _adminService.GetRolesAsync(i.Id)).Contains("manager")?"Менеджер":"Клиент";
@@ -62,16 +81,27 @@ namespace Rental.WEB.Controllers
                 banns.Add(i.Id, bann);
 
             }
+
             var filters = new List<Models.View_Models.Shared.Filter>();
             if (usersDM != null && usersDM.Count > 0)
             {
                 if (model.Filters == null || model.Filters.Count == 0)
                 {
                     filters.AddRange(roles.Select(x => x.Value).Distinct()
-                        .Select(x => new Models.View_Models.Shared.Filter() { Name = "Должность", Checked = false, Text = x }));
+                        .Select(x => new Models.View_Models.Shared.Filter()
+                        {
+                            Name = "Должность",
+                            Checked = false,
+                            Text = x
+                        }));
 
                     filters.AddRange(banns.Select(x => x.Value).Distinct()
-                        .Select(x => new Models.View_Models.Shared.Filter() { Name = "Статус", Checked = false, Text = x?"Забанен":"Незабанен" }));
+                        .Select(x => new Models.View_Models.Shared.Filter()
+                        {
+                            Name = "Статус",
+                            Checked = false,
+                            Text = x?"Забанен":"Незабанен"
+                        }));
                 }
                 else
                 {
@@ -79,11 +109,13 @@ namespace Rental.WEB.Controllers
 
                     if (usersDM.Count > 0 && model.Filters.Any(f => f.Name == "Должность" && f.Checked))
                     {
-                        usersDM = usersDM.Where(p => model.Filters.Any(f => f.Name =="Должность" && f.Text == roles[p.Id] && f.Checked)).ToList();
+                        usersDM = usersDM.Where(p => model.Filters
+                        .Any(f => f.Name =="Должность" && f.Text == roles[p.Id] && f.Checked)).ToList();
                     }
                     if (usersDM.Count > 0 && model.Filters.Any(f => f.Name == "Статус" && f.Checked))
                     {
-                        usersDM = usersDM.Where(p => model.Filters.Any(f => f.Name == "Статус" && (f.Text== "Забанен") == banns[p.Id] && f.Checked)).ToList();
+                        usersDM = usersDM.Where(p => model.Filters
+                        .Any(f => f.Name == "Статус" && (f.Text== "Забанен") == banns[p.Id] && f.Checked)).ToList();
                     }
                 }
             }
@@ -109,14 +141,16 @@ namespace Rental.WEB.Controllers
                     break;
             }
 
-            int pageSize = 2;
+            int pageSize = 7;
             int count = usersDM.Count;
             usersDM = usersDM.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if ((page < 1&&usersDM.Count>0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&& count != 0) || (page > pageInfo.TotalPages && count != 0)
+                || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
+
             GetUsersVM getUsersVM = new GetUsersVM() {
                 UsersDM = usersDM,
                 Filters = filters,
@@ -126,9 +160,15 @@ namespace Rental.WEB.Controllers
                 SortModes=sortModes,
                 SelectedMode=sortMode
             };
+
             return View("GetUsers",getUsersVM);
         }
 
+        /// <summary>
+        /// Ban user by id.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns>View</returns>
         public ActionResult BanUser(string id)
         {
             if (!String.IsNullOrEmpty(id))
@@ -136,9 +176,15 @@ namespace Rental.WEB.Controllers
                 _adminService.BanUser(id);
                 _logWriter.CreateLog("Забанил пользователя "+id, User.Identity.GetUserId());
             }
+
             return RedirectToAction("GetUsers");
         }
 
+        /// <summary>
+        /// Unban user by id.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns>View</returns>
         public ActionResult UnbanUser(string id)
         {
             if (!String.IsNullOrEmpty(id))
@@ -146,20 +192,34 @@ namespace Rental.WEB.Controllers
                 _adminService.UnbanUser(id);
                 _logWriter.CreateLog("Разбанил пользователя " + id, User.Identity.GetUserId());
             }
+
             return RedirectToAction("GetUsers");
         }
 
+        /// <summary>
+        /// Show create car view.
+        /// </summary>
+        /// <returns>View</returns>
         public ActionResult CreateCar()
         {
             return View("CreateCar");
         }
 
+        /// <summary>
+        /// Show all cars.
+        /// </summary>
+        /// <param name="model">View model</param>
+        /// <param name="sortMode">Sort mode</param>
+        /// <param name="page">Page number</param>
+        /// <param name="selectedMode">Selected sort mode</param>
+        /// <returns>View</returns>
         public ActionResult GetCars(GetCarsVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
         {
             if (sortMode == 0)
             {
                 sortMode = selectedMode;
             }
+
             var carsDTO = _rentService.GetCars();
             var cars = _rentMapperDM.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(carsDTO);
             var filters = new List<Models.View_Models.Shared.Filter>();
@@ -167,6 +227,7 @@ namespace Rental.WEB.Controllers
                  maxPrice = 0,
                  minCurPrice = 0,
                  maxCurPrice = 0;
+
             if (cars != null && cars.Count > 0)
             {
                 if (model.Filters == null || model.Filters.Count == 0)
@@ -174,8 +235,14 @@ namespace Rental.WEB.Controllers
                     void CreateFilters(string name, Func<CarDM, string> value)
                     {
                         filters.AddRange(cars.Select(x => value(x)).Distinct()
-                            .Select(x => new Models.View_Models.Shared.Filter() { Name = name, Text = x, Checked = false }));
+                            .Select(x => new Models.View_Models.Shared.Filter()
+                            {
+                                Name = name,
+                                Text = x,
+                                Checked = false
+                            }));
                     }
+
                     CreateFilters("Марка", x => x.Brand.Name);
                     CreateFilters("Вместительность", x => x.Кoominess.ToString());
                     CreateFilters("Топливо", x => x.Fuel);
@@ -197,7 +264,8 @@ namespace Rental.WEB.Controllers
                     {
                         if (cars.Count > 0 && model.Filters.Any(f => f.Name == name && f.Checked))
                         {
-                            cars = cars.Where(p => model.Filters.Any(f => f.Name == name && f.Text == value(p) && f.Checked)).ToList();
+                            cars = cars.Where(p => model.Filters
+                            .Any(f => f.Name == name && f.Text == value(p) && f.Checked)).ToList();
                         }
                     }
 
@@ -248,14 +316,16 @@ namespace Rental.WEB.Controllers
                     break;
             }
 
-            int pageSize = 2;
+            int pageSize = 7;
             int count = cars.Count;
             cars = cars.Skip((page - 1) * pageSize).Take(pageSize).ToList();
             PageInfo pageInfo = new PageInfo { PageNumber = page, PageSize = pageSize, TotalItem = count };
-            if ((page < 1&&cars.Count!=0) || page > pageInfo.TotalPages || sortMode < 1 || sortMode > sortModes.Count)
+            if ((page < 1&& count != 0) || (page > pageInfo.TotalPages && count != 0) 
+                || sortMode < 1 || sortMode > sortModes.Count)
             {
                  return  View("CustomNotFound", "_Layout", "Страница не найдена");
             }
+
             GetCarsVM carsVM = new GetCarsVM()
             {
                 CarsDM = cars,
@@ -268,16 +338,24 @@ namespace Rental.WEB.Controllers
                 SortModes = sortModes,
                 SelectedMode = sortMode
             };
+
             return View("GetCars",carsVM);
         }
 
+        /// <summary>
+        /// Create car data transfer object.
+        /// </summary>
+        /// <param name="model">Car model</param>
+        /// <returns>New car</returns>
         private CarDTO _createCarDTO(CreateVM model)
         {
             CarDTO carDTO = _rentMapperDM.ToCarDTO.Map<CarDM, CarDTO>(model.Car);
             List<PropertyDTO> properties = new List<PropertyDTO>();
+
             if(model.PropertyNames!=null&&model.PropertyNames.Length>0)
             for (int i = 0; i < model.PropertyNames.Count(); i++)
                 properties.Add(new PropertyDTO() { Name = model.PropertyNames[i], Text = model.PropertyValues[i] });
+
             carDTO.Properties = properties;
 
             List<ImageDM> images = new List<ImageDM>();
@@ -290,76 +368,121 @@ namespace Rental.WEB.Controllers
                     images.Add(new ImageDM { Text = model.Alts[i], Photo = _rentService.GetCar(model.Car.Id).Images.First(x => x.Id.ToString() == model.Photos[i]).Photo });
                 }
             }
+
             if (model.Images != null)
             {
                 for (int i = 0; i < model.Images.Length; i++)
                     using (var reader = new BinaryReader(model.Images[i].InputStream))
                         images.Add(new ImageDM { Photo = reader.ReadBytes(model.Images[i].ContentLength), Text = model.Alts[i + ofset] });
             }
+
             carDTO.Images = _rentMapperDM.ToImageDTO.Map<List<ImageDM>, IEnumerable<ImageDTO>>(images);
             return carDTO;
         }
 
+        /// <summary>
+        /// Create car.
+        /// </summary>
+        /// <param name="model">Car view model.</param>
+        /// <returns>View</returns>
         [HttpPost]
         public ActionResult CreateCar(CreateVM model)
         {
             if (model.Car.DateOfCreate.Date > DateTime.Now.Date ||
                 model.Car.DateOfCreate.Date < DateTime.Now.AddYears(-30).Date)
                 ModelState.AddModelError("DateOfCreate", "Неверная дата");
+
             if (ModelState.IsValid)
             {
                 CarDTO carDTO = _createCarDTO(model);
                 _adminService.CreateCar(carDTO);
                 _logWriter.CreateLog("Добавил автомобиль " , User.Identity.GetUserId());
+
                 return RedirectToAction("GetCars");
             }
+
             return View(model);
         }
 
+        /// <summary>
+        /// Show view for update car.
+        /// </summary>
+        /// <param name="id">Car id</param>
+        /// <returns>View</returns>
         public ActionResult UpdateCar(int? id)
         {
             if (id == null)
                 return View("CustomNotFound", "_Layout", "Автомобиль не найден");
+
             var carDTO = _rentService.GetCar(id);
+            if(carDTO==null)
+                return View("CustomNotFound", "_Layout", "Автомобиль не найден");
+
             CarDM car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
+
             return View("CreateCar", new CreateVM() { Car=car });
 
         }
 
+        /// <summary>
+        /// Update car.
+        /// </summary>
+        /// <param name="model">Car view model</param>
+        /// <returns>View</returns>
         [HttpPost]
         public ActionResult UpdateCar(CreateVM model)
         {
             if (model.Car.DateOfCreate.Date > DateTime.Now.Date ||
                    model.Car.DateOfCreate.Date < DateTime.Now.AddYears(-30).Date)
                 ModelState.AddModelError("Car.DateOfCreate", "Неверная дата");
+
             if (ModelState.IsValid)
             {
                 CarDTO carDTO = _createCarDTO(model);
-            _adminService.UpdateCar(carDTO);
+                _adminService.UpdateCar(carDTO);
                 _logWriter.CreateLog("Обновил данные про автомобиль " + model.Car.Id, User.Identity.GetUserId());
+
                 return RedirectToAction("GetCars");
             }
+
             CarDM car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(_rentService.GetCar(model.Car.Id));
             model.Car.Properties = car.Properties;
             model.Car.Images = car.Images;
+
             return View("CreateCar", model );
         }
 
+        /// <summary>
+        /// Block car by id.
+        /// </summary>
+        /// <param name="id">Car id</param>
+        /// <returns>View</returns>
         public ActionResult Delete(int? id)
         {
             if (id == null)
                 return View("CustomNotFound", "_Layout", "Автомобиль не найден");
+
             _adminService.DeleteCar(id.Value);
             _logWriter.CreateLog("Убрал автомобиль " + id, User.Identity.GetUserId());
+
             return RedirectToAction("GetCars");
         }
 
+        /// <summary>
+        /// Show create user view.
+        /// </summary>
+        /// <returns>View</returns>
         public ActionResult CreateManager()
         {
             ViewBag.CreatingManger = true;
             return View("Register");
         }
 
+        /// <summary>
+        /// Create manager.
+        /// </summary>
+        /// <param name="register">User model</param>
+        /// <returns>View</returns>
         [HttpPost]
         public ActionResult CreateManager(RegisterVM register)
         {
@@ -371,19 +494,27 @@ namespace Rental.WEB.Controllers
                     Password = register.Password,
                     Name = register.Name,
                 };
+
                 string result = _adminService.CreateManager(user);
                 if (result==null|| result.Length == 0)
                 {
                     _logWriter.CreateLog("Добавил менеджера", User.Identity.GetUserId());
+
                     return RedirectToAction("GetUsers");
                 }
                 else
                     ModelState.AddModelError("", result);
             }
             ViewBag.CreatingManger = true;
+
             return View("Register", register);
         }
 
+        /// <summary>
+        /// Values for autocomplete
+        /// </summary>
+        /// <param name="term">input value</param>
+        /// <returns>Values</returns>
         public ActionResult AutocompleteBrand(string term)
         {
             if (term != null)
@@ -392,11 +523,18 @@ namespace Rental.WEB.Controllers
                 var items = _rentService.GetCars().Select(x=>x.Brand)
                     .Where(x => x.Name.ToLower().Replace(" ", "").Contains(term)).Select(x => x.Name.ToLower()).Distinct()
                     .Take(5).Select(x => new { value = x });
+
                 return Json(items, JsonRequestBehavior.AllowGet);
             }
+
             return Json(new List<string>(), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Values for autocomplete
+        /// </summary>
+        /// <param name="term">input value</param>
+        /// <returns>Values</returns>
         public ActionResult AutocompleteCarcass(string term)
         {
             if (term != null)
@@ -405,11 +543,18 @@ namespace Rental.WEB.Controllers
                 var items = _rentService.GetCars().Select(x => x.Carcass)
                     .Where(x => x.Type.ToLower().Replace(" ", "").Contains(term)).Select(x => x.Type.ToLower()).Distinct()
                     .Take(5).Select(x => new { value = x });
+
                 return Json(items, JsonRequestBehavior.AllowGet);
             }
+
             return Json(new List<string>(), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Values for autocomplete
+        /// </summary>
+        /// <param name="term">input value</param>
+        /// <returns>Values</returns>
         public ActionResult AutocompleteQuality(string term)
         {
             if (term != null)
@@ -418,24 +563,39 @@ namespace Rental.WEB.Controllers
                 var items = _rentService.GetCars().Select(x => x.Quality)
                     .Where(x => x.Text.ToLower().Replace(" ", "").Contains(term)).Select(x => x.Text.ToLower()).Distinct()
                     .Take(5).Select(x => new { value = x });
+
                 return Json(items, JsonRequestBehavior.AllowGet);
             }
+
             return Json(new List<string>(), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Values for autocomplete
+        /// </summary>
+        /// <param name="term">input value</param>
+        /// <returns>Values</returns>
         public ActionResult AutocompleteTransmission(string term)
         {
             if (term != null)
             {
                 term = term.ToLower().Replace(" ", "");
                 var items = _rentService.GetCars().Select(x => x.Transmission)
-                    .Where(x => x.Category.ToLower().Replace(" ", "").Contains(term)).Select(x => x.Category.ToLower()).Distinct()
+                    .Where(x => x.Category.ToLower().Replace(" ", "")
+                    .Contains(term)).Select(x => x.Category.ToLower()).Distinct()
                     .Take(5).Select(x => new { value = x });
+
                 return Json(items, JsonRequestBehavior.AllowGet);
             }
+
             return Json(new List<string>(), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Values for autocomplete
+        /// </summary>
+        /// <param name="term">input value</param>
+        /// <returns>Values</returns>
         public ActionResult AutocompletePropertyName(string term)
         {
             if (term != null)
@@ -446,13 +606,21 @@ namespace Rental.WEB.Controllers
                 {
                     properties.AddRange(i);
                 }
+
                 var items = properties.Where(x => x.Name.ToLower().Replace(" ", "").Contains(term))
                     .Select(x => x.Name.ToLower()).Distinct().Take(5).Select(x => new { value = x });
+
                 return Json(items, JsonRequestBehavior.AllowGet);
             }
+
             return Json(new List<string>(), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Values for autocomplete
+        /// </summary>
+        /// <param name="term">input value</param>
+        /// <returns>Values</returns>
         public ActionResult AutocompletePropertyValue(string term)
         {
             if (term != null)
@@ -463,13 +631,20 @@ namespace Rental.WEB.Controllers
                 {
                     properties.AddRange(i);
                 }
+
                 var items = properties.Where(x => x.Text.ToLower().Replace(" ", "").Contains(term))
                     .Select(x => x.Text.ToLower()).Distinct().Take(5).Select(x => new { value = x });
+
                 return Json(items, JsonRequestBehavior.AllowGet);
             }
+
             return Json(new List<string>(), JsonRequestBehavior.AllowGet);
         }
 
+        /// <summary>
+        /// Dispose services.
+        /// </summary>
+        /// <param name="disposing">Disposing</param>
         protected override void Dispose(bool disposing)
         {
             _rentService.Dispose();

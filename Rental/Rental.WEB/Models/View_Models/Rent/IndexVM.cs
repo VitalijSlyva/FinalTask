@@ -1,12 +1,12 @@
 ﻿using Rental.WEB.Models.Domain_Models.Rent;
 using Rental.WEB.Models.View_Models.Shared;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Models.View_Models.Rent
 {
+    /// <summary>
+    /// Index view model.
+    /// </summary>
     public class IndexVM
     {
         public List<CarDM> Cars { get; set; }

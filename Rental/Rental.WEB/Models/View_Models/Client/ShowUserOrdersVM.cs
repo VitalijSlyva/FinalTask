@@ -1,12 +1,12 @@
 ﻿using Rental.WEB.Models.Domain_Models.Rent;
 using Rental.WEB.Models.View_Models.Shared;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Models.View_Models.Client
 {
+    /// <summary>
+    /// Show user orders view model.
+    /// </summary>
     public class ShowUserOrdersVM
     {
         public List<OrderDM> OrdersDM { get; set; }

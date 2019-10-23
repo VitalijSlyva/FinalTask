@@ -7,8 +7,15 @@ using System.Web.Routing;
 
 namespace Rental.WEB
 {
+    /// <summary>
+    /// Configuration for routes
+    /// </summary>
     public class RouteConfig
     {
+        /// <summary>
+        /// Register routes
+        /// </summary>
+        /// <param name="routes">Route collection</param>
         public static void RegisterRoutes(RouteCollection routes)
         {
             routes.IgnoreRoute("{resource}.axd/{*pathInfo}");

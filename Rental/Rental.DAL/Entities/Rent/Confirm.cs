@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Rental.DAL.Entities.Rent
+﻿namespace Rental.DAL.Entities.Rent
 {
+    /// <summary>
+    /// Confirm entity.
+    /// </summary>
     public class Confirm:Entity
     {
         public string ManagerId { get; set; }

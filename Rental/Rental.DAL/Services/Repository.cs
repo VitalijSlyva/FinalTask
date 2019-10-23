@@ -4,21 +4,24 @@ using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Services
 {
+    /// <summary>
+    /// Template of repository for work with entities
+    /// </summary>
+    /// <typeparam name="T">Entity</typeparam>
     public class Repository<T> : RentRepository<T> where T : class
     {
         public Repository(RentContext context):base(context)
         {
+
         }
 
         /// <summary>
-        /// Add new element into table.
+        /// Add new item in table.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">New item</param>
         public override void Create(T item)
         {
             _context.Entry(item).State = EntityState.Added;
@@ -28,50 +31,52 @@ namespace Rental.DAL.Services
         /// <summary>
         /// Delete element from table.
         /// </summary>
-        /// <param name="id"></param>
+        /// <param name="id">Item id</param>
         public override void Delete(int id)
         {
             T item = _context.Set<T>().Find(id);
             if (item != null)
                 _context.Entry(item).State = EntityState.Deleted;
+            _context.SaveChanges();
         }
 
         /// <summary>
-        /// Returns IEnumerable elements for predicate.
+        /// Returns items by condition.
         /// </summary>
-        /// <param name="predicate"></param>
-        /// <returns></returns>
+        /// <param name="predicate">Condition</param>
+        /// <returns>Itmes</returns>
         public override IEnumerable<T> Find(Func<T, bool> predicate)
         {
             return _context.Set<T>().Where(predicate);
         }
 
         /// <summary>
-        /// Take element for id.
+        /// Take element by id.
         /// </summary>
-        /// <param name="id"></param>
-        /// <returns></returns>
+        /// <param name="id">Item id</param>
+        /// <returns>Item</returns>
         public override T Get(int id)
         {
             return _context.Set<T>().Find(id);
         }
 
         /// <summary>
-        /// Get all elements from table.
+        /// Get all items.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>Items</returns>
         public override IEnumerable<T> Show()
         {
             return _context.Set<T>();
         }
 
         /// <summary>
-        /// Updates element in table.
+        /// Updates item.
         /// </summary>
-        /// <param name="item"></param>
+        /// <param name="item">Updated item</param>
         public override void Update(T item)
         {
             _context.Entry(item).State = EntityState.Modified;
+            _context.SaveChanges();
         }
     }
 }

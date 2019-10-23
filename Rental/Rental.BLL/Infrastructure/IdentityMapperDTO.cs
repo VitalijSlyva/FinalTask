@@ -2,15 +2,12 @@
 using Rental.BLL.DTO.Identity;
 using Rental.BLL.Interfaces;
 using Rental.DAL.Entities.Identity;
-using Rental.DAL.Entities.Rent;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.BLL.Infrastructure
 {
+    /// <summary>
+    /// Mapper for identity objects and data transfer objects.
+    /// </summary>
     internal class IdentityMapperDTO : IIdentityMapperDTO
     {
         public IMapper ToUserDTO

@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Rental.BLL.DTO.Rent
+﻿namespace Rental.BLL.DTO.Rent
 {
+    /// <summary>
+    /// Common fields for data transfer objects.
+    /// </summary>
     public class EntityDTO
     {
         public int Id { get; set; }

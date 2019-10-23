@@ -1,12 +1,10 @@
 ﻿using Rental.DAL.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Services
 {
+    /// <summary>
+    /// Common unit of work.
+    /// </summary>
     public class UnitOfWork:IUnitOfWork
     {
         private IIdentityUnitOfWork _identity;
@@ -17,6 +15,11 @@ namespace Rental.DAL.Services
 
         private readonly string _connectionIdentity;
 
+        /// <summary>
+        /// Create connection with databases.
+        /// </summary>
+        /// <param name="connectionRent">Connection string for rent context</param>
+        /// <param name="connectionIdentity">Connection string for identity context</param>
         public UnitOfWork(string connectionRent,string connectionIdentity)
         {
             _connectionRent = connectionRent;
@@ -43,6 +46,9 @@ namespace Rental.DAL.Services
             }
         }
 
+        /// <summary>
+        /// Dispose contexts.
+        /// </summary>
         public void Dispose()
         {
             Identity.Dispose();

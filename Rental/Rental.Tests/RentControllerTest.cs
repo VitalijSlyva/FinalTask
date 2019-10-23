@@ -12,89 +12,101 @@ using Rental.WEB.Models.View_Models.Rent;
 
 namespace Rental.Tests
 {
+    /// <summary>
+    /// Testing rent controller
+    /// </summary>
     [TestClass]
     public class RentControllerTest
     {
+        private Mock<IRentService> _mockRent;
+        private Mock<IRentMapperDM> _mockMapper;
+        private RentController _controller;
+
+
+        /// <summary>
+        /// Initialization
+        /// </summary>
+        [TestInitialize]
+        public void Setup()
+        {
+            _mockRent = new Mock<IRentService>();
+            _mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
+            _mockRent.Setup(x => x.GetCar(1)).Returns(new CarDTO());
+            _mockMapper = new Mock<IRentMapperDM>();
+            _mockMapper.Setup(x => x.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(new List<CarDTO>())).Returns(new List<CarDM>());
+            _mockMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(new CarDTO())).Returns(new CarDM());
+            _controller  = new RentController(_mockRent.Object, _mockMapper.Object);
+        }
+
+
+        /// <summary>
+        /// The test that index view result not null
+        /// </summary>
         [TestMethod]
         public void IndexViewResultNotNull()
         {
-            var mockRent = new Mock<IRentService>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            var mockMapper = new Mock<IRentMapperDM>();
-            mockMapper.Setup(x => x.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(new List<CarDTO>())).Returns(new List<CarDM>());
-            RentController controller = new RentController(mockRent.Object, mockMapper.Object);
-
-            ViewResult result = controller.Index(null, 0, 0, 1) as ViewResult;
+            ViewResult result = _controller.Index(null, 0, 0, 1) as ViewResult;
 
             Assert.IsNotNull(result.ViewName);
         }
 
+        /// <summary>
+        /// The test that index view is 
+        /// </summary>
         [TestMethod]
         public void IndexViewEqualIndexCshtml()
         {
-            var mockRent = new Mock<IRentService>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            var mockMapper = new Mock<IRentMapperDM>();
-            mockMapper.Setup(x => x.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(new List<CarDTO>())).Returns(new List<CarDM>());
-            RentController controller = new RentController(mockRent.Object, mockMapper.Object);
-
-            ViewResult result = controller.Index(null, 0, 0, 1) as ViewResult;
+            ViewResult result = _controller.Index(null, 0, 0, 1) as ViewResult;
 
             Assert.AreEqual("Index",result.ViewName);
         }
 
+        /// <summary>
+        /// The test that index model not null
+        /// </summary>
         [TestMethod]
         public void IndexModelNotNull()
         {
-            var mockRent = new Mock<IRentService>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            var mockMapper = new Mock<IRentMapperDM>();
-            mockMapper.Setup(x => x.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(new List<CarDTO>())).Returns(new List<CarDM>());
-            RentController controller = new RentController(mockRent.Object, mockMapper.Object);
-
-            ViewResult result = controller.Index(null, 0, 0, 1) as ViewResult;
+            ViewResult result = _controller.Index(null, 0, 0, 1) as ViewResult;
 
             Assert.IsInstanceOfType(result.Model, typeof(IndexVM));
         }
 
+        /// <summary>
+        /// The test that car view result not null
+        /// </summary>
         [TestMethod]
         public void CarViewResultNotNull()
         {
-            var mockRent = new Mock<IRentService>();
-            mockRent.Setup(x => x.GetCar(1)).Returns(new CarDTO());
-            var mockMapper = new Mock<IRentMapperDM>();
-            mockMapper.Setup(x => x.ToCarDM.Map<CarDTO,CarDM>(new CarDTO())).Returns(new CarDM());
-            RentController controller = new RentController(mockRent.Object, mockMapper.Object);
-
-            ViewResult result = controller.Car(1) as ViewResult;
+            ViewResult result = _controller.Car(1) as ViewResult;
 
             Assert.IsNotNull(result.ViewName);
         }
 
+        /// <summary>
+        /// The test that car view is index.cshtml
+        /// </summary>
         [TestMethod]
         public void CarViewEqualIndexCshtml()
         {
-            var mockRent = new Mock<IRentService>();
-            mockRent.Setup(x => x.GetCar(1)).Returns(null as CarDTO);
-            var mockMapper = new Mock<IRentMapperDM>();
-            mockMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(null)).Returns(new CarDM() {Id=1 });
-            RentController controller = new RentController(mockRent.Object, mockMapper.Object);
+            _mockRent.Setup(x => x.GetCar(1)).Returns(null as CarDTO);
+            _mockMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(null)).Returns(new CarDM() { Id = 1 });
 
-            ViewResult result = controller.Car(1) as ViewResult;
+            ViewResult result = _controller.Car(1) as ViewResult;
 
             Assert.AreEqual("Car", result.ViewName);
         }
 
+        /// <summary>
+        /// The test that car model not null
+        /// </summary>
         [TestMethod]
         public void CarModelNotNull()
         {
-            var mockRent = new Mock<IRentService>();
-            mockRent.Setup(x => x.GetCar(1)).Returns(null as CarDTO);
-            var mockMapper = new Mock<IRentMapperDM>();
-            mockMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(null)).Returns(new CarDM() { Id = 1 });
-            RentController controller = new RentController(mockRent.Object, mockMapper.Object);
+            _mockRent.Setup(x => x.GetCar(1)).Returns(null as CarDTO);
+            _mockMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(null)).Returns(new CarDM() { Id = 1 });
 
-            ViewResult result = controller.Car(1) as ViewResult;
+            ViewResult result = _controller.Car(1) as ViewResult;
 
             Assert.IsInstanceOfType(result.Model, typeof(CarDM));
         }

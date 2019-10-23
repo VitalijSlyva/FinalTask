@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Entities.Rent
 {
+    /// <summary>
+    /// Car entity.
+    /// </summary>
     public class Car : Entity
     {
         public string Model { set; get; }

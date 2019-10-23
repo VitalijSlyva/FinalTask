@@ -2,13 +2,12 @@
 using Rental.BLL.DTO.Identity;
 using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Infrastructure
 {
+    /// <summary>
+    /// Mapper for identity data transfer objects and identity models.
+    /// </summary>
     public class IdentityMapperDM:IIdentityMapperDM
     {
         public IMapper ToUserDM

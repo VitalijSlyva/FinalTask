@@ -1,13 +1,12 @@
 ﻿using Rental.DAL.Abstracts;
 using Rental.DAL.Entities.Rent;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Interfaces
 {
+    /// <summary>
+    /// Interface for working with rent entities.
+    /// </summary>
     public interface IRentUnitOfWork : IDisposable
     {
         RentRepository<Brand> Brands { get; }
@@ -34,6 +33,9 @@ namespace Rental.DAL.Interfaces
 
         RentRepository<Transmission> Transmissions { get;  }
 
+        /// <summary>
+        /// Save changes.
+        /// </summary>
         void Save();
     }
 }

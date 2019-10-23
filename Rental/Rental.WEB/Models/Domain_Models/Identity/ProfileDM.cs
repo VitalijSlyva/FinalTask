@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Models.Domain_Models.Identity
 {
+    /// <summary>
+    /// Client profile model.
+    /// </summary>
     public class ProfileDM
     {
         public string Id { get; set; }

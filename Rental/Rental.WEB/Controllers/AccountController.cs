@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNet.Identity;
 using Microsoft.Owin.Security;
 using Rental.BLL.DTO.Identity;
-using Rental.BLL.DTO.Log;
 using Rental.BLL.Interfaces;
 using Rental.WEB.Attributes;
 using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Identity;
 using Rental.WEB.Models.View_Models.Account;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -17,6 +13,9 @@ using System.Web.Mvc;
 
 namespace Rental.WEB.Controllers
 {
+    /// <summary>
+    /// Controller for account actions.
+    /// </summary>
     [ExceptionLogger]
     public class AccountController : Controller
     {
@@ -34,6 +33,12 @@ namespace Rental.WEB.Controllers
             }
         }
 
+        /// <summary>
+        /// Create services and mappers for work.
+        /// </summary>
+        /// <param name="accountService">Account service</param>
+        /// <param name="identityMapperDM">Identity mapper</param>
+        /// <param name="log">Log service</param>
         public AccountController(IAccountService accountService, IIdentityMapperDM identityMapperDM,ILogWriter log)
         {
             _accountService = accountService;
@@ -41,18 +46,31 @@ namespace Rental.WEB.Controllers
             _logWriter = log;
         }
 
+        /// <summary>
+        /// Show login view.
+        /// </summary>
+        /// <returns>View</returns>
         [NoAuthorize]
         public ActionResult Login()
         {
             return View("Login");
         }
 
+        /// <summary>
+        /// Show register view.
+        /// </summary>
+        /// <returns>View</returns>
         [NoAuthorize]
         public ActionResult Register()
         {
             return View("Register");
         }
 
+        /// <summary>
+        /// Login user.
+        /// </summary>
+        /// <param name="login">Login model</param>
+        /// <returns>View</returns>
         [NoAuthorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -74,13 +92,22 @@ namespace Rental.WEB.Controllers
             return View(login);
         }
 
+        /// <summary>
+        /// Logout user.
+        /// </summary>
+        /// <returns>View</returns>
         [Authorize]
-        public async Task<ActionResult> Logout()
+        public ActionResult Logout()
         {
             _authenticationManager.SignOut();
             return RedirectToAction("Index", "Rent");
         }
 
+        /// <summary>
+        /// Register user.
+        /// </summary>
+        /// <param name="register">Register model</param>
+        /// <returns>View</returns>
         [NoAuthorize]
         [ValidateAntiForgeryToken]
         [HttpPost]
@@ -103,6 +130,10 @@ namespace Rental.WEB.Controllers
             return View("Register",register);
         }
 
+        /// <summary>
+        /// Show user data.
+        /// </summary>
+        /// <returns>View</returns>
         [Authorize]
         public async Task<ActionResult> ShowUser()
         {
@@ -112,6 +143,10 @@ namespace Rental.WEB.Controllers
             return View("ShowUser",userProfile);
         }
 
+        /// <summary>
+        /// Dispose services.
+        /// </summary>
+        /// <param name="disposing">Disposing.</param>
         protected override void Dispose(bool disposing)
         {
             _accountService.Dispose();

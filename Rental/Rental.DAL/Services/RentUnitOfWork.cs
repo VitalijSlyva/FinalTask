@@ -2,13 +2,12 @@
 using Rental.DAL.Entities.Rent;
 using Rental.DAL.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Services
 {
+    /// <summary>
+    /// Unit for work with rent context.
+    /// </summary>
     public class RentUnitOfWork : IRentUnitOfWork
     {
         private EF.Contexts.RentContext _rentContext;
@@ -37,6 +36,10 @@ namespace Rental.DAL.Services
 
         private RentRepository<Transmission> _transmissions;
 
+        /// <summary>
+        /// Create context with connection.
+        /// </summary>
+        /// <param name="connection">Connection string</param>
         public RentUnitOfWork(string connection)
         {
             _rentContext = new EF.Contexts.RentContext(connection);
@@ -162,6 +165,9 @@ namespace Rental.DAL.Services
             }
         }
 
+        /// <summary>
+        /// Save changes.
+        /// </summary>
         public void Save()
         {
             _rentContext.SaveChanges();
@@ -169,16 +175,23 @@ namespace Rental.DAL.Services
 
         private bool _Disposed = false;
 
+        /// <summary>
+        /// Call method for disposing.
+        /// </summary>
+        /// <param name="disposing"></param>
         public virtual void Dispose(bool disposing)
         {
             if (!_Disposed)
             {
                 if (disposing)
                     _rentContext.Dispose();
-                _Disposed = true;
             }
+            _Disposed = true;
         }
 
+        /// <summary>
+        /// Dispose context.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);

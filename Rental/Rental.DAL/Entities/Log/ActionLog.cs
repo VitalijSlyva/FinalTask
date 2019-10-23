@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Entities.Log
 {
+    /// <summary>
+    /// Entity for action log.
+    /// </summary>
     public class ActionLog
     {
         public int Id { get; set; }

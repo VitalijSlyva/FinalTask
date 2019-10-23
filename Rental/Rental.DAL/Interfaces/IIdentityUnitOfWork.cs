@@ -1,12 +1,11 @@
 ﻿using Rental.DAL.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Interfaces
 {
+    /// <summary>
+    /// Interface for working with identity.
+    /// </summary>
     public interface IIdentityUnitOfWork : IDisposable
     {
         ApplicationUserManager UserManager { get; }
@@ -15,6 +14,9 @@ namespace Rental.DAL.Interfaces
 
         ApplicationRoleManager RoleManager { get; }
 
+        /// <summary>
+        /// Save changes.
+        /// </summary>
         void Save();
     }
 }

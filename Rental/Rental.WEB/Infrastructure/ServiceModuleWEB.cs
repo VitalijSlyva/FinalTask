@@ -1,20 +1,18 @@
 ﻿using Ninject.Modules;
-using Ninject.Web.Mvc.FilterBindingSyntax;
 using Rental.BLL.Interfaces;
 using Rental.BLL.Services;
-using Rental.WEB.Attributes;
-using Rental.WEB.Controllers;
 using Rental.WEB.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
 
 namespace Rental.WEB.Infrastructure
 {
+    /// <summary>
+    /// Module for dependency injection.
+    /// </summary>
     public class ServiceModuleWEB : NinjectModule
     {
+        /// <summary>
+        /// Create binds.
+        /// </summary>
         public override void Load()
         {
             Bind<IAccountService>().To<AccountService>();
@@ -27,7 +25,6 @@ namespace Rental.WEB.Infrastructure
             Bind<IRentMapperDM>().To<RentMapperDM>();
             Bind<ILogMapperDM>().To<LogMapperDM>();
             Bind<ILogWriter>().To<LogWriter>();
-
         }
     }
 }

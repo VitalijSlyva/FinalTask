@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Models.Domain_Models.Log
 {
+    /// <summary>
+    /// Action log model.
+    /// </summary>
     public class ActionLogDM
     {
         public int Id { get; set; }

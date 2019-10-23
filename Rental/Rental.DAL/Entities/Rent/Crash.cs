@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Rental.DAL.Entities.Rent
 {
+    /// <summary>
+    /// Crash entity.
+    /// </summary>
     public class Crash :Entity
     {
         public int? ReturnId { get; set; }
@@ -13,10 +12,6 @@ namespace Rental.DAL.Entities.Rent
         public virtual Return Return { get; set; }
 
         public string Description { get; set; }
-
-        //public int? PaymentId { get; set; }
-
-        //public virtual Payment Payment { get; set; }
 
         public virtual ICollection<Payment> Payment { get; set; }
     }

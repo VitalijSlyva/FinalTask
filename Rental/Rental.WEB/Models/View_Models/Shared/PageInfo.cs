@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Models.View_Models.Shared
 {
+    /// <summary>
+    /// Paging information.
+    /// </summary>
     public class PageInfo
     {
         public int PageNumber { get; set; }

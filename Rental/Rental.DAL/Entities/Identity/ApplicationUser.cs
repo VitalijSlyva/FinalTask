@@ -1,12 +1,10 @@
 ﻿using Microsoft.AspNet.Identity.EntityFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Entities.Identity
 {
+    /// <summary>
+    /// User entity.
+    /// </summary>
     public class ApplicationUser : IdentityUser
     {
         public virtual Profile Profile { get; set; }

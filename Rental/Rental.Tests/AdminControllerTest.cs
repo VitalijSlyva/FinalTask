@@ -16,174 +16,157 @@ using System.Security.Principal;
 
 namespace Rental.Tests
 {
+    /// <summary>
+    /// Testing admin controller
+    /// </summary>
     [TestClass]
     public class AdminControllerTest
     {
+        private Mock<IAdminService> _mockAdmin;
+        private Mock<IRentMapperDM> _mockRentMapper;
+        private Mock<IIdentityMapperDM> _mockIdentityMapper;
+        private Mock<IRentService> _mockRent;
+        private Mock<ILogWriter> _mockLog;
+        private AdminController _controller;
+
+        /// <summary>
+        /// Initialization
+        /// </summary>
+        [TestInitialize]
+        public void Setup()
+        {
+            _mockAdmin = new Mock<IAdminService>();
+            _mockAdmin.Setup(x => x.GetUsers()).Returns(new List<User>());
+            _mockRentMapper = new Mock<IRentMapperDM>();
+            _mockRentMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(null)).Returns(new CarDM());
+            _mockRentMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(new CarDTO())).Returns(new CarDM());
+            _mockRentMapper.Setup(x => x.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(new List<CarDTO>()))
+                .Returns(new List<CarDM>());
+            _mockRentMapper.Setup(x => x.ToImageDTO.Map<List<ImageDM>, IEnumerable<ImageDTO>>(new List<ImageDM>()))
+                .Returns(null as List<ImageDTO>);
+            _mockIdentityMapper = new Mock<IIdentityMapperDM>();
+            _mockIdentityMapper.Setup(x => x.ToUserDM.Map<IEnumerable<User>, List<UserDM>>(new List<User>()))
+               .Returns(new List<UserDM>());
+            _mockRent = new Mock<IRentService>();
+            _mockRent.Setup(x => x.GetCar(1)).Returns(new CarDTO());
+            _mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
+            _mockLog = new Mock<ILogWriter>();
+
+            var controllerContext = new Mock<ControllerContext>();
+            var principal = new Moq.Mock<IPrincipal>();
+            principal.Setup(p => p.IsInRole("Administrator")).Returns(true);
+            principal.SetupGet(x => x.Identity.Name).Returns("name");
+            controllerContext.SetupGet(x => x.HttpContext.User).Returns(principal.Object);
+
+            _controller = new AdminController(_mockAdmin.Object, _mockIdentityMapper.Object, _mockRentMapper.Object,
+                   _mockRent.Object, _mockLog.Object)
+            {
+                ControllerContext = controllerContext.Object
+            };
+        }
+
+        /// <summary>
+        /// The test that get users view result not null
+        /// </summary>
         [TestMethod]
         public async Task GetUsersViewResultNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            mockAdmin.Setup(x => x.GetUsers()).Returns(new List<User>());
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockIdentityMapper.Setup(x => x.ToUserDM.Map<IEnumerable<User>, List<UserDM>>(new List<User>()))
-                .Returns(new List<UserDM>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            ViewResult result = await controller.GetUsers(null, 0, 0, 1) as ViewResult;
+            ViewResult result = await _controller.GetUsers(null, 0, 0, 1) as ViewResult;
 
             Assert.IsNotNull(result.ViewName);
         }
 
+        /// <summary>
+        /// The test that login model not null
+        /// </summary>
         [TestMethod]
         public async Task GetUsersModelNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            mockAdmin.Setup(x => x.GetUsers()).Returns(new List<User>());
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockIdentityMapper.Setup(x => x.ToUserDM.Map<IEnumerable<User>, List<UserDM>>(new List<User>()))
-                .Returns(new List<UserDM>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            ViewResult result = await controller.GetUsers(null, 0, 0, 1) as ViewResult;
+            ViewResult result = await _controller.GetUsers(null, 0, 0, 1) as ViewResult;
 
             Assert.IsInstanceOfType(result.Model,typeof(GetUsersVM));
         }
 
+        /// <summary>
+        /// The test that login view is getUsers.cshtml
+        /// </summary>
         [TestMethod]
         public async Task GetUsersViewResultEqualGetUsersCshtml()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            mockAdmin.Setup(x => x.GetUsers()).Returns(new List<User>());
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockIdentityMapper.Setup(x => x.ToUserDM.Map<IEnumerable<User>, List<UserDM>>(new List<User>()))
-                .Returns(new List<UserDM>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            ViewResult result = await controller.GetUsers(null, 0, 0, 1) as ViewResult;
+            ViewResult result = await _controller.GetUsers(null, 0, 0, 1) as ViewResult;
 
             Assert.AreEqual(result.ViewName, "GetUsers");
         }
 
+        /// <summary>
+        /// The test that banUsers redirect to getUsers
+        /// </summary>
         [TestMethod]
         public void BanUserRedirectToGetUsers()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            RedirectToRouteResult result = controller.BanUser(null) as RedirectToRouteResult;
+            RedirectToRouteResult result = _controller.BanUser(null) as RedirectToRouteResult;
 
             Assert.AreEqual("GetUsers", result.RouteValues["action"]);
         }
 
+        /// <summary>
+        /// The test that unbanUsers redirect to getUsers
+        /// </summary>
         [TestMethod]
         public void UnbanUserRedirectToGetUsers()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            RedirectToRouteResult result = controller.UnbanUser(null) as RedirectToRouteResult;
+            RedirectToRouteResult result = _controller.UnbanUser(null) as RedirectToRouteResult;
 
             Assert.AreEqual("GetUsers", result.RouteValues["action"]);
         }
 
+        /// <summary>
+        /// The test that create car view is createCar.cshtml
+        /// </summary>
         [TestMethod]
         public void CreateCarViewEqualCreateCarCshtml()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            ViewResult result = controller.CreateCar() as ViewResult;
+            ViewResult result = _controller.CreateCar() as ViewResult;
 
             Assert.AreEqual("CreateCar", result.ViewName);
         }
 
+        /// <summary>
+        /// The test that get cars view result not null
+        /// </summary>
         [TestMethod]
         public void GetCarsViewResultNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            mockRentMapper.Setup(x => x.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(new List<CarDTO>())).Returns(new List<CarDM>());
-            mockIdentityMapper.Setup(x => x.ToUserDM.Map<IEnumerable<User>, List<UserDM>>(new List<User>()))
-                .Returns(new List<UserDM>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            ViewResult result = controller.GetCars(null, 0, 0, 1) as ViewResult;
+            ViewResult result = _controller.GetCars(null, 0, 0, 1) as ViewResult;
 
             Assert.IsNotNull(result.ViewName);
         }
 
+        /// <summary>
+        /// The test that get cars model not null
+        /// </summary>
         [TestMethod]
         public void GetCarsModelNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            mockRentMapper.Setup(x => x.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(new List<CarDTO>())).Returns(new List<CarDM>());
-            mockIdentityMapper.Setup(x => x.ToUserDM.Map<IEnumerable<User>, List<UserDM>>(new List<User>()))
-                .Returns(new List<UserDM>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            ViewResult result = controller.GetCars(null, 0, 0, 1) as ViewResult;
+            ViewResult result = _controller.GetCars(null, 0, 0, 1) as ViewResult;
 
             Assert.IsInstanceOfType(result.Model,typeof(GetCarsVM));
         }
 
+        /// <summary>
+        /// The test that view is getCars.cshtml
+        /// </summary>
         [TestMethod]
         public void GetCarsViewResultEqualGetCarsCshtml()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            mockRentMapper.Setup(x => x.ToCarDM.Map<IEnumerable<CarDTO>, List<CarDM>>(new List<CarDTO>())).Returns(new List<CarDM>());
-            mockIdentityMapper.Setup(x => x.ToUserDM.Map<IEnumerable<User>, List<UserDM>>(new List<User>()))
-                .Returns(new List<UserDM>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            ViewResult result = controller.GetCars(null, 0, 0, 1) as ViewResult;
+            ViewResult result = _controller.GetCars(null, 0, 0, 1) as ViewResult;
 
             Assert.AreEqual(result.ViewName, "GetCars");
         }
 
+        /// <summary>
+        /// The test that create car retirect to getCars
+        /// </summary>
         [TestMethod]
         public void CreateCarViewRedirectToGetCars()
         {
@@ -191,65 +174,44 @@ namespace Rental.Tests
             {
                 Car = new CarDM() { DateOfCreate = DateTime.Now }
             };
-            var controllerContext = new Mock<ControllerContext>();
-            var principal = new Moq.Mock<IPrincipal>();
-            principal.Setup(p => p.IsInRole("Administrator")).Returns(true);
-            principal.SetupGet(x => x.Identity.Name).Returns("name");
-            controllerContext.SetupGet(x => x.HttpContext.User).Returns(principal.Object);
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            mockRentMapper.Setup(x => x.ToCarDTO.Map<CarDM, CarDTO>(model.Car)).Returns(new CarDTO());
-            mockRentMapper.Setup(x => x.ToImageDTO.Map<List<ImageDM>, IEnumerable<ImageDTO>>(new List<ImageDM>())).Returns(null as List<ImageDTO>);
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object)
-            {
-                ControllerContext=controllerContext.Object
-            };
 
-            RedirectToRouteResult result = controller.CreateCar(model) as RedirectToRouteResult;
+            _mockRentMapper.Setup(x => x.ToCarDTO.Map<CarDM, CarDTO>(model.Car)).Returns(new CarDTO());
+
+            RedirectToRouteResult result = _controller.CreateCar(model) as RedirectToRouteResult;
 
             Assert.AreEqual("GetCars", result.RouteValues["action"]);
         }
 
+        /// <summary>
+        /// The test that update car model not null
+        /// </summary>
         [TestMethod]
         public void UpdateCarModelCarNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCar(1)).Returns(null as CarDTO);
-            mockRentMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(null)).Returns(new CarDM());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
+            var model = new CarDTO() { };
+            _mockRent.Setup(x => x.GetCar(1)).Returns(model);
+            _mockRentMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(model)).Returns(new CarDM());
 
-            ViewResult result = controller.UpdateCar(1) as ViewResult;
+            ViewResult result = _controller.UpdateCar(1) as ViewResult;
 
             Assert.IsNotNull((result.Model as CreateVM).Car);
         }
 
+        /// <summary>
+        /// The test that update car view is updateCar.cshtml
+        /// </summary>
         [TestMethod]
-        public void UpdateCarViewResultEqualGetCarsCshtml()
+        public void UpdateCarViewResultEqualUpdateCarCshtml()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCar(1)).Returns(null as CarDTO);
-            mockRentMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(null)).Returns(new CarDM());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
 
-            ViewResult result = controller.UpdateCar(1) as ViewResult;
+            ViewResult result = _controller.UpdateCar(1) as ViewResult;
 
             Assert.AreEqual(result.ViewName,"CreateCar");
         }
 
+        /// <summary>
+        /// The test that updateCar redirect to getCars
+        /// </summary>
         [TestMethod]
         public void UpdateCarViewRedirectToGetCars()
         {
@@ -257,196 +219,110 @@ namespace Rental.Tests
             {
                 Car = new CarDM() { DateOfCreate = DateTime.Now }
             };
-            var controllerContext = new Mock<ControllerContext>();
-            var principal = new Moq.Mock<IPrincipal>();
-            principal.Setup(p => p.IsInRole("Administrator")).Returns(true);
-            principal.SetupGet(x => x.Identity.Name).Returns("name");
-            controllerContext.SetupGet(x => x.HttpContext.User).Returns(principal.Object);
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            mockRentMapper.Setup(x => x.ToCarDTO.Map<CarDM, CarDTO>(model.Car)).Returns(new CarDTO());
-            mockRentMapper.Setup(x => x.ToImageDTO.Map<List<ImageDM>, IEnumerable<ImageDTO>>(new List<ImageDM>())).Returns(null as List<ImageDTO>);
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object)
-            {
-                ControllerContext = controllerContext.Object
-            };
 
-            RedirectToRouteResult result = controller.UpdateCar(model) as RedirectToRouteResult;
+            _mockRentMapper.Setup(x => x.ToCarDTO.Map<CarDM, CarDTO>(model.Car)).Returns(new CarDTO());
+
+            RedirectToRouteResult result = _controller.UpdateCar(model) as RedirectToRouteResult;
 
             Assert.AreEqual("GetCars", result.RouteValues["action"]);
         }
 
+        /// <summary>
+        /// The test that delete redirect to getCars
+        /// </summary>
         [TestMethod]
         public void DeleteViewRedirectToGetCars()
         {
-            var model = new CreateVM()
-            {
-                Car = new CarDM() { DateOfCreate = DateTime.Now }
-            };
-            var controllerContext = new Mock<ControllerContext>();
-            var principal = new Moq.Mock<IPrincipal>();
-            principal.Setup(p => p.IsInRole("Administrator")).Returns(true);
-            principal.SetupGet(x => x.Identity.Name).Returns("name");
-            controllerContext.SetupGet(x => x.HttpContext.User).Returns(principal.Object);
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object)
-            {
-                ControllerContext = controllerContext.Object
-            };
-
-            RedirectToRouteResult result = controller.Delete(1) as RedirectToRouteResult;
+            RedirectToRouteResult result = _controller.Delete(1) as RedirectToRouteResult;
 
             Assert.AreEqual("GetCars", result.RouteValues["action"]);
         }
 
+        /// <summary>
+        /// The test that create manager view is register.cshtml
+        /// </summary>
         [TestMethod]
         public void CreateManagerViewEqualRegisterCshtml()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            ViewResult result = controller.CreateManager() as ViewResult;
+            ViewResult result = _controller.CreateManager() as ViewResult;
 
             Assert.AreEqual("Register", result.ViewName);
         }
 
+        /// <summary>
+        /// The test that create manager redirect to getUsers
+        /// </summary>
         [TestMethod]
         public void CreateManagerViewRedirectToGetUsers()
         {
-            var controllerContext = new Mock<ControllerContext>();
-            var principal = new Moq.Mock<IPrincipal>();
-            principal.Setup(p => p.IsInRole("Administrator")).Returns(true);
-            principal.SetupGet(x => x.Identity.Name).Returns("name");
-            controllerContext.SetupGet(x => x.HttpContext.User).Returns(principal.Object);
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            mockAdmin.Setup(x => x.CreateManager(null)).Returns("");
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object)
-            {
-                ControllerContext = controllerContext.Object
-            };
-
-            RedirectToRouteResult result = controller.CreateManager(new WEB.Models.View_Models.Account.RegisterVM()) as RedirectToRouteResult;
+            RedirectToRouteResult result = _controller.CreateManager(new WEB.Models.View_Models.Account.RegisterVM())
+                as RedirectToRouteResult;
 
             Assert.AreEqual("GetUsers", result.RouteValues["action"]);
         }
 
+        /// <summary>
+        /// The test that autocompleteBrand result not null
+        /// </summary>
         [TestMethod]
         public void AutocompleteBrandResultNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            JsonResult result = controller.AutocompleteBrand("test") as JsonResult;
+            JsonResult result = _controller.AutocompleteBrand("test") as JsonResult;
 
             Assert.IsNotNull(result.Data);
         }
 
+        /// <summary>
+        /// The test that autocompleteCarcass result not null
+        /// </summary>
         [TestMethod]
         public void AutocompleteCarcassResultNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            JsonResult result = controller.AutocompleteCarcass("test") as JsonResult;
+            JsonResult result = _controller.AutocompleteCarcass("test") as JsonResult;
 
             Assert.IsNotNull(result.Data);
         }
 
+        /// <summary>
+        /// The test that autocompleteQuality result not null
+        /// </summary>
         [TestMethod]
         public void AutocompleteQualityResultNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            JsonResult result = controller.AutocompleteQuality("test") as JsonResult;
+            JsonResult result = _controller.AutocompleteQuality("test") as JsonResult;
 
             Assert.IsNotNull(result.Data);
         }
 
+        /// <summary>
+        /// The test that autocompleteTransmission result not null
+        /// </summary>
         [TestMethod]
         public void AutocompleteTransmissionResultNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            JsonResult result = controller.AutocompleteTransmission("test") as JsonResult;
+            JsonResult result = _controller.AutocompleteTransmission("test") as JsonResult;
 
             Assert.IsNotNull(result.Data);
         }
 
+        /// <summary>
+        /// The test that autocompletePropertyName not null
+        /// </summary>
         [TestMethod]
         public void AutocompletePropertyNameNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            JsonResult result = controller.AutocompletePropertyName("test") as JsonResult;
+            JsonResult result = _controller.AutocompletePropertyName("test") as JsonResult;
 
             Assert.IsNotNull(result.Data);
         }
 
+        /// <summary>
+        /// The test that autocompletePropertyValue not null
+        /// </summary>
         [TestMethod]
         public void AutocompletePropertyValueNotNull()
         {
-            var mockAdmin = new Mock<IAdminService>();
-            var mockRentMapper = new Mock<IRentMapperDM>();
-            var mockIdentityMapper = new Mock<IIdentityMapperDM>();
-            var mockRent = new Mock<IRentService>();
-            var mockLog = new Mock<ILogWriter>();
-            mockRent.Setup(x => x.GetCars()).Returns(new List<CarDTO>());
-            AdminController controller = new AdminController(mockAdmin.Object, mockIdentityMapper.Object, mockRentMapper.Object,
-                mockRent.Object, mockLog.Object);
-
-            JsonResult result = controller.AutocompletePropertyValue("test") as JsonResult;
+            JsonResult result = _controller.AutocompletePropertyValue("test") as JsonResult;
 
             Assert.IsNotNull(result.Data);
         }

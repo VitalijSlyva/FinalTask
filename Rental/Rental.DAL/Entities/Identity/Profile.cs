@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Entities.Identity
 {
+    /// <summary>
+    /// Entity for additioanl information about client.
+    /// </summary>
     public class Profile
     {
         [Key]
@@ -41,6 +40,5 @@ namespace Rental.DAL.Entities.Identity
         public string PlaceOfBirth { get; set; }
 
         public virtual ApplicationUser ApplicationUser { get; set; }
-
     }
 }

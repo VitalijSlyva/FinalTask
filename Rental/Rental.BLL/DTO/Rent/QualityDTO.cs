@@ -1,11 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Rental.BLL.DTO.Rent
+﻿namespace Rental.BLL.DTO.Rent
 {
+    /// <summary>
+    /// Quality data transfer object.
+    /// </summary>
     public class QualityDTO : EntityDTO
     {
         public string Text { get; set; }

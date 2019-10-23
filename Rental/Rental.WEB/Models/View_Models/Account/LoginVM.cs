@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Rental.WEB.Models.View_Models.Account
 {
+    /// <summary>
+    /// Login view model.
+    /// </summary>
     public class LoginVM
     {
         [Required(ErrorMessage = "Поле должно быть заполнено")]

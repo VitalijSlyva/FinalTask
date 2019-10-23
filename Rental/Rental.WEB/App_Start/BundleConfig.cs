@@ -3,9 +3,15 @@ using System.Web.Optimization;
 
 namespace Rental.WEB
 {
+    /// <summary>
+    /// Bundle configuration
+    /// </summary>
     public class BundleConfig
     {
-        // Дополнительные сведения об объединении см. на странице https://go.microsoft.com/fwlink/?LinkId=301862
+        /// <summary>
+        /// Register main bundles
+        /// </summary>
+        /// <param name="bundles">Bundle collection</param>
         public static void RegisterBundles(BundleCollection bundles)
         {
             bundles.Add(new ScriptBundle("~/bundles/jquery").Include(
@@ -14,8 +20,6 @@ namespace Rental.WEB
             bundles.Add(new ScriptBundle("~/bundles/jqueryval").Include(
                         "~/Scripts/jquery.validate*"));
 
-            // Используйте версию Modernizr для разработчиков, чтобы учиться работать. Когда вы будете готовы перейти к работе,
-            // готово к выпуску, используйте средство сборки по адресу https://modernizr.com, чтобы выбрать только необходимые тесты.
             bundles.Add(new ScriptBundle("~/bundles/modernizr").Include(
                         "~/Scripts/modernizr-*"));
 
@@ -47,20 +51,38 @@ namespace Rental.WEB
                   "~/Content/themes/base/theme.css"));
         }
 
+        /// <summary>
+        /// Registercustom bundles.
+        /// </summary>
+        /// <param name="bundles">Bundle collection</param>
         private static void RegistreRentBundles(BundleCollection bundles)
         {
-            bundles.Add(new StyleBundle("~/Content/styles/shared/layout").Include("~/Content/styles/shared/layout.css"));
-            bundles.Add(new StyleBundle("~/Content/styles/shared/filter").Include("~/Content/styles/shared/filter.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/shared/layout")
+                .Include("~/Content/styles/shared/layout.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/shared/filter")
+                .Include("~/Content/styles/shared/filter.css"));
 
-            bundles.Add(new StyleBundle("~/Content/styles/rent/index").Include("~/Content/styles/rent/index.css"));
-            bundles.Add(new StyleBundle("~/Content/styles/rent/car").Include("~/Content/styles/rent/car.css"));
-            bundles.Add(new StyleBundle("~/Content/styles/client/show-orders").Include("~/Content/styles/client/show-orders.css"));
-            bundles.Add(new StyleBundle("~/Content/styles/client/show-payments").Include("~/Content/styles/client/show-payments.css"));
-            bundles.Add(new StyleBundle("~/Content/styles/admin/get-users").Include("~/Content/styles/admin/get-users.css"));
-            bundles.Add(new StyleBundle("~/Content/styles/admin/get-cars").Include("~/Content/styles/admin/get-cars.css"));
-            bundles.Add(new StyleBundle("~/Content/styles/admin/create-car").Include("~/Content/styles/admin/create-car.css"));
-            bundles.Add(new StyleBundle("~/Content/styles/manager/show-returns").Include("~/Content/styles/manager/show-returns.css"));
-            bundles.Add(new StyleBundle("~/Content/styles/manager/show-confirms").Include("~/Content/styles/manager/show-confirms.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/rent/index")
+                .Include("~/Content/styles/rent/index.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/rent/car")
+                .Include("~/Content/styles/rent/car.css"));
+
+            bundles.Add(new StyleBundle("~/Content/styles/client/show-orders")
+                .Include("~/Content/styles/client/show-orders.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/client/show-payments")
+                .Include("~/Content/styles/client/show-payments.css"));
+
+            bundles.Add(new StyleBundle("~/Content/styles/admin/get-users")
+                .Include("~/Content/styles/admin/get-users.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/admin/get-cars")
+                .Include("~/Content/styles/admin/get-cars.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/admin/create-car")
+                .Include("~/Content/styles/admin/create-car.css"));
+
+            bundles.Add(new StyleBundle("~/Content/styles/manager/show-returns")
+                .Include("~/Content/styles/manager/show-returns.css"));
+            bundles.Add(new StyleBundle("~/Content/styles/manager/show-confirms")
+                .Include("~/Content/styles/manager/show-confirms.css"));
         }
     }
 }

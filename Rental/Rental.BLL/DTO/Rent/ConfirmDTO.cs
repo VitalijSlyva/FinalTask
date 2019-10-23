@@ -1,12 +1,10 @@
 ﻿using Rental.BLL.DTO.Identity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.BLL.DTO.Rent
 {
+    /// <summary>
+    /// Confirm data transfer object.
+    /// </summary>
     public class ConfirmDTO : EntityDTO
     {
         public User User{ get; set; }

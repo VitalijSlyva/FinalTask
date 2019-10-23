@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.BLL.DTO.Log
 {
+    /// <summary>
+    /// Data transfer object for exception log.
+    /// </summary>
     public class ExceptionLogDTO
     {
         public int Id { get; set; }

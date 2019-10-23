@@ -3,17 +3,25 @@ using Rental.DAL.Entities.Rent;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Web;
 
 namespace Rental.DAL.EF.Initializers
 {
-    internal class RentInitializer: CreateDatabaseIfNotExists<RentContext>
+    /// <summary>
+    /// Intializator for rent context.
+    /// </summary>
+    internal class RentInitializer : CreateDatabaseIfNotExists<RentContext>
+    // internal class RentInitializer: DropCreateDatabaseAlways<RentContext>
     {
+        /// <summary>
+        /// Recreate database with new items.
+        /// </summary>
+        /// <param name="context">Database context</param>
         protected override void Seed(RentContext context)
         {
-            var car = new Car() {
+            var car = new Car()
+            {
                 Brand = new Brand() { Name = "ford" },
                 Carcass = new Carcass() { Type = "седан" },
                 Carrying = 1000,
@@ -24,14 +32,21 @@ namespace Rental.DAL.EF.Initializers
                 Hoursepower = 333,
                 Number = "XY1234YX",
                 IsDeleted = false,
-                Price=500,
-                Кoominess=4,
-                Transmission=new Transmission() {Category="автомат",Count=6 },
-                Images=new List<Image>() { new Image() {Photo=null, Text="фото"} },
-                Model= "mustang gtr",
-                Quality=new Quality() {Text="c" },
-                Properties=new List<Property>() { new Property() {Name="бронрованные стекла",Text="да" } }  
+                Price = 500,
+                Кoominess = 4,
+                Transmission = new Transmission() { Category = "автомат", Count = 6 },
+                Images = new List<Image>() {
+                    new Image() {
+                    Photo = File.ReadAllBytes(HttpContext.Current.Server.MapPath(@"~\EF\Initializers\Images\1.jpg")
+                    .Replace("WEB","DAL")),
+                    Text ="фото"
+                }
+                },
+                Model = "mustang gtr",
+                Quality = new Quality() { Text = "c" },
+                Properties = new List<Property>() { new Property() { Name = "бронрованные стекла", Text = "да" } }
             };
+
             var car2 = new Car()
             {
                 Brand = car.Brand,
@@ -47,11 +62,18 @@ namespace Rental.DAL.EF.Initializers
                 Price = 700,
                 Кoominess = 5,
                 Transmission = new Transmission() { Category = "автомат", Count = 10 },
-                Images = new List<Image>() { new Image() { Photo = null, Text = "фото" } },
+                Images = new List<Image>() {
+                    new Image() {
+                    Photo = File.ReadAllBytes(HttpContext.Current.Server.MapPath(@"~\EF\Initializers\Images\2.jpg")
+                    .Replace("WEB","DAL")),
+                    Text ="фото"
+                }
+                },
                 Model = "mustang gtx 530",
                 Quality = new Quality() { Text = "b" },
-                Properties = new List<Property>() { } 
+                Properties = new List<Property>() { }
             };
+
             var car3 = new Car()
             {
                 Brand = new Brand() { Name = "lada" },
@@ -67,14 +89,22 @@ namespace Rental.DAL.EF.Initializers
                 Price = 300,
                 Кoominess = 5,
                 Transmission = new Transmission() { Category = "механика", Count = 5 },
-                Images = new List<Image>() { new Image() { Photo = null, Text = "фото" } },
+                Images = new List<Image>() {
+                    new Image() {
+                    Photo = File.ReadAllBytes(HttpContext.Current.Server.MapPath(@"~\EF\Initializers\Images\3.jpg")
+                    .Replace("WEB","DAL")),
+                    Text ="фото"
+                }
+                },
                 Model = "10",
                 Quality = new Quality() { Text = "a" },
                 Properties = new List<Property>() { }
             };
+
             context.Cars.Add(car);
             context.Cars.Add(car2);
             context.Cars.Add(car3);
+
             base.Seed(context);
         }
     }

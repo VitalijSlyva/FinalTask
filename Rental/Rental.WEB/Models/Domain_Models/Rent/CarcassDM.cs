@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Rental.WEB.Models.Domain_Models.Rent
 {
+    /// <summary>
+    /// Carcass domain model.
+    /// </summary>
     public class CarcassDM : EntityDM
     {
         [Required(ErrorMessage = "Поле должно быть заполнено")]

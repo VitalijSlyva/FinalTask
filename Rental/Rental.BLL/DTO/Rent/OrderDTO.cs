@@ -1,12 +1,11 @@
 ﻿using Rental.BLL.DTO.Identity;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.BLL.DTO.Rent
 {
+    /// <summary>
+    /// Order data transfer object.
+    /// </summary>
     public class OrderDTO : EntityDTO
     {
         public ProfileDTO Profile { set; get; }

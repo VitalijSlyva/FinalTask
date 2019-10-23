@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Web;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace Rental.WEB.Models.Domain_Models.Rent
 {
+    /// <summary>
+    /// Transmission domain model.
+    /// </summary>
     public class TransmissionDM : EntityDM
     {
         [Required(ErrorMessage = "Поле должно быть заполнено")]

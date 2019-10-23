@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rental.DAL.Interfaces
 {
+    /// <summary>
+    /// Common intreface of unit for wotk.
+    /// </summary>
     public interface IUnitOfWork : IDisposable
     {
         IIdentityUnitOfWork Identity { get; }

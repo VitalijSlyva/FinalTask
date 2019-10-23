@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Rental.DAL.Entities.Rent
 {
+    /// <summary>
+    /// Quality entity.
+    /// </summary>
     public class Quality:Entity
     {
         public string Text { get; set; }

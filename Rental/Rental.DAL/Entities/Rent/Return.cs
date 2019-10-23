@@ -1,18 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Rental.DAL.Entities.Rent
 {
+    /// <summary>
+    /// Return entity. 
+    /// </summary>
     public class Return:Entity
     { 
         public string ManagerId { get; set; }
-
-        //   public int? CrashId { get; set; }
-
-        // public virtual Crash Crash { get; set; }
 
         public virtual ICollection<Crash> Crash { get; set; }
 

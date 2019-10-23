@@ -3,13 +3,13 @@ using Rental.BLL.DTO.Rent;
 using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Identity;
 using Rental.WEB.Models.Domain_Models.Rent;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Rental.WEB.Infrastructure
 {
+    /// <summary>
+    /// Mapper for data transfer objects and domain models.
+    /// </summary>
     public class RentMapperDM:IRentMapperDM
     {
         public virtual IMapper ToBrandDTO
