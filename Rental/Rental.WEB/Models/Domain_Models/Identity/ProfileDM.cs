@@ -38,6 +38,7 @@ namespace Rental.WEB.Models.Domain_Models.Identity
 
         [Required(ErrorMessage = "Поле должно быть заполнено")]
         [DataType(DataType.PhoneNumber, ErrorMessage = "Неверный номер")]
+        [RegularExpression("[0-9]{9,}",ErrorMessage ="Неверный формат")]
         [Display(Name = "Номер телефона")]
         public string Number { get; set; }
 

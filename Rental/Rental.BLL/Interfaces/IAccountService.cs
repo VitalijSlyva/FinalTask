@@ -31,11 +31,23 @@ namespace Rental.BLL.Interfaces
         /// <returns>User</returns>
         Task<User> GetUserAsync(string id);
 
+        User GetUser(string id);
+
         /// <summary>
         /// Test on ban for user.
         /// </summary>
         /// <param name="id">User id</param>
         /// <returns>Ban</returns>
         bool IsBanned(string id);
+
+        string GetIdByEmail(string email);
+
+        void ConfirmEmail(string userId);
+
+        string ChangeEmail(string email, string userId, string password);
+
+        string ChangeName(string name, string userId, string password);
+
+        string ChangePassword(string userId, string password);
     }
 }

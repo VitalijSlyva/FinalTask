@@ -87,26 +87,35 @@
                 </div>
             </div>
         </div>
-        @foreach (var i in Model.Payments)
+        @if (Model != null && Model.Payments!= null && Model.Payments.Count > 0)
         {
-            <div class="col-12">
-                <h4><b>Идентификационный номер: </b> @i.Id</h4>
-                <h4><b>Сумма: </b>@i.Price</h4>
-                <h4><b>Статус: </b>@(i.IsPaid ? "Оплачен" : "Неоплачен")</h4>
-                @if (!i.IsPaid)
-                {
-                    <a class="btn btn-default btn-dark" href="@Url.Action("MakePayment","Client",new { id=i.Id})">Оплатить</a>
-                }
-            </div>
-            <hr />
-        }
-        @if (Model.PageInfo.TotalPages > 1)
-        {
-            <br />
-            <div class="text-right">
-                <div class="btn-group">
-                    @Html.PageLinks(Model.PageInfo, "filters")
+            foreach (var i in Model.Payments)
+            {
+                <div class="col-12">
+                    <h4><b>Идентификационный номер: </b> @i.Id</h4>
+                    <h4><b>Сумма: </b>@i.Price</h4>
+                    <h4><b>Статус: </b>@(i.IsPaid ? "Оплачен" : "Неоплачен")</h4>
+                    @if (!i.IsPaid)
+                    {
+                        <a class="btn btn-default btn-dark" href="@Url.Action("MakePayment","Client",new { id=i.Id})">Оплатить</a>
+                    }
                 </div>
+                <hr />
+            }
+            if (Model.PageInfo.TotalPages > 1)
+            {
+                <br />
+                <div class="text-right">
+                    <div class="btn-group">
+                        @Html.PageLinks(Model.PageInfo, "filters")
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div>
+                <h4>Платежи ненайдены...</h4>
             </div>
         }
     </div>

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web.Mvc;
 using Rental.WEB.Models.View_Models.Shared;
+using System.Net.Mail;
 
 namespace Rental.WEB.Controllers
 {

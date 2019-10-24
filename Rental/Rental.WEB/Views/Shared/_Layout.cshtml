@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿@using Rental.WEB.Infrastructure
+<!DOCTYPE html>
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
@@ -27,7 +28,9 @@
 
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <div id="user-page" class="navbar-right"><a href="@Url.Action("ShowUser","Account")" class="btn btn-default">@User.Identity.Name</a></div>
+                    <div id="user-page" class="navbar-right">
+                        <a href="@Url.Action("ShowUser","Account")" class="btn @(User.Identity.GetEmailConfirm()?"btn-default":"btn-danger")">@(User.Identity.GetUserName())</a>
+                    </div>
                     }
                     <div class="navbar-right">
                         <button type="button" class="navbar-toggle " data-toggle="collapse" data-target="#myNavbar">

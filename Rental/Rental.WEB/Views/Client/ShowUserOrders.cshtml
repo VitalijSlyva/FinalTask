@@ -66,45 +66,54 @@
                 </div>
             </div>
         </div>
-        @foreach (var i in Model.OrdersDM)
+        @if (Model != null && Model.OrdersDM != null && Model.OrdersDM.Count > 0)
         {
-        <div class="col-12">
-            <h3>
-                <b>Сатус: </b>
-                @Model.Statuses[i.Id]
-            </h3>
-            @if(Model.Statuses[i.Id]== "Одобрен")
+            foreach (var i in Model.OrdersDM)
             {
-            <h4 class="text-danger">
-                Забрать автомобиль  @i.DateStart.ToShortDateString() вы можете по адресу Харьков улица Сумская 18
-            </h4>
-            }
-            <h4><b> Номер:</b> @i.Id</h4>
-            <h4><b>Автомобиль:</b> @i.Car.Brand.Name @i.Car.Model</h4>
-            <h4><b>Период:</b> @i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</h4>
-            <h4><b>Сумма: </b>@(i.Payment.Price.ToString())</h4>
-            @if (i.Payment != null && !i.Payment.IsPaid)
-            {
-                <h3 class="text-danger">Не оплачен</h3>
-            }
-            else
-            {
-                if (Model.Statuses[i.Id].Split(' ')[0] == "Отклонен" && i.Payment.IsPaid)
-                {
-                   <h4 class="text-danger">Деньги будут возвращены в течении 24 часов после отмены заказа</h4>
-                }
-            }
+                <div class="col-12">
+                    <h3>
+                        <b>Сатус: </b>
+                        @Model.Statuses[i.Id]
+                    </h3>
+                    @if (Model.Statuses[i.Id] == "Одобрен")
+                    {
+                        <h4 class="text-danger">
+                            Забрать автомобиль  @i.DateStart.ToShortDateString() вы можете по адресу Харьков улица Сумская 18
+                        </h4>
+                    }
+                    <h4><b> Номер:</b> @i.Id</h4>
+                    <h4><b>Автомобиль:</b> @i.Car.Brand.Name @i.Car.Model</h4>
+                    <h4><b>Период:</b> @i.DateStart.ToShortDateString()-@i.DateEnd.ToShortDateString()</h4>
+                    <h4><b>Сумма: </b>@(i.Payment.Price.ToString())</h4>
+                    @if (i.Payment != null && !i.Payment.IsPaid)
+                    {
+                        <h3 class="text-danger">Неоплачен</h3>
+                    }
+                    else
+                    {
+                        if (Model.Statuses[i.Id].Split(' ')[0] == "Отклонен" && i.Payment.IsPaid)
+                        {
+                            <h4 class="text-danger">Деньги будут возвращены в течении 24 часов после отмены заказа</h4>
+                        }
+                    }
 
-        </div>
-            <hr />
-        }
-        @if (Model.PageInfo.TotalPages > 1)
-        {
-            <br />
-            <div class="text-right">
-                <div class="btn-group">
-                    @Html.PageLinks(Model.PageInfo, "filters")
                 </div>
+                <hr />
+            }
+            if (Model.PageInfo.TotalPages > 1)
+            {
+                <br />
+                <div class="text-right">
+                    <div class="btn-group">
+                        @Html.PageLinks(Model.PageInfo, "filters")
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div>
+                <h4>Заказы ненайдены...</h4>
             </div>
         }
     </div>

@@ -293,7 +293,7 @@ namespace Rental.WEB.Controllers
                     }
                     else
                     {
-                        return View("CustomNotFound", "_Layout", "Перед заказом необходимо заполнить паспортные данные");
+                        return View("CustomNotFound", "_Layout", "Перед заказом необходимо заполнить паспортные данные (Профиль)");
                     }
                 }
                 else

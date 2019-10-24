@@ -87,41 +87,50 @@
                 </div>
             </div>
         </div>
-        @foreach (var i in Model.CarsDM)
+        @if (Model != null && Model.CarsDM != null && Model.CarsDM.Count > 0)
         {
-            <div class="col-md-12">
-                <div class="col-md-10">
-                    <h4><b>@i.Brand.Name @i.Model</b></h4>
-                    <h4><b>Номер: </b>@i.Number</h4>
-                    <h4><b>@i.Price</b> грн. сутки</h4>
+            foreach (var i in Model.CarsDM)
+            {
+                <div class="col-md-12">
+                    <div class="col-md-10">
+                        <h4><b>@i.Brand.Name @i.Model</b></h4>
+                        <h4><b>Номер: </b>@i.Number</h4>
+                        <h4><b>@i.Price</b> грн. сутки</h4>
+                    </div>
+                    <div class="col-md-2">
+                        @if (!i.IsDeleted)
+                        {
+                            <div>
+                                <a class="btn btn-danger btn-dark" href="@Url.Action("Delete", "Admin", new { id = i.Id })"
+                                   onclick="return confirm('Поддтвердите действие удаления автомобиля с номером @i.Number.')">Удалить</a>
+                            </div>
+                            <br />
+                            <div>
+                                <a class="btn btn-warning btn-dark" href="@Url.Action("UpdateCar", "Admin", new { id = i.Id })">Изменить</a>
+                            </div>
+                        }
+                        else
+                        {
+                            <h3 class="text-danger">Удалена</h3>
+                        }
+                    </div>
                 </div>
-                <div class="col-md-2">
-                    @if (!i.IsDeleted)
-                    {
-                        <div>
-                            <a class="btn btn-danger btn-dark" href="@Url.Action("Delete","Admin",new { id=i.Id})"
-                               onclick="return confirm('Поддтвердите действие удаления автомобиля с номером @i.Number.')">Удалить</a>
-                        </div>
-                        <br />
-                        <div>
-                            <a class="btn btn-warning btn-dark" href="@Url.Action("UpdateCar","Admin",new { id=i.Id})">Изменить</a>
-                        </div>
-                    }
-                    else
-                    {
-                        <h3 class="text-danger">Удалена</h3>
-                    }
+                <hr />
+            }
+            if (Model.PageInfo.TotalPages > 1)
+            {
+                <br />
+                <div class="text-right">
+                    <div class="btn-group">
+                        @Html.PageLinks(Model.PageInfo, "filters")
+                    </div>
                 </div>
-            </div>
-            <hr />
+            }
         }
-        @if (Model.PageInfo.TotalPages > 1)
+        else
         {
-            <br />
-            <div class="text-right">
-                <div class="btn-group">
-                    @Html.PageLinks(Model.PageInfo, "filters")
-                </div>
+            <div>
+                <h4>Автомобили ненайдены...</h4>
             </div>
         }
     </div>

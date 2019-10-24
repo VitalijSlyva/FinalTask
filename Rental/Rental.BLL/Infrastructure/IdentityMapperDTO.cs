@@ -15,7 +15,8 @@ namespace Rental.BLL.Infrastructure
             get
             {
                 return new MapperConfiguration(cfg => cfg.CreateMap<ApplicationUser, User>()
-                .ForMember(x => x.Password, k => k.MapFrom(c => c.PasswordHash)))
+                .ForMember(x => x.Password, k => k.MapFrom(c => c.PasswordHash))
+                .ForMember(x=>x.ConfirmedEmail,k=>k.MapFrom(c=>c.EmailConfirmed)))
                 .CreateMapper();
             }
         }

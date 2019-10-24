@@ -115,6 +115,24 @@ namespace Rental.BLL.Services
             }
         }
 
+        public User GetUser(string id)
+        {
+            try
+            {
+                ApplicationUser user = IdentityUnitOfWork.UserManager.FindById(id);
+                if (user != null)
+                    return IdentityMapperDTO.ToUserDTO.Map<ApplicationUser, User>(user);
+
+                return null;
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "AccountService", "GetUserAsync");
+
+                return null;
+            }
+        }
+
         /// <summary>
         /// Test on ban for user.
         /// </summary>
@@ -123,6 +141,116 @@ namespace Rental.BLL.Services
         public bool IsBanned(string id)
         {
             return IdentityUnitOfWork.UserManager.IsInRole(id, "banned");
+        }
+
+        public string GetIdByEmail(string email)
+        {
+            try
+            {
+                var user = IdentityUnitOfWork.UserManager.FindByEmail(email);
+                return user?.Id;
+            }
+            catch(Exception e)
+            {
+                CreateLog(e, "AccountService", "GetEmailByIdAsync");
+
+                return null;
+            }
+        }
+
+        public void ConfirmEmail(string userId)
+        {
+            try
+            {
+                var user = IdentityUnitOfWork.UserManager.FindById(userId);
+                if (user != null) {
+                    user.EmailConfirmed = true;
+                    IdentityUnitOfWork.UserManager.Update(user);
+                    IdentityUnitOfWork.Save();
+                }
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "AccountService", "ConfirmEmailAsync");
+            }
+        }
+
+        public string ChangeEmail(string email,string userId,string password)
+        {
+            try
+            {
+                var user = IdentityUnitOfWork.UserManager.FindById(userId);
+                var test = IdentityUnitOfWork.UserManager.FindByEmail(email);
+                if (test==null&&user != null&&IdentityUnitOfWork.UserManager.CheckPassword(user,password))
+                {
+                    user.EmailConfirmed = false;
+                    user.Email = email;
+                    user.UserName = email;
+                    IdentityUnitOfWork.UserManager.Update(user);
+                    IdentityUnitOfWork.Save();
+                    return "";
+                }
+                else
+                {
+                    return "Неверный пароль или пользователь с такой почтой уже существует.";
+                }
+            }
+            catch(Exception e)
+            {
+                CreateLog(e, "AccountService", "ChangeEmail");
+
+                return "Неверный пароль или пользователь с такой почтой уже существует.";
+            }
+        }
+
+        public string ChangeName(string name, string userId, string password)
+        {
+            try
+            {
+                var user = IdentityUnitOfWork.UserManager.FindById(userId);
+                if (user != null && IdentityUnitOfWork.UserManager.CheckPassword(user, password))
+                {
+                    user.Name = name;
+                    IdentityUnitOfWork.UserManager.Update(user);
+                    IdentityUnitOfWork.Save();
+                    return "";
+                }
+                else
+                {
+                    return "Неверный пароль.";
+                }
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "AccountService", "ChangeName");
+
+                return "Неверный пароль";
+            }
+        }
+
+        public string ChangePassword(string userId, string password)
+        {
+            try
+            {
+                var user = IdentityUnitOfWork.UserManager.FindById(userId);
+                if (user != null)
+                {
+                    IdentityUnitOfWork.UserManager.RemovePassword(userId);
+                    IdentityUnitOfWork.UserManager.AddPassword(userId, password);
+                    IdentityUnitOfWork.Save();
+                    return "";
+                }
+                else
+                {
+                    return "Неверный пароль.";
+                }
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "AccountService", "ChangeName");
+
+                return "Неверный пароль";
+            }
         }
     }
 }

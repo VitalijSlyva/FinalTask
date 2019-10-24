@@ -3,10 +3,10 @@
 @{
     ViewBag.Title = "Возврат";
 }
-@using (Html.BeginForm()) 
+@using (Html.BeginForm())
 {
     @Html.AntiForgeryToken()
-    
+
 <div class="form-horizontal">
     @Html.HiddenFor(x => x.Order.Id)
     <h3>Заказ:</h3>
@@ -64,7 +64,7 @@
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group " id="crash-info-1">
         @Html.LabelFor(model => model.Crash.Description, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             <div class="checkbox">
@@ -73,7 +73,7 @@
             </div>
         </div>
     </div>
-    <div class="form-group">
+    <div class="form-group " id="crash-info-2">
         @Html.LabelFor(model => model.Crash.Payment.Price, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             <div class="checkbox">
@@ -88,9 +88,22 @@
         </div>
     </div>
 </div>
-    }
+}
 
-
-    @section Scripts {
-        @Scripts.Render("~/bundles/jqueryval")
-    }
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+    <script>
+        $("#crash-info-1").hide();
+        $("#crash-info-2").hide();
+        var c = document.getElementById("withCrash");
+        c.addEventListener('change', function () {
+            if (this.checked) {
+                $("#crash-info-1").show();
+                $("#crash-info-2").show();
+                } else {
+                $("#crash-info-1").hide();
+                $("#crash-info-2").hide();
+                }
+            });
+    </script>
+}

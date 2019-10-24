@@ -14,7 +14,7 @@ namespace Rental.WEB.Models.Domain_Models.Rent
         [Display(Name = "Принято")]
         public bool IsConfirmed { get; set; }
 
-        [Display(Name ="Коментарий")]
+        [Display(Name ="Причина отказа")]
         public string Description { get; set; }
     }
 }

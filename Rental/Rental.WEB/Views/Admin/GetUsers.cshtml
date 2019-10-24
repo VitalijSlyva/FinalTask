@@ -50,55 +50,64 @@
             <div class="dropdown">
                 <button class="btn btn-secondary btn-dark dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                     @Model.SortModes[Model.SelectedMode - 1]
-                    <span class="glyphicon  @((Model.SelectedMode - 1)%2==0?"glyphicon-arrow-up":"glyphicon-arrow-down")"></span>
+                    <span class="glyphicon  @((Model.SelectedMode - 1) % 2 == 0 ? "glyphicon-arrow-up" : "glyphicon-arrow-down")"></span>
                 </button>
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                     @for (int i = 0; i < Model.SortModes.Count; i++)
                     {<div class="dropdown-item">
-                            <button class="btn " type="submit" name="sortMode" form="filters" value="@(i+1)">
+                            <button class="btn " type="submit" name="sortMode" form="filters" value="@(i + 1)">
                                 @Model.SortModes[i]
-                                <span class="glyphicon  @(i%2==0?"glyphicon-arrow-up":"glyphicon-arrow-down")"></span>
+                                <span class="glyphicon  @(i % 2 == 0 ? "glyphicon-arrow-up" : "glyphicon-arrow-down")"></span>
                             </button>
                         </div>
                     }
                 </div>
             </div>
         </div>
-        @foreach (var i in Model.UsersDM)
+        @if (Model != null && Model.UsersDM != null && Model.UsersDM.Count > 0)
         {
-            <div class="col-md-12">
-                <div class="col-md-10">
-                    @if (!String.IsNullOrEmpty(i.Name))
-                    {
-                        <h5><b>Логин: </b>@i.Name</h5>
-                    }
-                    <h5><b>Почта: </b> @i.Email</h5>
-                    <h4><b>Роль: </b>@Model.Roles[i.Id]</h4>
-                    <h4 class="text-danger"><b> @(Model.Banns[i.Id] ? "Забанен" : "")</b></h4>
-                    <p><b>Номер:</b>@i.Id</p>
-                </div>
-                <div class="col-md-2 text-right">
-                    @if (Model.Banns[i.Id])
-                    {
-                        <a href="@Url.Action("UnbanUser","Admin",new { id=i.Id})" class="btn btn-success btn-dark"
-                           onclick="return confirm('Поддтвердите действие разбана пользователя @i.Name.')">Разбанить</a>
-                    }
-                    else
-                    {
-                        <a href="@Url.Action("BanUser","Admin",new { id=i.Id})" class="btn btn-danger btn-dark"
-                           onclick="return confirm('Поддтвердите действие бана пользователя @i.Name.')">Забанить</a>
-                    }
-                </div>
+            foreach (var i in Model.UsersDM)
+            {
+                <div class="col-md-12">
+                    <div class="col-md-10">
+                        @if (!String.IsNullOrEmpty(i.Name))
+                        {
+                            <h5><b>Логин: </b>@i.Name</h5>
+                        }
+                        <h5><b>Почта: </b> @i.Email</h5>
+                        <h4><b>Роль: </b>@Model.Roles[i.Id]</h4>
+                        <h4 class="text-danger"><b> @(Model.Banns[i.Id] ? "Забанен" : "")</b></h4>
+                        <p><b>Номер:</b>@i.Id</p>
+                    </div>
+                    <div class="col-md-2 text-right">
+                        @if (Model.Banns[i.Id])
+                        {
+                            <a href="@Url.Action("UnbanUser", "Admin", new { id = i.Id })" class="btn btn-success btn-dark"
+                               onclick="return confirm('Поддтвердите действие разбана пользователя @i.Name.')">Разбанить</a>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("BanUser", "Admin", new { id = i.Id })" class="btn btn-danger btn-dark"
+                               onclick="return confirm('Поддтвердите действие бана пользователя @i.Name.')">Забанить</a>
+                        }
+                    </div>
 
-            </div>
-            <hr />
-        }
-        @if (Model.PageInfo.TotalPages > 1)
-        {
-            <div class="text-right">
-                <div class="btn-group">
-                    @Html.PageLinks(Model.PageInfo, "filters")
                 </div>
+                <hr />
+            }
+            if (Model.PageInfo.TotalPages > 1)
+            {
+                <div class="text-right">
+                    <div class="btn-group">
+                        @Html.PageLinks(Model.PageInfo, "filters")
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div>
+                <h4>Пользователи ненайдены...</h4>
             </div>
         }
     </div>

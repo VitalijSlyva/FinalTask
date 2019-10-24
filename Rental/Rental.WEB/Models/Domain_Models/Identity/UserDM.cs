@@ -22,5 +22,7 @@ namespace Rental.WEB.Models.Domain_Models.Identity
         [DataType(DataType.Password)]
         [Display(Name = "Пароль")]
         public string Password { get; set; }
+
+        public bool ConfirmedEmail { get; set; }
     }
 }

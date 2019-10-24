@@ -188,13 +188,13 @@
         @Html.LabelFor(model => model.IsConfirmed, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             <div class="checkbox">
-                @Html.EditorFor(model => model.IsConfirmed)
+                @Html.EditorFor(model => model.IsConfirmed,new {htmlAttributes=new {id="check" } })
                 @Html.ValidationMessageFor(model => model.IsConfirmed, "", new { @class = "text-danger" })
             </div>
         </div>
     </div>
 
-    <div class="form-group">
+    <div class="form-group" id="comment">
         @Html.LabelFor(model => model.Description, htmlAttributes: new { @class = "control-label col-md-2" })
         <div class="col-md-10">
             @Html.EditorFor(model => model.Description, new { htmlAttributes = new { @class = "form-control" } })
@@ -212,4 +212,15 @@
 
 @section Scripts {
     @Scripts.Render("~/bundles/jqueryval")
+    <script>
+            var c = document.getElementById("check");
+        c.addEventListener('change', function () {
+                if (this.checked) {
+                    $("#comment").hide();
+                } else {
+                    $("#comment").show();
+                }
+            });
+
+    </script>
 }

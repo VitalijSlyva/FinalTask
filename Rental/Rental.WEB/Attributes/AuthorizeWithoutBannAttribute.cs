@@ -10,8 +10,7 @@ namespace Rental.WEB.Attributes
     /// </summary>
     public class AuthorizeWithoutBannAttribute:AuthorizeAttribute
     {
-        private IAccountService _accountService= 
-            (IAccountService)DependencyResolver.Current.GetService(typeof(IAccountService));
+        private IAccountService _accountService;
 
         /// <summary>
         /// Test on ban
@@ -20,6 +19,8 @@ namespace Rental.WEB.Attributes
         /// <returns>Is not ban</returns>
         protected override bool AuthorizeCore(HttpContextBase httpContext)
         {
+            _accountService =
+            (IAccountService)DependencyResolver.Current.GetService(typeof(IAccountService));
             return httpContext.User.Identity.IsAuthenticated&&
                 !_accountService.IsBanned(httpContext.User.Identity.GetUserId());
         }

@@ -48,7 +48,10 @@
     <div class="col-md-7">
         <h2>@Model.Brand.Name @Model.Model</h2>
         <h4>@Model.Price за сутки</h4>
-        <p><a class="btn btn-default btn-dark @(Model.IsDeleted?"disabled":"") " href="@Url.Action("MakeOrder","Client",new { carId=Model.Id})">Орендовать</a></p>
+            @if (!Model.IsDeleted && User.Identity.IsAuthenticated && User.IsInRole("client"))
+            {
+        <p><a class="btn btn-default btn-dark @(Model.IsDeleted ? "disabled" : "") " href="@Url.Action("MakeOrder", "Client", new { carId = Model.Id })">Арендовать</a></p>
+            }
     </div>
     <div id="properties" class="col-md-12">
         <ul class="list-group">

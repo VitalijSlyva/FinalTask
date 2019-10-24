@@ -198,6 +198,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Helpers\PagingHelper.cs" />
+    <Compile Include="Infrastructure\IdentityAdditional.cs" />
     <Compile Include="Infrastructure\IdentityMapperDM.cs" />
     <Compile Include="Infrastructure\LogMapperDM.cs" />
     <Compile Include="Infrastructure\LogWriter.cs" />
@@ -224,6 +225,10 @@
     <Compile Include="Models\Domain_Models\Rent\QualityDM.cs" />
     <Compile Include="Models\Domain_Models\Rent\ReturnDM.cs" />
     <Compile Include="Models\Domain_Models\Rent\TransmissionDM.cs" />
+    <Compile Include="Models\View_Models\Account\ChangeEmailVM.cs" />
+    <Compile Include="Models\View_Models\Account\ChangeNameVM.cs" />
+    <Compile Include="Models\View_Models\Account\ChangePasswordVM.cs" />
+    <Compile Include="Models\View_Models\Account\ForgotPasswordVM.cs" />
     <Compile Include="Models\View_Models\Account\LoginVM.cs" />
     <Compile Include="Models\View_Models\Account\RegisterVM.cs" />
     <Compile Include="Models\View_Models\Admin\CreateVM.cs" />
@@ -386,6 +391,11 @@
     <Content Include="Views\Admin\GetCars.cshtml" />
     <Content Include="Views\Shared\CustomError.cshtml" />
     <Content Include="Views\Shared\CustomNotFound.cshtml" />
+    <Content Include="Views\Account\ChangeName.cshtml" />
+    <Content Include="Views\Account\ChangeEmail.cshtml" />
+    <Content Include="Views\Account\ResetPassowrdEmail.cshtml" />
+    <Content Include="Views\Account\ChangePassword.cshtml" />
+    <Content Include="Views\Account\ForgotPassword.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

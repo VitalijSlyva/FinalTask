@@ -6,6 +6,7 @@ using Rental.WEB.Attributes;
 using Rental.WEB.Interfaces;
 using Rental.WEB.Models.Domain_Models.Identity;
 using Rental.WEB.Models.View_Models.Account;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -122,10 +123,13 @@ namespace Rental.WEB.Controllers
                     Name = register.Name,
                 };
                 string result= await _accountService.CreateAsync(user);
-                if (result!=null&&result.Length == 0)
+                if (result != null && result.Length == 0)
+                {
+                    _sendEmail(register.Email);
                     return await Login(new LoginVM() { Email = register.Email, Password = register.Password });
+                }
                 else
-                    ModelState.AddModelError("",result);
+                    ModelState.AddModelError("", result);
             }
             return View("Register",register);
         }
@@ -151,6 +155,160 @@ namespace Rental.WEB.Controllers
         {
             _accountService.Dispose();
             base.Dispose(disposing);
+        }
+
+        private void _sendEmail(string to)
+        {
+            SmtpClient client = new SmtpClient();
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.From = new MailAddress("cardoorrental@gmail.com", "Cardoor");
+            mailMessage.To.Add(to);
+            mailMessage.Subject = "Подтверждение почты";
+            mailMessage.Body= string.Format("Для завершения регистрации перейдите по ссылке:" +
+                            "<a href=\"{0}\" title=\"Подтвердить регистрацию\">{0}</a>",
+                Url.Action("ConfirmEmail", "Account", 
+                new { token = _accountService.GetIdByEmail(to) , email = to }, Request.Url.Scheme));
+            mailMessage.IsBodyHtml = true;
+            client.Send(mailMessage);
+        }
+
+        public async Task<ActionResult> ConfirmEmail(string token, string email)
+        {
+            var user = await _accountService.GetUserAsync(token);
+            if (user != null)
+            {
+                if (user.Email == email&&!user.ConfirmedEmail)
+                {
+                    _accountService.ConfirmEmail(user.Id);
+                    return RedirectToAction("Index", "Rent");
+                }
+                else
+                {
+                    return View("CustomNotFound", "_Layout", "Страница не доступна");
+                }
+            }
+            else
+            {
+                return View("CustomNotFound", "_Layout", "Страница не доступна");
+            }
+        }
+
+        public ActionResult ChangeName()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ChangeName(ChangeNameVM model)
+        {
+            if (ModelState.IsValid)
+            {
+               string res= _accountService.ChangeName(model.Name, User.Identity.GetUserId(), model.Password);
+                if (res.Length == 0)
+                {
+                    return RedirectToAction("Logout");
+                }
+                else
+                {
+                    ModelState.AddModelError("", res);
+                }
+            }
+            return View(model);
+        }
+
+        public ActionResult ChangeEmail()
+        {
+            return View();
+        }
+
+        public ActionResult ForgotPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public ActionResult ChangeEmail(ChangeEmailVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                string res = _accountService.ChangeEmail(model.Email, User.Identity.GetUserId(), model.Password);
+                if (res.Length == 0)
+                {
+                    return RedirectToAction("Logout");
+                }
+                else
+                {
+                    ModelState.AddModelError("", res);
+                }
+            }
+            return View(model);
+        }
+
+        public ActionResult ResetPasswordEmail(string email)
+        {
+            string id = null;
+            if (!string.IsNullOrEmpty(email))
+                id = _accountService.GetIdByEmail(email);
+            else
+            {
+                id = User.Identity.GetUserId();
+                email = User.Identity.Name;
+            }
+            _sendEmailResetPassword(email, id);
+            return View("ResetPassowrdEmail");
+        }
+
+        private void _sendEmailResetPassword(string to,string id)
+        {
+            SmtpClient client = new SmtpClient();
+            MailMessage mailMessage = new MailMessage();
+            mailMessage.From = new MailAddress("cardoorrental@gmail.com", "Cardoor");
+            mailMessage.To.Add(to);
+            mailMessage.Subject = "Измененение пароля";
+            mailMessage.Body = string.Format("Для изменения пароля по ссылке:" +
+                            "<a href=\"{0}\" title=\"Изменить пароль\">{0}</a>",
+                Url.Action("ChangePassword", "Account",
+                new { token = id, email = to }, Request.Url.Scheme));
+            mailMessage.IsBodyHtml = true;
+            client.Send(mailMessage);
+        }
+
+        public ActionResult ChangePassword(string token, string email)
+        {
+            var user =  _accountService.GetUser(token);
+            if (user != null)
+            {
+                if (user.Email == email )
+                {
+                    return View(new ChangePasswordVM() { Id=user.Id});
+                }
+                else
+                {
+                    return View("CustomNotFound", "_Layout", "Страница не доступна");
+                }
+            }
+            else
+            {
+                return View("CustomNotFound", "_Layout", "Страница не доступна");
+            }
+        }
+
+        [HttpPost]
+        public ActionResult ChangePassword(ChangePasswordVM model)
+        {
+            if (ModelState.IsValid)
+            {
+                string res = _accountService.ChangePassword(model.Id, model.Password);
+                if (res.Length == 0)
+                {
+                    return RedirectToAction("Logout");
+                }
+                else
+                {
+                    ModelState.AddModelError("", res);
+                }
+            }
+            return View(model);
         }
     }
 }

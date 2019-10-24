@@ -10,7 +10,7 @@ namespace Rental.WEB.Attributes
     /// </summary>
     public class ExceptionLoggerAttribute : FilterAttribute,IExceptionFilter
     {
-        private ILogService _logService= (ILogService)DependencyResolver.Current.GetService(typeof(ILogService));
+        private ILogService _logService;
 
         /// <summary>
         /// Log exception
@@ -18,6 +18,7 @@ namespace Rental.WEB.Attributes
         /// <param name="filterContext">Exception context</param>
         public void OnException(ExceptionContext filterContext)
         {
+            _logService = (ILogService)DependencyResolver.Current.GetService(typeof(ILogService));
             ExceptionLogDTO exceptionLogDTO = new ExceptionLogDTO()
             {
                 ExeptionMessage = filterContext.Exception.Message,
