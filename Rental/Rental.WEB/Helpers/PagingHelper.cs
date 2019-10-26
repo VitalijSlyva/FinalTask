@@ -21,26 +21,34 @@ namespace Rental.WEB.Helpers
              PageInfo pageInfo, string form, string name = "page")
         {
             StringBuilder result = new StringBuilder();
-            TagBuilder tag = new TagBuilder("button");
-            tag.MergeAttribute("name", name);
-            tag.MergeAttribute("form", form);
-            TagBuilder span = new TagBuilder("span");
+
             if (pageInfo.PageNumber > 1)
             {
+                TagBuilder tag = new TagBuilder("button");
+                tag.MergeAttribute("name", name);
+                tag.MergeAttribute("form", form);
+                TagBuilder span = new TagBuilder("span");
                 tag.MergeAttribute("value",(pageInfo.PageNumber-1).ToString());
                 span.AddCssClass("glyphicon glyphicon-circle-arrow-left");
+                tag.InnerHtml = span.ToString();
+                tag.AddCssClass("btn btn-default");
+                tag.AddCssClass("btn-dark");
+                result.Append(tag.ToString());
             }
 
             if (pageInfo.PageNumber < pageInfo.TotalPages)
             {
+                TagBuilder tag = new TagBuilder("button");
+                tag.MergeAttribute("name", name);
+                tag.MergeAttribute("form", form);
+                TagBuilder span = new TagBuilder("span");
                 tag.MergeAttribute("value", (pageInfo.PageNumber + 1).ToString());
                 span.AddCssClass("glyphicon glyphicon-circle-arrow-right");
+                tag.InnerHtml = span.ToString();
+                tag.AddCssClass("btn btn-default");
+                tag.AddCssClass("btn-dark");
+                result.Append(tag.ToString());
             }
-
-            tag.InnerHtml = span.ToString();
-            tag.AddCssClass("btn btn-default");
-            tag.AddCssClass("btn-dark");
-            result.Append(tag.ToString());
 
             return MvcHtmlString.Create(result.ToString());
         }

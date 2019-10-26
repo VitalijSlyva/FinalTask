@@ -23,10 +23,15 @@ namespace Rental.Tests
     public class AdminControllerTest
     {
         private Mock<IAdminService> _mockAdmin;
+
         private Mock<IRentMapperDM> _mockRentMapper;
+
         private Mock<IIdentityMapperDM> _mockIdentityMapper;
+
         private Mock<IRentService> _mockRent;
+
         private Mock<ILogWriter> _mockLog;
+
         private AdminController _controller;
 
         /// <summary>

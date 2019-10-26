@@ -269,8 +269,8 @@ namespace Rental.BLL.Services
         public bool CarIsFree(int carId, DateTime startDate, DateTime endDate)
         {
             return !RentUnitOfWork.Orders.Show()
-                .Any(x => x.CarId == carId && ((x.DateStart.Date >= startDate.Date && x.DateStart.Date <=endDate.Date) ||
-                (x.DateEnd.Date >= startDate.Date && x.DateEnd.Date <= endDate.Date))&&(x?.Confirm?.FirstOrDefault()
+                .Any(x => x.CarId == carId && ((x.DateStart.Date <= startDate.Date && x.DateEnd.Date >= startDate.Date) ||
+                (x.DateStart.Date <= endDate.Date && x.DateEnd.Date >= endDate.Date))&&(x?.Confirm?.FirstOrDefault()
                 ?.IsConfirmed??true)!=false);
         }
 

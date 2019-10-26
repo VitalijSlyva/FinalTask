@@ -184,7 +184,7 @@ namespace Rental.WEB.Controllers
                 var car = _rentMapperDM.ToCarDM.Map<CarDTO, CarDM>(carDTO);
                 if (car == null)
                     return View("CustomNotFound", "_Layout", "Автомобиль не найден");
-
+                ViewBag.FreeDays = _rentService.GetFreeDates(id.Value);
                 return View("Car",car);
             }
 

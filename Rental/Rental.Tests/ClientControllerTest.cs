@@ -24,10 +24,15 @@ namespace Rental.Tests
     public class ClientControllerTest
     {
         private Mock<IClientService> _mockClient;
+
         private Mock<IRentMapperDM> _mockRentMapper;
+
         private Mock<IIdentityMapperDM> _mockIdentityMapper;
+
         private Mock<IRentService> _mockRent;
+
         private Mock<ILogWriter> _mockLog;
+
         private ClientController _controller;
 
         /// <summary>
@@ -220,16 +225,16 @@ namespace Rental.Tests
         }
 
         /// <summary>
-        /// The test that make payment redirect to index
+        /// The test that make payment redirect to success page
         /// </summary>
         [TestMethod]
-        public void MakePaymentRedirectToIndex()
+        public void MakePaymentRedirectToSuccess()
         {
             var model = new PaymentDTO();
             _mockClient.Setup(x => x.GetPayment(1)).Returns(model);
-            RedirectToRouteResult result = _controller.MakePayment(new PaymentDM()) as RedirectToRouteResult;
+            ViewResult result = _controller.MakePayment(new PaymentDM()) as ViewResult;
 
-            Assert.AreEqual(result.RouteValues["action"],"Index");
+            Assert.AreEqual(result.ViewName,"SuccessPay");
         }
 
         /// <summary>

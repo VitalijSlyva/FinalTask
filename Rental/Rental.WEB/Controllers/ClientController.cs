@@ -14,6 +14,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Web.Mvc;
 
+
+
 namespace Rental.WEB.Controllers
 {
     /// <summary>
@@ -353,7 +355,15 @@ namespace Rental.WEB.Controllers
                 if(paymentDTO==null)
                     return View("CustomNotFound", "_Layout", "Заказ не найден");
 
-                return View(_rentMapperDM.ToPaymentDM.Map<PaymentDTO, PaymentDM>(paymentDTO));
+                string transactionId = "";
+                Random r = new Random();
+                for(int i = 0; i < 11; i++)
+                {
+                    transactionId += r.Next(0, 10).ToString();
+                }
+                var paymentDM = _rentMapperDM.ToPaymentDM.Map<PaymentDTO, PaymentDM>(paymentDTO);
+                paymentDM.TransactionId = transactionId;
+                return View(paymentDM);
             }
 
             return View("CustomNotFound", "_Layout", "Заказ не найден");
@@ -372,7 +382,7 @@ namespace Rental.WEB.Controllers
                 _clientService.CreatePayment(paymentDM.Id, paymentDM.TransactionId);
                 _logWriter.CreateLog("Произвел оплату" +paymentDM.Id, User.Identity.GetUserId());
 
-                return RedirectToAction("Index", "Rent");
+                return View("SuccessPay");
             }
 
             return View(paymentDM);

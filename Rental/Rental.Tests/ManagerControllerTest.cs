@@ -22,9 +22,13 @@ namespace Rental.Tests
     public class ManagerControllerTest
     {
         private Mock<IManagerService> _mockManager;
+
         private Mock<IRentMapperDM> _mockRentMapper;
+
         private Mock<IIdentityMapperDM> _mockIdentityMapper;
+
         private Mock<ILogWriter> _mockLog;
+
         private ManagerController _controller;
 
         /// <summary>

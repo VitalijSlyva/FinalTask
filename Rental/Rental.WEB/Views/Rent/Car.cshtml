@@ -56,7 +56,7 @@
     <div id="properties" class="col-md-12">
         <ul class="list-group">
             <li class="list-group-item black">Характеристики</li>
-            <li class="list-group-item">Качество: @Model.Quality.Text</li>
+            <li class="list-group-item">Атребут качества: @Model.Quality.Text</li>
             <li class="list-group-item">Номер: @Model.Number</li>
             <li class="list-group-item">Количество дверей: @Model.Doors</li>
             <li class="list-group-item">Вместительность: @Model.Кoominess</li>
@@ -75,5 +75,13 @@
                 }
             }
         </ul>
+        <hr />
+        <h4>График занятости:</h4>
+        <div class="col-md-4">
+            @foreach(var i in ViewBag.FreeDays as Dictionary<DateTime, bool>)
+            {
+                <span class="btn-date btn @(!i.Value?"btn-danger": "btn-success")">@(i.Key.Day).@(i.Key.Month)</span>
+            }
+        </div>
     </div>
 </div>

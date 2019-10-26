@@ -157,21 +157,48 @@ namespace Rental.WEB.Controllers
             base.Dispose(disposing);
         }
 
+        /// <summary>
+        /// Send message for confirm email.
+        /// </summary>
+        /// <param name="to">Email</param>
         private void _sendEmail(string to)
         {
-            SmtpClient client = new SmtpClient();
-            MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress("cardoorrental@gmail.com", "Cardoor");
-            mailMessage.To.Add(to);
-            mailMessage.Subject = "Подтверждение почты";
-            mailMessage.Body= string.Format("Для завершения регистрации перейдите по ссылке:" +
-                            "<a href=\"{0}\" title=\"Подтвердить регистрацию\">{0}</a>",
-                Url.Action("ConfirmEmail", "Account", 
-                new { token = _accountService.GetIdByEmail(to) , email = to }, Request.Url.Scheme));
-            mailMessage.IsBodyHtml = true;
-            client.Send(mailMessage);
+            try
+            {
+                SmtpClient client = new SmtpClient();
+                MailMessage mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress("cardoorrental@gmail.com", "Cardoor");
+                mailMessage.To.Add(to);
+                mailMessage.Subject = "Подтверждение почты";
+                mailMessage.Body = string.Format("Для завершения регистрации перейдите по ссылке:" +
+                                "<a href=\"{0}\" title=\"Подтвердить регистрацию\">{0}</a>",
+                    Url.Action("ConfirmEmail", "Account",
+                    new { token = _accountService.GetIdByEmail(to), email = to }, Request.Url.Scheme));
+                mailMessage.IsBodyHtml = true;
+                client.Send(mailMessage);
+            }
+            catch
+            {
+
+            }
         }
 
+        /// <summary>
+        /// Send message for confirm email again.
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult SendEmailForConfirm()
+        {
+            _sendEmail(User.Identity.GetUserName());
+            return RedirectToAction("ShowUser");
+        }
+
+        /// <summary>
+        /// Confirm email.
+        /// </summary>
+        /// <param name="token">User id</param>
+        /// <param name="email">User email</param>
+        /// <returns>View</returns>
         public async Task<ActionResult> ConfirmEmail(string token, string email)
         {
             var user = await _accountService.GetUserAsync(token);
@@ -193,11 +220,20 @@ namespace Rental.WEB.Controllers
             }
         }
 
+        /// <summary>
+        /// Change user name view.
+        /// </summary>
+        /// <returns>View</returns>
         public ActionResult ChangeName()
         {
             return View();
         }
 
+        /// <summary>
+        /// Change user name.
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <returns>View</returns>
         [HttpPost]
         public ActionResult ChangeName(ChangeNameVM model)
         {
@@ -216,16 +252,29 @@ namespace Rental.WEB.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Change email view.
+        /// </summary>
+        /// <returns>View</returns>
         public ActionResult ChangeEmail()
         {
             return View();
         }
 
+        /// <summary>
+        /// Get forgot email page.
+        /// </summary>
+        /// <returns>View</returns>
         public ActionResult ForgotPassword()
         {
             return View();
         }
 
+        /// <summary>
+        /// Change email.
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <returns>View</returns>
         [HttpPost]
         public ActionResult ChangeEmail(ChangeEmailVM model)
         {
@@ -244,6 +293,11 @@ namespace Rental.WEB.Controllers
             return View(model);
         }
 
+        /// <summary>
+        /// Get page for send message.
+        /// </summary>
+        /// <param name="email">Email</param>
+        /// <returns>View</returns>
         public ActionResult ResetPasswordEmail(string email)
         {
             string id = null;
@@ -258,21 +312,39 @@ namespace Rental.WEB.Controllers
             return View("ResetPassowrdEmail");
         }
 
+        /// <summary>
+        ///  Send message for reset password.
+        /// </summary>
+        /// <param name="to">Email</param>
+        /// <param name="id">User id</param>
         private void _sendEmailResetPassword(string to,string id)
         {
-            SmtpClient client = new SmtpClient();
-            MailMessage mailMessage = new MailMessage();
-            mailMessage.From = new MailAddress("cardoorrental@gmail.com", "Cardoor");
-            mailMessage.To.Add(to);
-            mailMessage.Subject = "Измененение пароля";
-            mailMessage.Body = string.Format("Для изменения пароля по ссылке:" +
-                            "<a href=\"{0}\" title=\"Изменить пароль\">{0}</a>",
-                Url.Action("ChangePassword", "Account",
-                new { token = id, email = to }, Request.Url.Scheme));
-            mailMessage.IsBodyHtml = true;
-            client.Send(mailMessage);
+            try
+            {
+                SmtpClient client = new SmtpClient();
+                MailMessage mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress("cardoorrental@gmail.com", "Cardoor");
+                mailMessage.To.Add(to);
+                mailMessage.Subject = "Измененение пароля";
+                mailMessage.Body = string.Format("Для изменения пароля по ссылке:" +
+                                "<a href=\"{0}\" title=\"Изменить пароль\">{0}</a>",
+                    Url.Action("ChangePassword", "Account",
+                    new { token = id, email = to }, Request.Url.Scheme));
+                mailMessage.IsBodyHtml = true;
+                client.Send(mailMessage);
+            }
+            catch
+            {
+
+            }
         }
 
+        /// <summary>
+        /// Change password page.
+        /// </summary>
+        /// <param name="token">Id</param>
+        /// <param name="email">Email</param>
+        /// <returns>View</returns>
         public ActionResult ChangePassword(string token, string email)
         {
             var user =  _accountService.GetUser(token);
@@ -293,6 +365,11 @@ namespace Rental.WEB.Controllers
             }
         }
 
+        /// <summary>
+        /// Change password
+        /// </summary>
+        /// <param name="model">Model</param>
+        /// <returns>View</returns>
         [HttpPost]
         public ActionResult ChangePassword(ChangePasswordVM model)
         {

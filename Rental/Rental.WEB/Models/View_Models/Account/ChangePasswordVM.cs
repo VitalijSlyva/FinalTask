@@ -6,6 +6,9 @@ using System.Web;
 
 namespace Rental.WEB.Models.View_Models.Account
 {
+    /// <summary>
+    /// Change password view model.
+    /// </summary>
     public class ChangePasswordVM
     {
         [Required(ErrorMessage = "Поле должно быть заполнено")]

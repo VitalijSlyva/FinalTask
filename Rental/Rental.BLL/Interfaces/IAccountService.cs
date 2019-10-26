@@ -31,6 +31,11 @@ namespace Rental.BLL.Interfaces
         /// <returns>User</returns>
         Task<User> GetUserAsync(string id);
 
+        /// <summary>
+        /// Get user by id.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns>User</returns>
         User GetUser(string id);
 
         /// <summary>
@@ -40,14 +45,43 @@ namespace Rental.BLL.Interfaces
         /// <returns>Ban</returns>
         bool IsBanned(string id);
 
+        /// <summary>
+        /// Get user id by email.
+        /// </summary>
+        /// <param name="email">Email</param>
+        /// <returns>Id</returns>
         string GetIdByEmail(string email);
 
+        /// <summary>
+        /// Confirm user email.
+        /// </summary>
+        /// <param name="userId">Id</param>
         void ConfirmEmail(string userId);
 
+        /// <summary>
+        /// Change email.
+        /// </summary>
+        /// <param name="email">Email</param>
+        /// <param name="userId">Id</param>
+        /// <param name="password">Password</param>
+        /// <returns>Status</returns>
         string ChangeEmail(string email, string userId, string password);
 
+        /// <summary>
+        /// Change name.
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <param name="userId">Id</param>
+        /// <param name="password">Password</param>
+        /// <returns>Status</returns>
         string ChangeName(string name, string userId, string password);
 
+        /// <summary>
+        /// Change password.
+        /// </summary>
+        /// <param name="userId">Id</param>
+        /// <param name="password">Password</param>
+        /// <returns>Status</returns>
         string ChangePassword(string userId, string password);
     }
 }

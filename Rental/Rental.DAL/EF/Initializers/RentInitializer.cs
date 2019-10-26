@@ -11,8 +11,7 @@ namespace Rental.DAL.EF.Initializers
     /// <summary>
     /// Intializator for rent context.
     /// </summary>
-   internal class RentInitializer : CreateDatabaseIfNotExists<RentContext>
-   //  internal class RentInitializer: DropCreateDatabaseAlways<RentContext>
+    internal class RentInitializer : CreateDatabaseIfNotExists<RentContext>
     {
         /// <summary>
         /// Recreate database with new items.

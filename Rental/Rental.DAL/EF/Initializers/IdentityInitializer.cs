@@ -11,7 +11,6 @@ namespace Rental.DAL.EF.Initializers
     /// Initializator for identity context.
     /// </summary>
     internal class IdentityInitializer : CreateDatabaseIfNotExists<IdentityContext>
-  //  internal class IdentityInitializer : DropCreateDatabaseAlways<IdentityContext>
     {
         /// <summary>
         /// Recreate database with new items.
@@ -31,7 +30,7 @@ namespace Rental.DAL.EF.Initializers
                 UserName = "adminEmail@gmail.com",
                 Email = "adminEmail@gmail.com",
                 Name = "ADMIN",
-                EmailConfirmed=true
+                EmailConfirmed = true
             };
             string password = "P@ssw0rd";
             var result = userManager.Create(admin, password);

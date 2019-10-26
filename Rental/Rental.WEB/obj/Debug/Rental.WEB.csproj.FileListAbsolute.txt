@@ -227,3 +227,4 @@ C:\Users\User\source\repos\Rental\Rental.WEB\bin\Castle.Core.xml
 C:\Users\User\source\repos\Rental\Rental.WEB\bin\Moq.xml
 C:\Users\User\source\repos\Rental\Rental.WEB\bin\System.Runtime.CompilerServices.Unsafe.xml
 C:\Users\User\source\repos\Rental\Rental.WEB\bin\System.Threading.Tasks.Extensions.xml
+C:\Users\User\source\repos\Rental\Rental.WEB\bin\LiqPay.SDK.dll

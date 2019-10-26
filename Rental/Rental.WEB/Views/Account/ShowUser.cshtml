@@ -8,7 +8,10 @@
     @if (!Model.ConfirmedEmail)
     {
         <h2 class="text-center text-danger">Пожалуйста подтвердите Email</h2>
-    }
+        <div class="center-block text-center">
+            <a href="@Url.Action("SendEmailForConfirm","Account")" class=" center-block text-center btn btn-warning">Отправить сообщение с инструкцией</a>
+        </div>
+  }
         <dl class="dl-horizontal">
             <dt>
                 @Html.DisplayNameFor(model => model.Email)
@@ -27,29 +30,30 @@
                 @Html.DisplayFor(model => model.Name)
                 <br />
             </dd>
-
             <dt>
 
             </dt>
             <dd>
-                <a class="btn btn-default btn-dark" href="@Url.Action("ChangeName","Account")">Изменить имя</a>
+                <a class="btn btn-default btn-dark" href="@Url.Action("ChangeEmail", "Account")">Изменить почту</a>
                 <br />
             </dd>
+            @if (Model.ConfirmedEmail)
+            {
+                <dt>
 
-            <dt>
+                </dt>
+                <dd>
+                    <a class="btn btn-default btn-dark" href="@Url.Action("ChangeName", "Account")">Изменить имя</a>
+                    <br />
+                </dd>
+                <dt>
 
-            </dt>
-            <dd>
-                <a class="btn btn-default btn-dark" href="@Url.Action("ChangeEmail","Account")">Изменить почту</a>
-                <br />
-            </dd>
-            <dt>
-
-            </dt>
-            <dd>
-                <a class="btn btn-default btn-dark" href="@Url.Action("ResetPasswordEmail","Account",new { email=User.Identity.Name})">Изменить пароль</a>
-                <br />
-            </dd>
+                </dt>
+                <dd>
+                    <a class="btn btn-default btn-dark" href="@Url.Action("ResetPasswordEmail", "Account", new { email = User.Identity.Name })">Изменить пароль</a>
+                    <br />
+                </dd>
+            }
             <dt>
 
             </dt>

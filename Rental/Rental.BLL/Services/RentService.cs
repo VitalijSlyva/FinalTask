@@ -5,13 +5,14 @@ using Rental.DAL.Entities.Rent;
 using Rental.DAL.Interfaces;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Rental.BLL.Services
 {
     /// <summary>
     /// Service for rent actions.
     /// </summary>
-    public class RentService :Service, IRentService
+    public class RentService : Service, IRentService
     {
         /// <summary>
         /// Create units and mappers for work.
@@ -22,8 +23,8 @@ namespace Rental.BLL.Services
         /// <param name="identityMapper">Mapper for converting identity entities to BLL classes</param>
         /// <param name="log">Service for logging</param>
         public RentService(IRentMapperDTO mapperDTO, IRentUnitOfWork rentUnit,
-                 IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper,ILogService log)
-                   : base(mapperDTO, rentUnit, identityUnit, identityMapper,log)
+                 IIdentityUnitOfWork identityUnit, IIdentityMapperDTO identityMapper, ILogService log)
+                   : base(mapperDTO, rentUnit, identityUnit, identityMapper, log)
         {
 
         }
@@ -68,6 +69,36 @@ namespace Rental.BLL.Services
             catch (Exception e)
             {
                 CreateLog(e, "RentService", "GetCars");
+
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Get free days for car.
+        /// </summary>
+        /// <param name="carId">Id</param>
+        /// <returns>Days</returns>
+        public Dictionary<DateTime, bool> GetFreeDates(int carId)
+        {
+            try
+            {
+                if (GetCar(carId) == null)
+                    return null;
+                var result = new Dictionary<DateTime, bool>();
+                for (int i = 0; i < 30; i++)
+                {
+                    var date = DateTime.Now.AddDays(i).Date;
+                    result.Add(date, !RentUnitOfWork.Orders.Show()
+                        .Any(x => x.CarId == carId && (x.DateStart.Date <= date && x.DateEnd.Date >= date)
+                        && (x?.Confirm?.FirstOrDefault()
+                          ?.IsConfirmed ?? true) != false));
+                }
+                return result;
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "RentService", "GetCar");
 
                 return null;
             }

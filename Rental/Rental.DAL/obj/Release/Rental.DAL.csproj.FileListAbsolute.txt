@@ -1,0 +1,16 @@
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\Rental.DAL.dll.config
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\Rental.DAL.dll
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\Rental.DAL.pdb
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\EntityFramework.dll
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\EntityFramework.SqlServer.dll
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\Microsoft.AspNet.Identity.Core.dll
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\Microsoft.AspNet.Identity.EntityFramework.dll
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\EntityFramework.xml
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\EntityFramework.SqlServer.xml
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\Microsoft.AspNet.Identity.Core.xml
+C:\Users\User\source\repos\Rental\Rental.DAL\bin\Release\Microsoft.AspNet.Identity.EntityFramework.xml
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Release\Rental.DAL.csprojAssemblyReference.cache
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Release\Rental.DAL.csproj.CoreCompileInputs.cache
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Release\Rental.DAL.csproj.CopyComplete
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Release\Rental.DAL.dll
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Release\Rental.DAL.pdb

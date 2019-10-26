@@ -19,9 +19,10 @@ namespace Rental.Tests
     public class RentControllerTest
     {
         private Mock<IRentService> _mockRent;
-        private Mock<IRentMapperDM> _mockMapper;
-        private RentController _controller;
 
+        private Mock<IRentMapperDM> _mockMapper;
+
+        private RentController _controller;
 
         /// <summary>
         /// Initialization
@@ -37,7 +38,6 @@ namespace Rental.Tests
             _mockMapper.Setup(x => x.ToCarDM.Map<CarDTO, CarDM>(new CarDTO())).Returns(new CarDM());
             _controller  = new RentController(_mockRent.Object, _mockMapper.Object);
         }
-
 
         /// <summary>
         /// The test that index view result not null

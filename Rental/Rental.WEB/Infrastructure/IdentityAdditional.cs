@@ -31,6 +31,11 @@ namespace Rental.WEB.Infrastructure
             return result;
         }
 
+        /// <summary>
+        /// Get email confirm for user.
+        /// </summary>
+        /// <param name="identity"></param>
+        /// <returns></returns>
         public static bool GetEmailConfirm(this IIdentity identity)
         {
             _accountService =

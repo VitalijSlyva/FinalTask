@@ -6,6 +6,9 @@ using System.Web;
 
 namespace Rental.WEB.Models.View_Models.Account
 {
+    /// <summary>
+    /// Change email view model.
+    /// </summary>
     public class ChangeEmailVM
     {
         [Required(ErrorMessage = "Поле должно быть заполнено")]

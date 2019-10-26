@@ -21,5 +21,12 @@ namespace Rental.BLL.Interfaces
         /// </summary>
         /// <returns>Cars</returns>
         IEnumerable<CarDTO> GetCars();
+
+        /// <summary>
+        /// Get free days for car.
+        /// </summary>
+        /// <param name="carId">Car id</param>
+        /// <returns>Days</returns>
+        Dictionary<DateTime, bool> GetFreeDates(int carId);
     }
 }

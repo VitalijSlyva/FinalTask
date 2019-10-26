@@ -18,8 +18,11 @@ namespace Rental.Tests
     public class AccountControllerTest
     {
         private Mock<IAccountService> _mockAccount;
+
         private Mock<IIdentityMapperDM> _mockIdentity;
+
         private Mock<ILogWriter> _mockLog;
+
         private AccountController _controller;
 
         /// <summary>

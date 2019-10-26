@@ -93,7 +93,7 @@ namespace Rental.BLL.Services
         }
 
         /// <summary>
-        /// Get user by id.
+        /// Get user by id async.
         /// </summary>
         /// <param name="id">User id</param>
         /// <returns>User</returns>
@@ -115,6 +115,11 @@ namespace Rental.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Get user by id.
+        /// </summary>
+        /// <param name="id">User id</param>
+        /// <returns>User</returns>
         public User GetUser(string id)
         {
             try
@@ -143,6 +148,11 @@ namespace Rental.BLL.Services
             return IdentityUnitOfWork.UserManager.IsInRole(id, "banned");
         }
 
+        /// <summary>
+        /// Get user id by email.
+        /// </summary>
+        /// <param name="email">Email</param>
+        /// <returns>Id</returns>
         public string GetIdByEmail(string email)
         {
             try
@@ -158,6 +168,10 @@ namespace Rental.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Confirm user email.
+        /// </summary>
+        /// <param name="userId">Id</param>
         public void ConfirmEmail(string userId)
         {
             try
@@ -175,6 +189,13 @@ namespace Rental.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Change email.
+        /// </summary>
+        /// <param name="email">Email</param>
+        /// <param name="userId">Id</param>
+        /// <param name="password">Password</param>
+        /// <returns>Status</returns>
         public string ChangeEmail(string email,string userId,string password)
         {
             try
@@ -203,6 +224,13 @@ namespace Rental.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Change name.
+        /// </summary>
+        /// <param name="name">Name</param>
+        /// <param name="userId">Id</param>
+        /// <param name="password">Password</param>
+        /// <returns>Status</returns>
         public string ChangeName(string name, string userId, string password)
         {
             try
@@ -228,6 +256,12 @@ namespace Rental.BLL.Services
             }
         }
 
+        /// <summary>
+        /// Change password.
+        /// </summary>
+        /// <param name="userId">Id</param>
+        /// <param name="password">Password</param>
+        /// <returns>Status</returns>
         public string ChangePassword(string userId, string password)
         {
             try
