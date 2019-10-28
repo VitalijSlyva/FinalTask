@@ -172,30 +172,5 @@ namespace Rental.DAL.Services
         {
             _rentContext.SaveChanges();
         }
-
-        private bool _Disposed = false;
-
-        /// <summary>
-        /// Call method for disposing.
-        /// </summary>
-        /// <param name="disposing"></param>
-        public virtual void Dispose(bool disposing)
-        {
-            if (!_Disposed)
-            {
-                if (disposing)
-                    _rentContext.Dispose();
-            }
-            _Disposed = true;
-        }
-
-        /// <summary>
-        /// Dispose context.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
     }
 }

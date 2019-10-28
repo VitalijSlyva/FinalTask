@@ -8,7 +8,7 @@ namespace Rental.BLL.Interfaces
     /// <summary>
     /// Interface for standard user actons.
     /// </summary>
-    public interface IAccountService :IDisposable
+    public interface IAccountService
     {
         /// <summary>
         /// Create new user.
@@ -83,5 +83,14 @@ namespace Rental.BLL.Interfaces
         /// <param name="password">Password</param>
         /// <returns>Status</returns>
         string ChangePassword(string userId, string password);
+
+        /// <summary>
+        /// Send mail.
+        /// </summary>
+        /// <param name="to">Email</param>
+        /// <param name="subject">Email subject</param>
+        /// <param name="body">Email body</param>
+        /// <param name="isBodyHtml">Body contains html</param>
+        void SendMail(string to, string subject, string body, bool isBodyHtml=true);
     }
 }

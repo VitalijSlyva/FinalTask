@@ -1,6 +1,5 @@
 C:\Users\User\source\repos\Rental\Rental.DAL\bin\Debug\Rental.DAL.dll
 C:\Users\User\source\repos\Rental\Rental.DAL\bin\Debug\Rental.DAL.pdb
-C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.csprojAssemblyReference.cache
 C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.csproj.CoreCompileInputs.cache
 C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.dll
 C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.pdb
@@ -14,3 +13,9 @@ C:\Users\User\source\repos\Rental\Rental.DAL\bin\Debug\EntityFramework.SqlServer
 C:\Users\User\source\repos\Rental\Rental.DAL\bin\Debug\Microsoft.AspNet.Identity.Core.xml
 C:\Users\User\source\repos\Rental\Rental.DAL\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
 C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.csproj.CopyComplete
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.csprojAssemblyReference.cache
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.Migrations_Rent.InitialCreate.resources
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.csproj.GenerateResource.cache
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.Migrations_Log.InitialCreate.resources
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.Migrations_Rent.First.resources
+C:\Users\User\source\repos\Rental\Rental.DAL\obj\Debug\Rental.DAL.Migrations_Log.First.resources

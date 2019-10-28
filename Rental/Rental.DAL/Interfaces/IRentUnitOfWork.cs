@@ -7,7 +7,7 @@ namespace Rental.DAL.Interfaces
     /// <summary>
     /// Interface for working with rent entities.
     /// </summary>
-    public interface IRentUnitOfWork : IDisposable
+    public interface IRentUnitOfWork
     {
         RentRepository<Brand> Brands { get; }
 

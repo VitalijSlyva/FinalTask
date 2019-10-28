@@ -6,7 +6,7 @@ namespace Rental.DAL.Interfaces
     /// <summary>
     /// Interface for working with identity.
     /// </summary>
-    public interface IIdentityUnitOfWork : IDisposable
+    public interface IIdentityUnitOfWork
     {
         ApplicationUserManager UserManager { get; }
 

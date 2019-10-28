@@ -7,7 +7,7 @@ namespace Rental.BLL.Interfaces
     /// <summary>
     /// Inerface for standard methods.
     /// </summary>
-    public interface IRentService:IDisposable
+    public interface IRentService
     {
         /// <summary>
         /// Get car by id.

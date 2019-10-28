@@ -31,14 +31,6 @@ namespace Rental.DAL.Services
         }
 
         /// <summary>
-        /// Dispose context.
-        /// </summary>
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
-
-        /// <summary>
         /// Update profile.
         /// </summary>
         /// <param name="profile">Updated profile.</param>

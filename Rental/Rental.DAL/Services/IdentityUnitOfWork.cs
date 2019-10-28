@@ -66,34 +66,5 @@ namespace Rental.DAL.Services
         {
             _context.SaveChanges();
         }
-
-        /// <summary>
-        /// Dispose data.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        private bool _Disposed = false;
-
-        /// <summary>
-        /// Call method for dispose.
-        /// </summary>
-        /// <param name="disposing">Need disposing</param>
-        public virtual void Dispose(bool disposing)
-        {
-            if (!_Disposed)
-            {
-                if (disposing)
-                {
-                    RoleManager.Dispose();
-                    RoleManager.Dispose();
-                    ClientManager.Dispose();
-                }
-            }
-            _Disposed = true;
-        }
     }
 }

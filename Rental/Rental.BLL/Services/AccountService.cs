@@ -6,6 +6,7 @@ using Rental.DAL.Entities.Identity;
 using Rental.DAL.Interfaces;
 using System;
 using System.Linq;
+using System.Net.Mail;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
@@ -284,6 +285,32 @@ namespace Rental.BLL.Services
                 CreateLog(e, "AccountService", "ChangeName");
 
                 return "Неверный пароль";
+            }
+        }
+
+        /// <summary>
+        /// Send mail.
+        /// </summary>
+        /// <param name="to">Email</param>
+        /// <param name="subject">Email subject</param>
+        /// <param name="body">Email body</param>
+        /// <param name="isBodyHtml">Body contains html</param>
+        public void SendMail(string to, string subject, string body, bool isBodyHtml=true)
+        {
+            try
+            {
+                SmtpClient client = new SmtpClient();
+                MailMessage mailMessage = new MailMessage();
+                mailMessage.From = new MailAddress("cardoorrental@gmail.com", "Cardoor");
+                mailMessage.To.Add(to);
+                mailMessage.Subject = subject;
+                mailMessage.Body = body;
+                mailMessage.IsBodyHtml = isBodyHtml;
+                client.Send(mailMessage);
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "AccountService", "SendEmai");
             }
         }
     }

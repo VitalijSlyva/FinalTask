@@ -155,8 +155,6 @@ C:\Users\User\source\repos\Rental\Rental.Tests\bin\Debug\System.Web.WebPages.Raz
 C:\Users\User\source\repos\Rental\Rental.Tests\bin\Debug\Rental.DAL.pdb
 C:\Users\User\source\repos\Rental\Rental.Tests\bin\Debug\Rental.DAL.dll.config
 C:\Users\User\source\repos\Rental\Rental.Tests\bin\Debug\Microsoft.AspNet.Identity.Core.xml
-C:\Users\User\source\repos\Rental\Rental.Tests\bin\Debug\AutoMapper.pdb
-C:\Users\User\source\repos\Rental\Rental.Tests\bin\Debug\AutoMapper.xml
 C:\Users\User\source\repos\Rental\Rental.Tests\bin\Debug\Ninject.xml
 C:\Users\User\source\repos\Rental\Rental.Tests\bin\Debug\Microsoft.AspNet.Identity.EntityFramework.xml
 C:\Users\User\source\repos\Rental\Rental.Tests\bin\Debug\Microsoft.Owin.xml

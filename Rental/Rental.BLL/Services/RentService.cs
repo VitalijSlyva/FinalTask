@@ -91,8 +91,8 @@ namespace Rental.BLL.Services
                     var date = DateTime.Now.AddDays(i).Date;
                     result.Add(date, !RentUnitOfWork.Orders.Show()
                         .Any(x => x.CarId == carId && (x.DateStart.Date <= date && x.DateEnd.Date >= date)
-                        && (x?.Confirm?.FirstOrDefault()
-                          ?.IsConfirmed ?? true) != false));
+                        && (x?.Confirm?.FirstOrDefault()?.IsConfirmed ?? true) != false&&
+                        (x?.Return?.FirstOrDefault()?.IsReturned??false)==false));
                 }
                 return result;
             }

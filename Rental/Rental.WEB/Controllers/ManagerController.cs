@@ -357,15 +357,5 @@ namespace Rental.WEB.Controllers
 
             return View(returnDM);
         }
-
-        /// <summary>
-        /// Dispose services.
-        /// </summary>
-        /// <param name="disposing">Disposing</param>
-        protected override void Dispose(bool disposing)
-        {
-            _managerService.Dispose();
-            base.Dispose(disposing);
-        }
     }
 }

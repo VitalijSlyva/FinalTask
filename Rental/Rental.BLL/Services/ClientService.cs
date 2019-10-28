@@ -271,7 +271,7 @@ namespace Rental.BLL.Services
             return !RentUnitOfWork.Orders.Show()
                 .Any(x => x.CarId == carId && ((x.DateStart.Date <= startDate.Date && x.DateEnd.Date >= startDate.Date) ||
                 (x.DateStart.Date <= endDate.Date && x.DateEnd.Date >= endDate.Date))&&(x?.Confirm?.FirstOrDefault()
-                ?.IsConfirmed??true)!=false);
+                ?.IsConfirmed??true)!=false&& (x?.Return?.FirstOrDefault()?.IsReturned ?? false) == false);
         }
 
     }

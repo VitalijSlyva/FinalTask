@@ -12,7 +12,7 @@ namespace Rental.WEB.Models.Domain_Models.Rent
 
         public CarDM Car { get; set; }
 
-        [Display(Name = "С водителем")]
+        [Display(Name = "С водителем (300грн. сутки)")]
         public bool WithDriver { get; set; }
 
         [Required(ErrorMessage = "Поле должно быть заполнено")]

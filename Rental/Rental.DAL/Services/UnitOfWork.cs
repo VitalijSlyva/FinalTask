@@ -45,14 +45,5 @@ namespace Rental.DAL.Services
                 return _identity;
             }
         }
-
-        /// <summary>
-        /// Dispose contexts.
-        /// </summary>
-        public void Dispose()
-        {
-            Identity.Dispose();
-            Rent.Dispose();
-        }
     }
 }

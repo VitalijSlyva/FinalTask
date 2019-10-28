@@ -111,7 +111,10 @@
                         }
                         else
                         {
-                            <h3 class="text-danger">Удалена</h3>
+                            <div>
+                                <a class="btn btn-danger btn-dark" href="@Url.Action("Restore", "Admin", new { id = i.Id })"
+                                   onclick="return confirm('Поддтвердите действие восстановления автомобиля с номером @i.Number.')">Восстановить</a>
+                            </div>
                         }
                     </div>
                 </div>

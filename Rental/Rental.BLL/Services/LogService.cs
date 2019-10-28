@@ -63,14 +63,6 @@ namespace Rental.BLL.Services
         }
 
         /// <summary>
-        /// Dispose unit of work.
-        /// </summary>
-        public void Dispose()
-        {
-            _logUnitOfWork.Dispose();
-        }
-
-        /// <summary>
         /// Show all action logs.
         /// </summary>
         /// <returns>Action logs</returns>

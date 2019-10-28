@@ -7,7 +7,7 @@ namespace Rental.BLL.Interfaces
     /// <summary>
     /// Interface for logging actions.
     /// </summary>
-    public interface ILogService:IDisposable
+    public interface ILogService
     {
         /// <summary>
         /// Save exception log.

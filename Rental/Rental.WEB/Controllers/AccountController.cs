@@ -125,7 +125,13 @@ namespace Rental.WEB.Controllers
                 string result= await _accountService.CreateAsync(user);
                 if (result != null && result.Length == 0)
                 {
-                    _sendEmail(register.Email);
+                    string to = User.Identity.GetUserName();
+                    string subject = "Подтверждение почты";
+                    string body = string.Format("Для завершения регистрации перейдите по ссылке:" +
+                                    "<a href=\"{0}\" title=\"Подтвердить регистрацию\">{0}</a>",
+                                    Url.Action("ConfirmEmail", "Account",
+                                    new { token = _accountService.GetIdByEmail(to), email = to }, Request.Url.Scheme));
+                    _accountService.SendMail(to, subject, body);
                     return await Login(new LoginVM() { Email = register.Email, Password = register.Password });
                 }
                 else
@@ -148,48 +154,18 @@ namespace Rental.WEB.Controllers
         }
 
         /// <summary>
-        /// Dispose services.
-        /// </summary>
-        /// <param name="disposing">Disposing.</param>
-        protected override void Dispose(bool disposing)
-        {
-            _accountService.Dispose();
-            base.Dispose(disposing);
-        }
-
-        /// <summary>
-        /// Send message for confirm email.
-        /// </summary>
-        /// <param name="to">Email</param>
-        private void _sendEmail(string to)
-        {
-            try
-            {
-                SmtpClient client = new SmtpClient();
-                MailMessage mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress("cardoorrental@gmail.com", "Cardoor");
-                mailMessage.To.Add(to);
-                mailMessage.Subject = "Подтверждение почты";
-                mailMessage.Body = string.Format("Для завершения регистрации перейдите по ссылке:" +
-                                "<a href=\"{0}\" title=\"Подтвердить регистрацию\">{0}</a>",
-                    Url.Action("ConfirmEmail", "Account",
-                    new { token = _accountService.GetIdByEmail(to), email = to }, Request.Url.Scheme));
-                mailMessage.IsBodyHtml = true;
-                client.Send(mailMessage);
-            }
-            catch
-            {
-
-            }
-        }
-
-        /// <summary>
         /// Send message for confirm email again.
         /// </summary>
         /// <returns></returns>
         public ActionResult SendEmailForConfirm()
         {
-            _sendEmail(User.Identity.GetUserName());
+            string to = User.Identity.GetUserName();
+            string subject = "Подтверждение почты";
+            string body = string.Format("Для завершения регистрации перейдите по ссылке:" +
+                            "<a href=\"{0}\" title=\"Подтвердить регистрацию\">{0}</a>",
+                            Url.Action("ConfirmEmail", "Account",
+                            new { token = _accountService.GetIdByEmail(to), email = to }, Request.Url.Scheme));
+            _accountService.SendMail(to, subject, body);
             return RedirectToAction("ShowUser");
         }
 
@@ -308,35 +284,14 @@ namespace Rental.WEB.Controllers
                 id = User.Identity.GetUserId();
                 email = User.Identity.Name;
             }
-            _sendEmailResetPassword(email, id);
+            string to = email;
+            string subject = "Измененение пароля";
+            string body = string.Format("Для изменения пароля по ссылке:" +
+                              "<a href=\"{0}\" title=\"Изменить пароль\">{0}</a>",
+                               Url.Action("ChangePassword", "Account",
+                               new { token = id, email = to }, Request.Url.Scheme));;
+            _accountService.SendMail(to, subject, body);
             return View("ResetPassowrdEmail");
-        }
-
-        /// <summary>
-        ///  Send message for reset password.
-        /// </summary>
-        /// <param name="to">Email</param>
-        /// <param name="id">User id</param>
-        private void _sendEmailResetPassword(string to,string id)
-        {
-            try
-            {
-                SmtpClient client = new SmtpClient();
-                MailMessage mailMessage = new MailMessage();
-                mailMessage.From = new MailAddress("cardoorrental@gmail.com", "Cardoor");
-                mailMessage.To.Add(to);
-                mailMessage.Subject = "Измененение пароля";
-                mailMessage.Body = string.Format("Для изменения пароля по ссылке:" +
-                                "<a href=\"{0}\" title=\"Изменить пароль\">{0}</a>",
-                    Url.Action("ChangePassword", "Account",
-                    new { token = id, email = to }, Request.Url.Scheme));
-                mailMessage.IsBodyHtml = true;
-                client.Send(mailMessage);
-            }
-            catch
-            {
-
-            }
         }
 
         /// <summary>

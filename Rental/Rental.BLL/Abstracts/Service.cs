@@ -8,7 +8,7 @@ namespace Rental.BLL.Abstracts
     /// <summary>
     /// Abstract service for work with units.
     /// </summary>
-    public abstract class Service:IDisposable
+    public abstract class Service
     {
         protected IRentUnitOfWork RentUnitOfWork;
 
@@ -56,16 +56,6 @@ namespace Rental.BLL.Abstracts
             };
 
             LogService.CreateExeptionLog(log);
-        }
-
-        /// <summary>
-        /// Dispose units.
-        /// </summary>
-        public void Dispose()
-        {
-            RentUnitOfWork.Dispose();
-            IdentityUnitOfWork.Dispose();
-            LogService.Dispose();
         }
     }
 }

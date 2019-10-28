@@ -9,7 +9,7 @@ namespace Rental.BLL.Interfaces
     /// <summary>
     /// Interface for admin actions.
     /// </summary>
-    public interface IAdminService:IDisposable
+    public interface IAdminService
     {
         /// <summary>
         /// Create car.
@@ -60,5 +60,11 @@ namespace Rental.BLL.Interfaces
         /// <param name="id">User id</param>
         /// <returns>Roles</returns>
         Task<IEnumerable<string>> GetRolesAsync(string id);
+
+        /// <summary>
+        /// Restore car.
+        /// </summary>
+        /// <param name="id">Car id</param>
+        void RestoreCar(int id);
     }
 }

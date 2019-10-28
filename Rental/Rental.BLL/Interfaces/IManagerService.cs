@@ -8,7 +8,7 @@ namespace Rental.BLL.Interfaces
     /// <summary>
     /// Interface for manager actions. 
     /// </summary>
-    public interface IManagerService:IDisposable
+    public interface IManagerService
     {
         /// <summary>
         /// Confirm order.

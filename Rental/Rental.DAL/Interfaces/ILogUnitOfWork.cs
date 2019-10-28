@@ -6,7 +6,7 @@ namespace Rental.DAL.Interfaces
     /// <summary>
     /// Interface for working with log.
     /// </summary>
-    public interface ILogUnitOfWork :IDisposable
+    public interface ILogUnitOfWork
     {
         ICreator<ExceptionLog> ExceptionLogger { get; }
 

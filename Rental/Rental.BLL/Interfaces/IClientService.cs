@@ -9,7 +9,7 @@ namespace Rental.BLL.Interfaces
     /// <summary>
     /// Interface for client actions.
     /// </summary>
-    public interface IClientService:IDisposable
+    public interface IClientService
     {
         /// <summary>
         /// Make order.

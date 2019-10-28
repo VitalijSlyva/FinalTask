@@ -251,6 +251,28 @@ namespace Rental.BLL.Services
         }
 
         /// <summary>
+        /// Restore car.
+        /// </summary>
+        /// <param name="id">Car id</param>
+        public void RestoreCar(int id)
+        {
+            try
+            {
+                Car car = RentUnitOfWork.Cars.Get(id);
+                if (car != null)
+                {
+                    car.IsDeleted = false;
+                    RentUnitOfWork.Cars.Update(car);
+                    RentUnitOfWork.Save();
+                }
+            }
+            catch (Exception e)
+            {
+                CreateLog(e, "AdminService", "RestoreCar");
+            }
+        }
+
+        /// <summary>
         /// Unban user.
         /// </summary>
         /// <param name="userId">User id</param>

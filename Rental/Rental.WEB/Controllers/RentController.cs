@@ -190,15 +190,5 @@ namespace Rental.WEB.Controllers
 
             return View("CustomNotFound", "_Layout", "Автомобиль не найден");
         }
-
-        /// <summary>
-        /// Dispose services.
-        /// </summary>
-        /// <param name="disposing">Disposing</param>
-        protected override void Dispose(bool disposing)
-        {
-            _rentService.Dispose();
-            base.Dispose(disposing);
-        }
     }
 }

@@ -168,7 +168,7 @@ namespace Rental.WEB.Controllers
         /// <param name="page">Page number</param>
         /// <param name="selectedMode">Selected sort mode</param>
         /// <returns>View</returns>
-        public ActionResult ShowUserOrders(ShowUserOrdersVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
+        public ActionResult ShowUserOrders(ShowUserOrdersVM model, int sortMode = 0, int page = 1, int selectedMode = 2)
         {
             if (sortMode == 0)
             {
@@ -217,6 +217,8 @@ namespace Rental.WEB.Controllers
             }
 
             var sortModes = new List<string>();
+            sortModes.Add("По номеру");
+            sortModes.Add("По номеру");
             sortModes.Add("По статусу");
             sortModes.Add("По статусу");
             sortModes.Add("По цене");
@@ -226,21 +228,27 @@ namespace Rental.WEB.Controllers
             switch (sortMode)
             {
                 case 1:
-                    ordersDM = ordersDM.OrderBy(x => statuses[x.Id]).ToList();
+                    ordersDM = ordersDM.OrderBy(x => x.Id).ToList();
                     break;
                 case 2:
-                    ordersDM = ordersDM.OrderByDescending(x => statuses[x.Id]).ToList();
+                    ordersDM = ordersDM.OrderByDescending(x => x.Id).ToList();
                     break;
                 case 3:
-                    ordersDM = ordersDM.OrderBy(x => x.Payment.Price).ToList();
+                    ordersDM = ordersDM.OrderBy(x => statuses[x.Id]).ToList();
                     break;
                 case 4:
-                    ordersDM = ordersDM.OrderByDescending(x => x.Payment.Price).ToList();
+                    ordersDM = ordersDM.OrderByDescending(x => statuses[x.Id]).ToList();
                     break;
                 case 5:
-                    ordersDM = ordersDM.OrderBy(x => x.Car.Brand.Name+" "+x.Car.Model).ToList();
+                    ordersDM = ordersDM.OrderBy(x => x.Payment.Price).ToList();
                     break;
                 case 6:
+                    ordersDM = ordersDM.OrderByDescending(x => x.Payment.Price).ToList();
+                    break;
+                case 7:
+                    ordersDM = ordersDM.OrderBy(x => x.Car.Brand.Name+" "+x.Car.Model).ToList();
+                    break;
+                case 8:
                     ordersDM = ordersDM.OrderByDescending(x => x.Car.Brand.Name + " " + x.Car.Model).ToList();
                     break;
             }
@@ -396,7 +404,7 @@ namespace Rental.WEB.Controllers
         /// <param name="page">Page number</param>
         /// <param name="selectedMode">Selected sort mode</param>
         /// <returns>View</returns>
-        public ActionResult ShowPayments(ShowPaymentsVM model, int sortMode = 0, int page = 1, int selectedMode = 1)
+        public ActionResult ShowPayments(ShowPaymentsVM model, int sortMode = 0, int page = 1, int selectedMode = 2)
         {
             if (sortMode == 0)
             {
@@ -448,6 +456,8 @@ namespace Rental.WEB.Controllers
             }
 
             var sortModes = new List<string>();
+            sortModes.Add("По номеру");
+            sortModes.Add("По номеру");
             sortModes.Add("По статусу");
             sortModes.Add("По статусу");
             sortModes.Add("По сумме");
@@ -455,15 +465,21 @@ namespace Rental.WEB.Controllers
             switch (sortMode)
             {
                 case 1:
-                    payments = payments.OrderBy(x => x.IsPaid).ToList();
+                    payments = payments.OrderBy(x => x.Id).ToList();
                     break;
                 case 2:
-                    payments = payments.OrderByDescending(x => x.IsPaid).ToList();
+                    payments = payments.OrderByDescending(x => x.Id).ToList();
                     break;
                 case 3:
-                    payments = payments.OrderBy(x => x.Price).ToList();
+                    payments = payments.OrderBy(x => x.IsPaid).ToList();
                     break;
                 case 4:
+                    payments = payments.OrderByDescending(x => x.IsPaid).ToList();
+                    break;
+                case 5:
+                    payments = payments.OrderBy(x => x.Price).ToList();
+                    break;
+                case 6:
                     payments = payments.OrderByDescending(x => x.Price).ToList();
                     break;
             }
@@ -491,17 +507,6 @@ namespace Rental.WEB.Controllers
             };
 
             return View("ShowPayments",paymenthsVM);
-        }
-
-        /// <summary>
-        /// Dispose services.
-        /// </summary>
-        /// <param name="disposing">Disposing</param>
-        protected override void Dispose(bool disposing)
-        {
-            _rentService.Dispose();
-            _clientService.Dispose();
-            base.Dispose(disposing);
         }
     }
 }

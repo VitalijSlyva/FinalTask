@@ -95,6 +95,25 @@
     <Compile Include="Interfaces\IUpdater.cs" />
     <Compile Include="Logging\Logger.cs" />
     <Compile Include="Logging\Reporter.cs" />
+    <Compile Include="Migrations_Identity\Configuration.cs" />
+    <Compile Include="Migrations_Log\201910241918457_InitialCreate.cs" />
+    <Compile Include="Migrations_Log\201910241918457_InitialCreate.Designer.cs">
+      <DependentUpon>201910241918457_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations_Log\201910281442484_First.cs" />
+    <Compile Include="Migrations_Log\201910281442484_First.Designer.cs">
+      <DependentUpon>201910281442484_First.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations_Log\Configuration.cs" />
+    <Compile Include="Migrations_Rent\201910261309569_InitialCreate.cs" />
+    <Compile Include="Migrations_Rent\201910261309569_InitialCreate.Designer.cs">
+      <DependentUpon>201910261309569_InitialCreate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations_Rent\201910281442332_First.cs" />
+    <Compile Include="Migrations_Rent\201910281442332_First.Designer.cs">
+      <DependentUpon>201910281442332_First.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations_Rent\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\ClientManager.cs" />
     <Compile Include="Services\IdentityUnitOfWork.cs" />
@@ -107,7 +126,20 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <EmbeddedResource Include="Migrations_Log\201910241918457_InitialCreate.resx">
+      <DependentUpon>201910241918457_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations_Log\201910281442484_First.resx">
+      <DependentUpon>201910281442484_First.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations_Rent\201910261309569_InitialCreate.resx">
+      <DependentUpon>201910261309569_InitialCreate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations_Rent\201910281442332_First.resx">
+      <DependentUpon>201910281442332_First.cs</DependentUpon>
+    </EmbeddedResource>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="EF\Initializers\Images\1.jpg" />
     <Content Include="EF\Initializers\Images\2.jpg" />

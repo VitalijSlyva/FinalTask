@@ -469,6 +469,22 @@ namespace Rental.WEB.Controllers
         }
 
         /// <summary>
+        /// Restore car by id.
+        /// </summary>
+        /// <param name="id">Car id</param>
+        /// <returns>View</returns>
+        public ActionResult Restore(int? id)
+        {
+            if (id == null)
+                return View("CustomNotFound", "_Layout", "Автомобиль не найден");
+
+            _adminService.RestoreCar(id.Value);
+            _logWriter.CreateLog("Восстановил автомобиль " + id, User.Identity.GetUserId());
+
+            return RedirectToAction("GetCars");
+        }
+
+        /// <summary>
         /// Show create user view.
         /// </summary>
         /// <returns>View</returns>
@@ -639,17 +655,6 @@ namespace Rental.WEB.Controllers
             }
 
             return Json(new List<string>(), JsonRequestBehavior.AllowGet);
-        }
-
-        /// <summary>
-        /// Dispose services.
-        /// </summary>
-        /// <param name="disposing">Disposing</param>
-        protected override void Dispose(bool disposing)
-        {
-            _rentService.Dispose();
-            _adminService.Dispose();
-            base.Dispose(disposing);
         }
     }
 }

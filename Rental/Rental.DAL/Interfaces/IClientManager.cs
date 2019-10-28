@@ -6,7 +6,7 @@ namespace Rental.DAL.Interfaces
     /// <summary>
     /// Interface for working with profile entity.
     /// </summary>
-    public interface IClientManager : IDisposable,ICreator<Profile>,IUpdateer<Profile> 
+    public interface IClientManager : ICreator<Profile>,IUpdateer<Profile> 
     {
     }
 }
